@@ -748,6 +748,37 @@
 
             <!-- Sidebar -->
             <div class="sidebar">
+                <!-- Apply Card (Top of Sidebar) -->
+                {% if current_user.is_authenticated %}
+                <div class="sidebar-card" style="background: linear-gradient(135deg, var(--success) 0%, #00a17a 100%); color: white; text-align: center;">
+                    {% if applied %}
+                    <div style="padding: 1rem 0;">
+                        <i class="fas fa-check-circle" style="font-size: 2.5rem; margin-bottom: 0.5rem;"></i>
+                        <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: white;">Already Applied</h3>
+                        <p style="font-size: 0.9rem; margin: 0; opacity: 0.95;">We'll notify you about updates</p>
+                    </div>
+                    {% else %}
+                    <div style="padding: 0.5rem 0;">
+                        <h3 style="font-size: 1.2rem; margin-bottom: 0.75rem; color: white;">Ready to Apply?</h3>
+                        <button class="apply-btn" onclick="applyNow()" style="width: 100%; justify-content: center;">
+                            <i class="fas fa-paper-plane"></i>
+                            Apply Now
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="sidebar-card" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white; text-align: center;">
+                    <div style="padding: 0.5rem 0;">
+                        <h3 style="font-size: 1.2rem; margin-bottom: 0.75rem; color: white;">Want to Apply?</h3>
+                        <a href="/student/login" class="apply-btn text-decoration-none" style="width: 100%; justify-content: center;">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Login to Apply
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+
                 <!-- Quick Info Card -->
                 <div class="sidebar-card">
                     <h3 class="sidebar-title">
