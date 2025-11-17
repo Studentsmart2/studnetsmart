@@ -652,6 +652,48 @@
 
             const submitBtn = e.target.querySelector('.btn-submit');
             const originalText = submitBtn.innerHTML;
+
+            // Validate required file uploads
+            const profilePhoto = document.getElementById('profile_photo').files[0];
+            const resume = document.getElementById('resume').files[0];
+
+            let validationErrors = [];
+
+            if (!profilePhoto) {
+                validationErrors.push('Profile photo is required');
+            } else {
+                // Validate file size (max 5MB)
+                if (profilePhoto.size > 5 * 1024 * 1024) {
+                    validationErrors.push('Profile photo must be less than 5MB');
+                }
+                // Validate file type
+                const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                if (!validImageTypes.includes(profilePhoto.type)) {
+                    validationErrors.push('Profile photo must be JPG, PNG, or GIF');
+                }
+            }
+
+            if (!resume) {
+                validationErrors.push('Resume is required');
+            } else {
+                // Validate file size (max 10MB)
+                if (resume.size > 10 * 1024 * 1024) {
+                    validationErrors.push('Resume must be less than 10MB');
+                }
+                // Validate file type
+                const validResumeTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+                if (!validResumeTypes.includes(resume.type)) {
+                    validationErrors.push('Resume must be PDF, DOC, or DOCX');
+                }
+            }
+
+            // Show validation errors if any
+            if (validationErrors.length > 0) {
+                alert('Please fix the following errors:\n\n' + validationErrors.join('\n'));
+                return;
+            }
+
+            // Proceed with submission
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
             submitBtn.disabled = true;
 
@@ -676,6 +718,7 @@
                     submitBtn.disabled = false;
                 }
             } catch (error) {
+                console.error('Submission error:', error);
                 alert('Network error. Please try again.');
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
