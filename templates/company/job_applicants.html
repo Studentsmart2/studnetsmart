@@ -365,7 +365,7 @@
                             <span class="status-badge status-{{ application.status }}">
                                 {{ application.status|title }}
                             </span>
-                            <a href="/student/profile/{{ application.student_profile.user_id }}" target="_blank" class="btn-view-profile">
+                            <a href="/student/profile/{{ application.student_profile.user.full_name | create_slug }}" target="_blank" class="btn-view-profile">
                                 <i class="fas fa-user"></i> View Profile
                             </a>
                             {% if application.student_profile.resume_url %}
