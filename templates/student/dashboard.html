@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | StudentSmart</title>
+    <link rel="icon" href="https://i.ibb.co/1YBpx2KS/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --primary-light: #A29BFE;
+            --secondary: #00CEC9;
+            --accent: #FD79A8;
+            --dark: #2D3436;
+            --light: #F5F6FA;
+            --white: #FFFFFF;
+            --success: #00B894;
+            --warning: #FDCB6E;
+            --border-radius: 12px;
+            --border-radius-lg: 20px;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-link {
+            color: var(--dark);
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: var(--white);
+            padding: 2.5rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .kpi-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border-left: 5px solid var(--primary);
+        }
+
+        .kpi-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-5px);
+        }
+
+        .kpi-card.secondary {
+            border-left-color: var(--secondary);
+        }
+
+        .kpi-card.accent {
+            border-left-color: var(--accent);
+        }
+
+        .kpi-card.success {
+            border-left-color: var(--success);
+        }
+
+        .kpi-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .kpi-icon.primary {
+            background: rgba(108, 92, 231, 0.1);
+            color: var(--primary);
+        }
+
+        .kpi-icon.secondary {
+            background: rgba(0, 206, 201, 0.1);
+            color: var(--secondary);
+        }
+
+        .kpi-icon.accent {
+            background: rgba(253, 121, 168, 0.1);
+            color: var(--accent);
+        }
+
+        .kpi-icon.success {
+            background: rgba(0, 184, 148, 0.1);
+            color: var(--success);
+        }
+
+        .kpi-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .kpi-label {
+            color: #666;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .kpi-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        .badge-success {
+            background: rgba(0, 184, 148, 0.1);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(253, 203, 110, 0.1);
+            color: var(--warning);
+        }
+
+        .quick-actions {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            background: var(--light);
+            color: var(--dark);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .recent-applications {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .applications-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .applications-table th {
+            background: var(--light);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .applications-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .applications-table tr:hover {
+            background: var(--light);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: rgba(253, 203, 110, 0.2);
+            color: #d97706;
+        }
+
+        .status-reviewed {
+            background: rgba(59, 130, 246, 0.2);
+            color: #2563eb;
+        }
+
+        .status-shortlisted {
+            background: rgba(0, 184, 148, 0.2);
+            color: var(--success);
+        }
+
+        .status-rejected {
+            background: rgba(239, 68, 68, 0.2);
+            color: #dc2626;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        /* Mobile Hamburger Menu Styles */
+        .navbar-toggler {
+            border: none;
+            padding: 0.5rem;
+            background: transparent;
+            position: relative;
+            z-index: 1001;
+            display: none;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: none;
+            outline: none;
+        }
+
+        .navbar-toggler-icon {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 26px;
+            cursor: pointer;
+            background-image: none !important;
+        }
+
+        .navbar-toggler-icon span {
+            width: 26px;
+            height: 3px;
+            background: var(--dark);
+            border-radius: 3px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: block;
+        }
+
+        .navbar-toggler.active .navbar-toggler-icon span:nth-child(1) {
+            transform: rotate(45deg) translate(7px, 7px);
+        }
+
+        .navbar-toggler.active .navbar-toggler-icon span:nth-child(2) {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+
+        .navbar-toggler.active .navbar-toggler-icon span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        .mobile-menu-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-menu-backdrop.show {
+            display: block;
+            opacity: 1;
+        }
+
+        body.menu-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-title {
+                font-size: 2rem;
+            }
+
+            .kpi-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .applications-table {
+                font-size: 0.9rem;
+            }
+
+            .applications-table th,
+            .applications-table td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .navbar-toggler {
+                display: flex;
+            }
+
+            .navbar .d-flex.gap-3 {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 320px;
+                max-width: 85vw;
+                height: 100vh;
+                background: var(--white);
+                box-shadow: -5px 0 30px rgba(0, 0, 0, 0.2);
+                transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 999;
+                overflow-y: auto;
+                display: flex !important;
+                flex-direction: column;
+                padding: 5rem 2rem 2rem;
+                gap: 0 !important;
+            }
+
+            .navbar .d-flex.gap-3.show {
+                right: 0;
+            }
+
+            .navbar .nav-link {
+                padding: 1rem 1.5rem;
+                margin: 0;
+                border-bottom: 1px solid var(--light);
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                font-size: 1.05rem;
+            }
+
+            .navbar .nav-link:hover {
+                background: var(--light);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <a href="/" class="navbar-brand">StudentSmart</a>
+
+                <button class="navbar-toggler" type="button" onclick="toggleMobileMenu()">
+                    <div class="navbar-toggler-icon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </button>
+
+                <div class="d-flex gap-3" id="navbarNav">
+                    <a href="/student/profile/edit" class="nav-link">
+                        <i class="fas fa-user-edit me-1"></i> Edit Profile
+                    </a>
+                    <a href="/student/internships" class="nav-link">
+                        <i class="fas fa-briefcase me-1"></i> Browse Internships
+                    </a>
+                    <a href="/logout" class="nav-link">
+                        <i class="fas fa-sign-out-alt me-1"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="mobile-menu-backdrop" onclick="closeMobileMenu()"></div>
+
+    <div class="dashboard-header">
+        <div class="container">
+            <h1 class="dashboard-title">Welcome back, {{ current_user.full_name }}! 👋</h1>
+            <p class="opacity-90">Here's what's happening with your internship journey</p>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        <div class="kpi-cards">
+            <div class="kpi-card primary">
+                <div class="kpi-icon primary">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div class="kpi-value">
+                    {% if profile.onboarding_complete %}
+                    <i class="fas fa-check-circle" style="font-size: 2rem; color: var(--success);"></i>
+                    {% else %}
+                    <i class="fas fa-exclamation-circle" style="font-size: 2rem; color: var(--warning);"></i>
+                    {% endif %}
+                </div>
+                <div class="kpi-label">Profile Status</div>
+                <span class="kpi-badge {% if profile.onboarding_complete %}badge-success{% else %}badge-warning{% endif %}">
+                    {% if profile.onboarding_complete %}Complete{% else %}Incomplete{% endif %}
+                </span>
+            </div>
+
+            <div class="kpi-card secondary">
+                <div class="kpi-icon secondary">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="kpi-value">{{ applications|length }}</div>
+                <div class="kpi-label">Total Applications</div>
+            </div>
+
+            <div class="kpi-card accent">
+                <div class="kpi-icon accent">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="kpi-value">
+                    {{ applications|selectattr('status', 'equalto', 'pending')|list|length }}
+                </div>
+                <div class="kpi-label">Pending Reviews</div>
+            </div>
+
+            <div class="kpi-card success">
+                <div class="kpi-icon success">
+                    <i class="fas fa-check-double"></i>
+                </div>
+                <div class="kpi-value">
+                    {{ applications|selectattr('status', 'equalto', 'shortlisted')|list|length }}
+                </div>
+                <div class="kpi-label">Shortlisted</div>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <h2 class="section-title">
+                <i class="fas fa-bolt"></i> Quick Actions
+            </h2>
+            <div class="action-buttons">
+                <a href="/student/internships" class="action-btn">
+                    <i class="fas fa-search"></i>
+                    Browse Internships
+                </a>
+                <a href="/student/applications" class="action-btn">
+                    <i class="fas fa-list-ul"></i>
+                    View All Applications
+                </a>
+                <a href="/student/profile/edit" class="action-btn">
+                    <i class="fas fa-edit"></i>
+                    Edit Profile
+                </a>
+                <a href="/student/profile/{{ profile.user.full_name | create_slug }}" class="action-btn">
+                    <i class="fas fa-eye"></i>
+                    View My Public Profile
+                </a>
+            </div>
+        </div>
+
+        <div class="recent-applications">
+            <h2 class="section-title">
+                <i class="fas fa-history"></i> Recent Applications
+            </h2>
+            {% if applications %}
+            <div class="table-responsive">
+                <table class="applications-table">
+                    <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th>Company</th>
+                            <th>Status</th>
+                            <th>Applied On</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for app in applications[:5] %}
+                        <tr>
+                            <td>
+                                <strong>{{ app.internship.title }}</strong>
+                            </td>
+                            <td>{{ app.internship.company.company_name if app.internship.company else 'Admin Posted' }}</td>
+                            <td>
+                                <span class="status-badge status-{{ app.status }}">
+                                    {{ app.status }}
+                                </span>
+                            </td>
+                            <td>{{ app.applied_at.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <a href="/student/internships/{{ app.internship_id }}" style="color: var(--primary); text-decoration: none;">
+                                    <i class="fas fa-arrow-right"></i> View
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if applications|length > 5 %}
+            <div class="text-center mt-3">
+                <a href="/student/applications" style="color: var(--primary); text-decoration: none; font-weight: 500;">
+                    View All {{ applications|length }} Applications <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <h3>No Applications Yet</h3>
+                <p>Start your internship journey by applying to positions that match your skills!</p>
+                <a href="/student/internships" style="display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--primary); color: var(--white); text-decoration: none; border-radius: var(--border-radius); font-weight: 500;">
+                    <i class="fas fa-search me-2"></i> Browse Internships
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleMobileMenu() {
+            const toggler = document.querySelector('.navbar-toggler');
+            const navbarNav = document.getElementById('navbarNav');
+            const backdrop = document.querySelector('.mobile-menu-backdrop');
+
+            toggler.classList.toggle('active');
+            navbarNav.classList.toggle('show');
+            backdrop.classList.toggle('show');
+            document.body.classList.toggle('menu-open');
+        }
+
+        function closeMobileMenu() {
+            const toggler = document.querySelector('.navbar-toggler');
+            const navbarNav = document.getElementById('navbarNav');
+            const backdrop = document.querySelector('.mobile-menu-backdrop');
+
+            toggler.classList.remove('active');
+            navbarNav.classList.remove('show');
+            backdrop.classList.remove('show');
+            document.body.classList.remove('menu-open');
+        }
+
+        document.querySelectorAll('#navbarNav .nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                setTimeout(closeMobileMenu, 300);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colleges & Interest Management - Admin | StudentSmart</title>
+    <link rel="icon" href="https://i.ibb.co/1YBpx2KS/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --primary-light: #A29BFE;
+            --secondary: #00CEC9;
+            --accent: #FD79A8;
+            --dark: #2D3436;
+            --light: #F5F6FA;
+            --white: #FFFFFF;
+            --success: #00B894;
+            --warning: #FDCB6E;
+            --danger: #E17055;
+            --info: #0984E3;
+            --border-radius: 12px;
+            --border-radius-lg: 20px;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-link {
+            color: var(--dark);
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: var(--white);
+            padding: 2.5rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .kpi-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 1.75rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border-left: 5px solid var(--primary);
+        }
+
+        .kpi-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-5px);
+        }
+
+        .kpi-card.secondary {
+            border-left-color: var(--secondary);
+        }
+
+        .kpi-card.accent {
+            border-left-color: var(--accent);
+        }
+
+        .kpi-card.success {
+            border-left-color: var(--success);
+        }
+
+        .kpi-card.info {
+            border-left-color: var(--info);
+        }
+
+        .kpi-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .kpi-icon.primary {
+            background: rgba(108, 92, 231, 0.1);
+            color: var(--primary);
+        }
+
+        .kpi-icon.secondary {
+            background: rgba(0, 206, 201, 0.1);
+            color: var(--secondary);
+        }
+
+        .kpi-icon.accent {
+            background: rgba(253, 121, 168, 0.1);
+            color: var(--accent);
+        }
+
+        .kpi-icon.success {
+            background: rgba(0, 184, 148, 0.1);
+            color: var(--success);
+        }
+
+        .kpi-icon.info {
+            background: rgba(9, 132, 227, 0.1);
+            color: var(--info);
+        }
+
+        .kpi-value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .kpi-label {
+            color: #666;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .filter-section {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--primary);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-light);
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .action-btn.secondary {
+            background: var(--secondary);
+        }
+
+        .action-btn.secondary:hover {
+            background: #00a99d;
+        }
+
+        .action-btn.success {
+            background: var(--success);
+        }
+
+        .action-btn.success:hover {
+            background: #00997a;
+        }
+
+        .action-btn.outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .action-btn.outline:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .table-section {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .data-table th {
+            background: var(--light);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table tr:hover {
+            background: var(--light);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge.bg-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .badge.bg-secondary {
+            background: #6c757d;
+            color: var(--white);
+        }
+
+        .badge.bg-info {
+            background: var(--info);
+            color: var(--white);
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 500px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+        /* Hamburger Button */
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 30px;
+            height: 25px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 30px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1050;
+        }
+
+        .mobile-nav-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -350px;
+            width: 300px;
+            height: 100vh;
+            background: var(--white);
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 1051;
+            overflow-y: auto;
+        }
+
+        .mobile-nav.active {
+            right: 0;
+        }
+
+        .mobile-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--white);
+        }
+
+        .mobile-nav-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: var(--white);
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .mobile-nav-content {
+            padding: 1rem 0;
+        }
+
+        .mobile-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .mobile-nav-link:hover {
+            background: var(--light);
+            border-left-color: var(--primary);
+            color: var(--primary);
+        }
+
+        @media (max-width: 991px) {
+            .navbar-collapse:not(.d-none) {
+                display: none !important;
+            }
+        }
+
+
+
+        @media (max-width: 768px) {
+            .dashboard-title {
+                font-size: 2rem;
+            }
+
+            .kpi-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .data-table {
+                font-size: 0.9rem;
+            }
+
+            .data-table thead {
+                display: none;
+            }
+
+            .data-table tr {
+                display: block;
+                margin-bottom: 1rem;
+                border: 1px solid #eee;
+                border-radius: var(--border-radius);
+                padding: 1rem;
+            }
+
+            .data-table td {
+                display: block;
+                text-align: right;
+                padding: 0.5rem 0;
+                border: none;
+            }
+
+            .data-table td:before {
+                content: attr(data-label);
+                float: left;
+                font-weight: 600;
+            }
+        }
+    </style>
+</head>
+<body>
+        <nav class="navbar">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <a href="/" class="navbar-brand">StudentSmart Admin</a>
+
+                <!-- Desktop Navigation -->
+                <div class="collapse navbar-collapse justify-content-end d-none d-lg-flex">
+                    <a href="/admin/dashboard" class="nav-link"><i class="fas fa-home me-1"></i>Dashboard</a>
+                    <a href="/admin/students" class="nav-link"><i class="fas fa-users me-1"></i>Students</a>
+                    <a href="/admin/companies" class="nav-link"><i class="fas fa-building me-1"></i>Companies</a>
+                    <a href="/admin/colleges" class="nav-link"><i class="fas fa-university me-1"></i>Colleges</a>
+                    <a href="/admin/internships" class="nav-link"><i class="fas fa-briefcase me-1"></i>Internships</a>
+                    <a href="/admin/applications" class="nav-link"><i class="fas fa-file-alt me-1"></i>Applications</a>
+                    <a href="/admin/audit-logs" class="nav-link"><i class="fas fa-history me-1"></i>Audit Logs</a>
+                    <a href="/admin/manage-accounts" class="nav-link"><i class="fas fa-users-cog me-1"></i>Manage Accounts</a>
+                    <a href="/logout" class="nav-link"><i class="fas fa-sign-out-alt me-1"></i>Logout</a>
+                </div>
+
+                <!-- Mobile Hamburger Button -->
+                <button class="hamburger d-lg-none" id="hamburgerBtn" onclick="toggleMobileMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Sidebar -->
+    <div class="mobile-nav-backdrop" id="mobileNavBackdrop" onclick="toggleMobileMenu()"></div>
+    <div class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-header">
+            <h5>Admin Menu</h5>
+            <button class="close-btn" onclick="toggleMobileMenu()">×</button>
+        </div>
+        <div class="mobile-nav-content">
+            <a href="/admin/dashboard" class="mobile-nav-link"><i class="fas fa-home me-2"></i>Dashboard</a>
+            <a href="/admin/students" class="mobile-nav-link"><i class="fas fa-users me-2"></i>Students</a>
+            <a href="/admin/companies" class="mobile-nav-link"><i class="fas fa-building me-2"></i>Companies</a>
+            <a href="/admin/colleges" class="mobile-nav-link"><i class="fas fa-university me-2"></i>Colleges</a>
+            <a href="/admin/internships" class="mobile-nav-link"><i class="fas fa-briefcase me-2"></i>Internships</a>
+            <a href="/admin/applications" class="mobile-nav-link"><i class="fas fa-file-alt me-2"></i>Applications</a>
+            <a href="/admin/audit-logs" class="mobile-nav-link"><i class="fas fa-history me-2"></i>Audit Logs</a>
+            <a href="/admin/manage-accounts" class="mobile-nav-link"><i class="fas fa-users-cog me-2"></i>Manage Accounts</a>
+            <a href="/logout" class="mobile-nav-link"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+        </div>
+    </div>
+
+    <div class="dashboard-header">
+        <div class="container">
+            <h1 class="dashboard-title">Colleges & Interest Management</h1>
+            <p class="opacity-90">Manage colleges, filter students by interests, and analyze distributions</p>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        <!-- Stats Cards -->
+        <div class="kpi-cards">
+            <div class="kpi-card primary">
+                <div class="kpi-icon primary">
+                    <i class="fas fa-university"></i>
+                </div>
+                <div class="kpi-value" id="totalColleges">0</div>
+                <div class="kpi-label">Total Colleges</div>
+                <small class="text-muted">With student profiles</small>
+            </div>
+
+            <div class="kpi-card success">
+                <div class="kpi-icon success">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <div class="kpi-value" id="totalStudents">0</div>
+                <div class="kpi-label">Total Students</div>
+                <small class="text-muted">Across all colleges</small>
+            </div>
+
+            <div class="kpi-card info">
+                <div class="kpi-icon info">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="kpi-value" id="totalStates">0</div>
+                <div class="kpi-label">States</div>
+                <small class="text-muted">Represented</small>
+            </div>
+
+            <div class="kpi-card accent">
+                <div class="kpi-icon accent">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h6 class="kpi-value" id="topInterest" style="font-size: 1.5rem;">-</h6>
+                <div class="kpi-label">Top Interest</div>
+                <small class="text-muted" id="topInterestCount">0 students</small>
+            </div>
+        </div>
+
+        <!-- Interest Filter Section -->
+        <div class="filter-section">
+            <h2 class="section-title">
+                <i class="fas fa-filter"></i> Filter Students by Interest
+            </h2>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Select Interests</label>
+                    <select id="interestFilter" class="form-select" multiple size="6">
+                        <option value="Frontend Developer">Frontend Developer</option>
+                        <option value="Backend Developer">Backend Developer</option>
+                        <option value="Full Stack Developer">Full Stack Developer</option>
+                        <option value="Mobile Development">Mobile Development</option>
+                        <option value="Data Science">Data Science</option>
+                        <option value="DevOps">DevOps</option>
+                        <option value="UI/UX Design">UI/UX Design</option>
+                        <option value="Machine Learning">Machine Learning</option>
+                        <option value="Cloud Computing">Cloud Computing</option>
+                        <option value="Cybersecurity">Cybersecurity</option>
+                        <option value="AI">Artificial Intelligence</option>
+                        <option value="Blockchain">Blockchain</option>
+                    </select>
+                    <small class="text-muted">Hold Ctrl/Cmd to select multiple interests</small>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="form-label fw-bold">Filter by College</label>
+                            <select id="collegeFilterForStudents" class="form-select">
+                                <option value="">All Colleges</option>
+                            </select>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label fw-bold">Filter by State</label>
+                            <select id="stateFilter" class="form-select">
+                                <option value="">All States</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+                <button class="action-btn" onclick="filterStudentsByInterest()">
+                    <i class="fas fa-search"></i> Filter Students
+                </button>
+                <button class="action-btn outline" onclick="resetStudentFilters()">
+                    <i class="fas fa-redo"></i> Reset Filters
+                </button>
+                <button class="action-btn success ms-auto" onclick="exportFilteredStudents()">
+                    <i class="fas fa-download"></i> Export CSV
+                </button>
+            </div>
+        </div>
+
+        <!-- Filtered Students Results -->
+        <div class="table-section" id="filteredStudentsCard" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="section-title mb-0">
+                    <i class="fas fa-users"></i> Filtered Students
+                </h2>
+                <span class="badge bg-primary" id="filteredStudentsCount" style="font-size: 1rem; padding: 0.5rem 1rem;">0 results</span>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>College</th>
+                            <th>State</th>
+                            <th>Interests</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="filteredStudentsBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Interest Distribution Chart -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="table-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-chart-bar"></i> Interest Distribution
+                    </h2>
+                    <div class="chart-container">
+                        <canvas id="interestChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="table-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-chart-pie"></i> State Distribution
+                    </h2>
+                    <div class="chart-container">
+                        <canvas id="stateChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Colleges Table -->
+        <div class="table-section">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="section-title mb-0">
+                    <i class="fas fa-university"></i> College Management
+                </h2>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="collegeSearch" placeholder="Search colleges...">
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>College Name</th>
+                            <th>State</th>
+                            <th>Total Students</th>
+                            <th>Top Interests</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="collegesTableBody">
+                        <tr>
+                            <td colspan="5" class="text-center py-3">
+                                <div class="spinner-border spinner-border-sm text-primary me-2"></div>
+                                Loading colleges...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>
+                    Showing <span id="collegeStart">1</span> to <span id="collegeEnd">10</span> of <span id="collegeTotal">0</span> colleges
+                </div>
+                <div class="d-flex gap-1">
+                    <button class="btn btn-sm btn-outline-secondary" id="collegePrevPage" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary" id="collegeNextPage" disabled>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Global Variables
+        let allCollegesData = [];
+        let filteredStudentsData = [];
+        let interestChartInstance = null;
+        let stateChartInstance = null;
+        let currentCollegePage = 1;
+        const collegesPerPage = 10;
+
+        // Load colleges data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadColleges();
+
+            // College search
+            document.getElementById('collegeSearch').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const filteredColleges = allCollegesData.filter(college =>
+                    college.college_name.toLowerCase().includes(searchTerm) ||
+                    (college.state && college.state.toLowerCase().includes(searchTerm))
+                );
+                currentCollegePage = 1;
+                displayCollegesTable(filteredColleges, currentCollegePage);
+            });
+
+            // Colleges pagination
+            document.getElementById('collegePrevPage').addEventListener('click', () => {
+                if (currentCollegePage > 1) {
+                    currentCollegePage--;
+                    displayCollegesTable(allCollegesData, currentCollegePage);
+                }
+            });
+
+            document.getElementById('collegeNextPage').addEventListener('click', () => {
+                const totalPages = Math.ceil(allCollegesData.length / collegesPerPage);
+                if (currentCollegePage < totalPages) {
+                    currentCollegePage++;
+                    displayCollegesTable(allCollegesData, currentCollegePage);
+                }
+            });
+        });
+
+        async function loadColleges(page = 1, search = '') {
+            try {
+                const response = await fetch('/api/admin/colleges', {
+                    credentials: 'same-origin'
+                });
+
+                if (!response.ok) throw new Error('Failed to load colleges');
+
+                const data = await response.json();
+                allCollegesData = data.colleges || [];
+
+                // Update stats
+                updateCollegeStats(data.stats);
+
+                // Populate filter dropdowns
+                populateFilterDropdowns(data.colleges, data.states);
+
+                // Display colleges table
+                displayCollegesTable(allCollegesData, page);
+
+                // Create charts
+                if (data.interest_stats) {
+                    createInterestChart(data.interest_stats);
+                }
+                if (data.state_stats) {
+                    createStateChart(data.state_stats);
+                }
+
+            } catch (error) {
+                console.error('Error loading colleges:', error);
+                document.getElementById('collegesTableBody').innerHTML =
+                    '<tr><td colspan="5" class="text-center py-4 text-danger">Error loading colleges data</td></tr>';
+            }
+        }
+
+        function updateCollegeStats(stats) {
+            if (!stats) return;
+
+            document.getElementById('totalColleges').textContent = stats.total_colleges || 0;
+            document.getElementById('totalStudents').textContent = stats.total_students || 0;
+            document.getElementById('totalStates').textContent = stats.total_states || 0;
+
+            if (stats.top_interest) {
+                document.getElementById('topInterest').textContent = stats.top_interest.name || '-';
+                document.getElementById('topInterestCount').textContent = `${stats.top_interest.count || 0} students`;
+            }
+        }
+
+        function populateFilterDropdowns(colleges, states) {
+            // Populate college dropdown
+            const collegeFilter = document.getElementById('collegeFilterForStudents');
+            if (collegeFilter && colleges) {
+                collegeFilter.innerHTML = '<option value="">All Colleges</option>';
+                const uniqueColleges = [...new Set(colleges.map(c => c.college_name))].sort();
+                uniqueColleges.forEach(college => {
+                    collegeFilter.innerHTML += `<option value="${college}">${college}</option>`;
+                });
+            }
+
+            // Populate state dropdown
+            const stateFilter = document.getElementById('stateFilter');
+            if (stateFilter && states) {
+                stateFilter.innerHTML = '<option value="">All States</option>';
+                states.sort().forEach(state => {
+                    if (state) {
+                        stateFilter.innerHTML += `<option value="${state}">${state}</option>`;
+                    }
+                });
+            }
+        }
+
+        function displayCollegesTable(colleges, page = 1) {
+            const tableBody = document.getElementById('collegesTableBody');
+            if (!tableBody) return;
+
+            const start = (page - 1) * collegesPerPage;
+            const end = start + collegesPerPage;
+            const paginatedData = colleges.slice(start, end);
+
+            if (!colleges || colleges.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4">No colleges found</td></tr>';
+                return;
+            }
+
+            tableBody.innerHTML = paginatedData.map(college => {
+                const topInterests = college.top_interests ? college.top_interests.slice(0, 3).map(i =>
+                    `<span class="badge bg-secondary me-1">${i}</span>`
+                ).join('') : '<span class="text-muted">-</span>';
+
+                return `
+                <tr>
+                    <td data-label="College Name"><strong>${college.college_name}</strong></td>
+                    <td data-label="State">${college.state || '-'}</td>
+                    <td data-label="Total Students"><span class="badge bg-primary">${college.student_count || 0}</span></td>
+                    <td data-label="Top Interests">${topInterests}</td>
+                    <td data-label="Actions">
+                        <button class="action-btn" style="font-size: 0.85rem; padding: 0.4rem 0.8rem;" onclick="viewCollegeStudents('${college.college_name}')">
+                            <i class="fas fa-users"></i> View Students
+                        </button>
+                    </td>
+                </tr>
+            `;
+            }).join('');
+
+            updateCollegesPagination(colleges.length, page);
+        }
+
+        function updateCollegesPagination(total, currentPage) {
+            const totalPages = Math.ceil(total / collegesPerPage);
+            const start = total === 0 ? 0 : (currentPage - 1) * collegesPerPage + 1;
+            const end = Math.min(currentPage * collegesPerPage, total);
+
+            document.getElementById('collegeStart').textContent = start;
+            document.getElementById('collegeEnd').textContent = end;
+            document.getElementById('collegeTotal').textContent = total;
+
+            document.getElementById('collegePrevPage').disabled = currentPage === 1;
+            document.getElementById('collegeNextPage').disabled = currentPage === totalPages || totalPages === 0;
+        }
+
+        async function filterStudentsByInterest() {
+            const interestSelect = document.getElementById('interestFilter');
+            const selectedInterests = Array.from(interestSelect.selectedOptions).map(opt => opt.value);
+            const college = document.getElementById('collegeFilterForStudents').value;
+            const state = document.getElementById('stateFilter').value;
+
+            if (selectedInterests.length === 0 && !college && !state) {
+                alert('Please select at least one filter criteria');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/students/filter', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        interests: selectedInterests,
+                        college: college,
+                        state: state
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to filter students');
+
+                const data = await response.json();
+                filteredStudentsData = data.students || [];
+
+                displayFilteredStudents(filteredStudentsData);
+
+            } catch (error) {
+                console.error('Error filtering students:', error);
+                alert('Failed to filter students. Please try again.');
+            }
+        }
+
+        function displayFilteredStudents(students) {
+            const card = document.getElementById('filteredStudentsCard');
+            const tbody = document.getElementById('filteredStudentsBody');
+            const countBadge = document.getElementById('filteredStudentsCount');
+
+            if (!students || students.length === 0) {
+                card.style.display = 'block';
+                countBadge.textContent = '0 results';
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">No students found matching your criteria</td></tr>';
+                return;
+            }
+
+            card.style.display = 'block';
+            countBadge.textContent = `${students.length} result${students.length > 1 ? 's' : ''}`;
+
+            tbody.innerHTML = students.map(student => {
+                const interests = student.interests ? JSON.parse(student.interests).map(i =>
+                    `<span class="badge bg-info me-1">${i}</span>`
+                ).join('') : '<span class="text-muted">-</span>';
+
+                return `
+                <tr>
+                    <td data-label="Name"><strong>${student.name || 'N/A'}</strong></td>
+                    <td data-label="Email">${student.email}</td>
+                    <td data-label="College">${student.college || '-'}</td>
+                    <td data-label="State">${student.state || '-'}</td>
+                    <td data-label="Interests">${interests}</td>
+                    <td data-label="Actions">
+                        <button class="action-btn" style="font-size: 0.85rem; padding: 0.4rem 0.8rem;" onclick="viewStudentProfile(${student.id})">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                    </td>
+                </tr>
+            `;
+            }).join('');
+
+            // Scroll to results
+            card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function resetStudentFilters() {
+            document.getElementById('interestFilter').selectedIndex = -1;
+            document.getElementById('collegeFilterForStudents').value = '';
+            document.getElementById('stateFilter').value = '';
+            document.getElementById('filteredStudentsCard').style.display = 'none';
+            filteredStudentsData = [];
+        }
+
+        function exportFilteredStudents() {
+            if (!filteredStudentsData || filteredStudentsData.length === 0) {
+                alert('Please filter students first before exporting');
+                return;
+            }
+
+            let csv = 'Name,Email,College,State,Department,Year,Interests,Phone,Profile Complete\n';
+
+            filteredStudentsData.forEach(student => {
+                const interests = student.interests ? JSON.parse(student.interests).join('; ') : '';
+                csv += `"${student.name || ''}","${student.email}","${student.college || ''}","${student.state || ''}","${student.department || ''}","${student.year || ''}","${interests}","${student.phone || ''}","${student.profile_complete ? 'Yes' : 'No'}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `filtered_students_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            alert('Student list exported successfully!');
+        }
+
+        function viewCollegeStudents(collegeName) {
+            document.getElementById('collegeFilterForStudents').value = collegeName;
+            filterStudentsByInterest();
+        }
+
+        function viewStudentProfile(studentId) {
+            window.open(`/admin/students/${studentId}/dashboard`, '_blank');
+        }
+
+        function createInterestChart(interestStats) {
+            const ctx = document.getElementById('interestChart');
+            if (!ctx || !interestStats || interestStats.length === 0) return;
+
+            // Destroy existing chart if it exists
+            if (interestChartInstance) {
+                interestChartInstance.destroy();
+            }
+
+            interestChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: interestStats.map(item => item.interest),
+                    datasets: [{
+                        label: 'Number of Students',
+                        data: interestStats.map(item => item.count),
+                        backgroundColor: '#6C5CE7',
+                        borderColor: '#5F50D7',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createStateChart(stateStats) {
+            const ctx = document.getElementById('stateChart');
+            if (!ctx || !stateStats || stateStats.length === 0) return;
+
+            // Destroy existing chart if it exists
+            if (stateChartInstance) {
+                stateChartInstance.destroy();
+            }
+
+            stateChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: stateStats.map(item => item.state),
+                    datasets: [{
+                        data: stateStats.map(item => item.count),
+                        backgroundColor: ['#6C5CE7', '#00B894', '#FDCB6E', '#E17055', '#0984E3', '#E84393', '#A29BFE', '#74B9FF']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+    
+        function toggleMobileMenu() {
+            const nav = document.getElementById('mobileNav');
+            const backdrop = document.getElementById('mobileNavBackdrop');
+            const hamburger = document.getElementById('hamburgerBtn');
+
+            nav.classList.toggle('active');
+            backdrop.classList.toggle('active');
+            if (hamburger) hamburger.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

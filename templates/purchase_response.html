@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Confirmed - StudentsMart</title>
+    <link rel="icon" href="https://i.ibb.co/1YBpx2KS/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --primary-light: #A29BFE;
+            --secondary: #00CEC9;
+            --accent: #FD79A8;
+            --accent-light: #FFEAA7;
+            --dark: #2D3436;
+            --light: #F5F6FA;
+            --white: #FFFFFF;
+            --success: #00B894;
+            --warning: #FDCB6E;
+            --danger: #E17055;
+            --border-radius: 12px;
+            --border-radius-lg: 20px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.15);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: linear-gradient(135deg, var(--light) 0%, #E8FFE8 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated background elements */
+        .bg-element {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .bg-element:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .bg-element:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            background: var(--secondary);
+            top: 20%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .bg-element:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            background: var(--accent);
+            bottom: 30%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        .bg-element:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            background: var(--success);
+            bottom: 20%;
+            right: 20%;
+            animation-delay: 1s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        .main-container {
+            max-width: 600px;
+            width: 100%;
+            margin: 2rem;
+            z-index: 10;
+            position: relative;
+        }
+
+        .status-card {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-xl);
+            padding: 3rem 2rem;
+            text-align: center;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--success), var(--secondary));
+        }
+
+        .status-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 184, 148, 0.03) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.3;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.1;
+            }
+        }
+
+        .status-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--success), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            color: var(--white);
+            font-size: 2.5rem;
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            z-index: 2;
+            animation: bounce 1s ease-in-out, glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: var(--shadow-xl);
+            }
+            to {
+                box-shadow: var(--shadow-xl), 0 0 30px rgba(0, 184, 148, 0.4);
+            }
+        }
+
+        .status-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .celebration-text {
+            font-size: 1.2rem;
+            color: var(--success);
+            font-weight: 600;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .purchase-details {
+            background: linear-gradient(135deg, rgba(0, 184, 148, 0.1), rgba(0, 206, 201, 0.1));
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--success);
+            margin: 2rem 0;
+            text-align: left;
+            position: relative;
+            z-index: 2;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: var(--success);
+            text-align: right;
+        }
+
+        .status-message {
+            font-size: 1.1rem;
+            color: var(--dark);
+            opacity: 0.8;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn-home {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: var(--border-radius);
+            color: var(--white);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            font-size: 1.1rem;
+        }
+
+        .btn-home:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl);
+            color: var(--white);
+        }
+
+        .btn-listings {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--success) 100%);
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: var(--border-radius);
+            color: var(--white);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            font-size: 1.1rem;
+        }
+
+        .btn-listings:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl);
+            color: var(--white);
+        }
+
+        .logo-container {
+            position: absolute;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .logo {
+            height: 40px;
+            opacity: 0.1;
+        }
+
+        .divider {
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--success), var(--secondary));
+            margin: 1.5rem auto;
+            border-radius: 2px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Confetti Animation */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
+            animation: confetti-fall 3s linear infinite;
+        }
+
+        .confetti:nth-child(even) {
+            background: var(--primary-light);
+            animation-delay: -1s;
+        }
+
+        .confetti:nth-child(3n) {
+            background: var(--secondary);
+            animation-delay: -2s;
+        }
+
+        .confetti:nth-child(4n) {
+            background: var(--accent-light);
+            animation-delay: -0.5s;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Success checkmark animation */
+        .checkmark {
+            position: relative;
+            z-index: 3;
+        }
+
+        .checkmark::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--white);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: checkmark-circle 0.6s ease-in-out;
+        }
+
+        @keyframes checkmark-circle {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0;
+            }
+            50% {
+                width: 50px;
+                height: 50px;
+                opacity: 1;
+            }
+            100% {
+                width: 50px;
+                height: 50px;
+                opacity: 0;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                margin: 1rem;
+            }
+            
+            .status-card {
+                padding: 2rem 1.5rem;
+            }
+            
+            .status-title {
+                font-size: 1.6rem;
+            }
+            
+            .status-icon {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+            
+            .purchase-details {
+                padding: 1.5rem;
+            }
+            
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .detail-value {
+                text-align: left;
+            }
+            
+            .btn-container {
+                flex-direction: column;
+            }
+            
+            .btn-home,
+            .btn-listings {
+                width: 100%;
+                justify-content: center;
+                padding: 1rem 2rem;
+                font-size: 1rem;
+            }
+        }
+
+        /* Animation for card entrance */
+        .status-card {
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Elements -->
+    <div class="bg-element"></div>
+    <div class="bg-element"></div>
+    <div class="bg-element"></div>
+    <div class="bg-element"></div>
+
+    <!-- Confetti elements -->
+    <div class="confetti" style="left: 10%; animation-delay: -0.5s;"></div>
+    <div class="confetti" style="left: 20%; animation-delay: -1.5s;"></div>
+    <div class="confetti" style="left: 30%; animation-delay: -2.5s;"></div>
+    <div class="confetti" style="left: 40%; animation-delay: -0.3s;"></div>
+    <div class="confetti" style="left: 50%; animation-delay: -1.3s;"></div>
+    <div class="confetti" style="left: 60%; animation-delay: -2.3s;"></div>
+    <div class="confetti" style="left: 70%; animation-delay: -0.8s;"></div>
+    <div class="confetti" style="left: 80%; animation-delay: -1.8s;"></div>
+    <div class="confetti" style="left: 90%; animation-delay: -2.8s;"></div>
+
+    <div class="main-container">
+        <div class="status-card">
+            <div class="logo-container">
+                <img src="https://i.ibb.co/Z05RbY8/logo-removebg-preview-5.png" alt="StudentsMart" class="logo">
+            </div>
+            
+            <div class="status-icon checkmark">
+                <i class="fas fa-check"></i>
+            </div>
+            
+            <h1 class="status-title">Purchase Confirmed Successfully!</h1>
+            <div class="celebration-text">🎉 Congratulations! Your transaction is complete 🎉</div>
+            <div class="divider"></div>
+            
+            <div class="purchase-details">
+                <div class="detail-row">
+                    <div class="detail-label">
+                        <i class="fas fa-box"></i>
+                        Item:
+                    </div>
+                    <div class="detail-value">{{ listing.title }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">
+                        <i class="fas fa-user"></i>
+                        Buyer:
+                    </div>
+                    <div class="detail-value">{{ buyer_name }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">
+                        <i class="fas fa-calendar-check"></i>
+                        Status:
+                    </div>
+                    <div class="detail-value">
+                        <i class="fas fa-check me-1"></i>Confirmed & Complete
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">
+                        <i class="fas fa-clock"></i>
+                        Confirmed at:
+                    </div>
+                    <div class="detail-value">
+                        {{ moment().format('MMM DD, YYYY [at] hh:mm A') }}
+                    </div>
+                </div>
+            </div>
+            
+            <p class="status-message">
+                🚀 The sale has been confirmed successfully! Both parties will receive email notifications with transaction details. Thank you for using StudentsMart!
+            </p>
+            
+            <div class="btn-container">
+                <a href="/my-listings" class="btn-listings">
+                    <i class="fas fa-list"></i>
+                    My Listings
+                </a>
+                <a href="/" class="btn-home">
+                    <i class="fas fa-home"></i>
+                    Return to StudentsMart
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive celebration effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create additional confetti on page load
+            setTimeout(() => {
+                for (let i = 0; i < 15; i++) {
+                    createConfetti();
+                }
+            }, 500);
+        });
+
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.animationDelay = -Math.random() * 3 + 's';
+            confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            document.body.appendChild(confetti);
+
+            // Remove confetti after animation
+            setTimeout(() => {
+                confetti.remove();
+            }, 5000);
+        }
+
+        // Add click effect to buttons
+        document.querySelectorAll('.btn-home, .btn-listings').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.style.position = 'absolute';
+                ripple.style.borderRadius = '50%';
+                ripple.style.background = 'rgba(255,255,255,0.6)';
+                ripple.style.transform = 'scale(0)';
+                ripple.style.animation = 'ripple 0.6s linear';
+                ripple.style.pointerEvents = 'none';
+                
+                this.style.position = 'relative';
+                this.style.overflow = 'hidden';
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+    </script>
+
+    <style>
+        @keyframes ripple {
+            to {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+    </style>
+</body>
+</html>

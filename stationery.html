@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stationery - StudentsMart</title>
+    <link rel="icon" href="https://i.ibb.co/1YBpx2KS/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --primary-light: #A29BFE;
+            --secondary: #00CEC9;
+            --accent: #FD79A8;
+            --accent-light: #FFEAA7;
+            --dark: #2D3436;
+            --light: #F5F6FA;
+            --white: #FFFFFF;
+            --success: #00B894;
+            --warning: #FDCB6E;
+            --danger: #E17055;
+            --border-radius: 12px;
+            --border-radius-lg: 20px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.15);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            padding-top: 80px;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1.2rem 0;
+            background: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .navbar-brand {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .logo {
+            height: 42px;
+            transition: var(--transition);
+        }
+
+        /* Breadcrumb */
+        .breadcrumb-nav {
+            background: var(--white);
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb {
+            background: none;
+            margin: 0;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* Filters Section */
+        .filters-section {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .filter-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        /* Quick Filter Pills */
+        .quick-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-pill {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            background: var(--white);
+            color: var(--dark);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .filter-pill:hover, .filter-pill.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Results Info */
+        .results-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--white);
+            border-radius: var(--border-radius);
+        }
+
+        .results-count {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Listing Cards */
+        .listing-card-horizontal-clean {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            height: 240px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 20px;
+        }
+
+        .listing-card-horizontal-clean:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border-color: var(--primary);
+        }
+
+        /* Image Section - Left Side */
+        .listing-image-section {
+            position: relative;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .listing-image-pro {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .listing-card-horizontal-clean:hover .listing-image-pro {
+            transform: scale(1.05);
+        }
+
+        .listing-badges-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .badge-category,
+        .badge-rental,
+        .badge-year {
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: white;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-transform: capitalize;
+        }
+
+        .badge-category {
+            background: rgba(108, 92, 231, 0.9);
+        }
+
+        .badge-rental {
+            background: rgba(253, 121, 168, 0.9);
+        }
+
+        .badge-year {
+            background: rgba(253, 121, 168, 0.9);
+        }
+
+        /* Content Section - Right Side */
+        .listing-content-section {
+            padding: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .content-top {
+            flex-grow: 1;
+            margin-bottom: 15px;
+        }
+
+        .content-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .listing-title-pro {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 12px;
+            line-height: 1.4;
+            display: -webkit-box;
+            --webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            max-height: 3.4em;
+        }
+
+        /* Details Section */
+        .listing-details {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .detail-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .detail-row i {
+            width: 14px;
+            color: var(--primary);
+            font-size: 0.8rem;
+        }
+
+        .detail-text {
+            color: var(--gray-dark);
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 500;
+        }
+
+        /* Price Section */
+        .listing-price-section {
+            flex-shrink: 0;
+        }
+
+        .price-display {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .price-period {
+            font-size: 0.85rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        /* Actions Section */
+        .listing-actions-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-shrink: 0;
+            min-width: 0;
+        }
+
+        .btn-primary-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: var(--transition);
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .btn-primary-action:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .btn-secondary-action {
+            width: 40px;
+            height: 40px;
+            background: rgba(225, 112, 85, 0.1);
+            color: #e17055;
+            border: 1px solid rgba(225, 112, 85, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            cursor: pointer;
+            flex-shrink: 0;
+            font-size: 1rem;
+        }
+
+        .btn-secondary-action:hover {
+            background: rgba(225, 112, 85, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Skeleton Loading */
+        .skeleton-card {
+            background: var(--white);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+        }
+
+        .skeleton-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: var(--border-radius);
+        }
+
+        .skeleton-text {
+            height: 20px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+
+        .skeleton-text.medium {
+            width: 70%;
+        }
+
+        .skeleton-text.short {
+            width: 40%;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Responsive */
+        @media (max-width: 767px) {
+            .listing-card-horizontal-clean {
+                height: 200px;
+            }
+            
+            .listing-content-section {
+                padding: 14px;
+            }
+            
+            .listing-title-pro {
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="https://i.ibb.co/Z05RbY8/logo-removebg-preview-5.png" alt="StudentsMart" class="logo">
+                StudentsMart
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/"><i class="fas fa-home me-2"></i>Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="buy.html"><i class="fas fa-shopping-bag me-2"></i>All Items</a></li>
+                    <li class="nav-item"><a class="nav-link" href="books.html"><i class="fas fa-book me-2"></i>Books</a></li>
+                    <li class="nav-item"><a class="nav-link" href="electronics.html"><i class="fas fa-laptop me-2"></i>Electronics</a></li>
+                    <li class="nav-item"><a class="nav-link" href="clothes.html"><i class="fas fa-tshirt me-2"></i>Clothes</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="stationery.html"><i class="fas fa-pen me-2"></i>Stationery</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="handlePathSelection('sell')"><i class="fas fa-plus me-2"></i>Sell</a></li>
+                    <li class="nav-item" id="authButtons">
+                        <button class="btn btn-outline-primary me-2" onclick="showLoginModal()">Login</button>
+                        <button class="btn btn-primary" onclick="showRegisterModal()">Register</button>
+                    </li>
+                    <li class="nav-item dropdown d-none" id="userMenu">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-2"></i><span id="userName"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="showMyListings()"><i class="fas fa-list me-2"></i>My Listings</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="showWishlist()"><i class="fas fa-heart me-2"></i>Wishlist</a></li>
+                            <li><a class="dropdown-item" href="/profiledashboard"><i class="fas fa-user me-2"></i>Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-nav">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                    <li class="breadcrumb-item"><a href="buy.html">Marketplace</a></li>
+                    <li class="breadcrumb-item active">Stationery</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <h5 class="mb-3"><i class="fas fa-pen-fancy me-2"></i>Filter Stationery</h5>
+            
+            <!-- Quick Filters -->
+            <div class="quick-filters">
+                <span class="filter-pill active" data-filter="all">All Stationery</span>
+                <span class="filter-pill" data-filter="drafter">Drafters</span>
+                <span class="filter-pill" data-filter="chart_holder">Chart Holders</span>
+                <span class="filter-pill" data-filter="geometry_box">Geometry Box</span>
+                <span class="filter-pill" data-filter="drawing_board">Drawing Board</span>
+                <span class="filter-pill" data-filter="compass">Compass Set</span>
+                <span class="filter-pill" data-filter="scale_ruler">Scale & Ruler</span>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="filter-group">
+                        <label class="filter-label">Search Stationery</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search by brand, type...">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="filter-group">
+                        <label class="filter-label">Condition</label>
+                        <select class="form-select" id="conditionFilter">
+                            <option value="">All Conditions</option>
+                            <option value="new">New</option>
+                            <option value="like-new">Like New</option>
+                            <option value="good">Good</option>
+                            <option value="fair">Fair</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="filter-group">
+                        <label class="filter-label">Academic Year</label>
+                        <select class="form-select" id="yearFilter">
+                            <option value="">All Years</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="filter-group">
+                        <label class="filter-label">Price Range</label>
+                        <select class="form-select" id="priceFilter">
+                            <option value="">All Prices</option>
+                            <option value="0-100">Under ₹100</option>
+                            <option value="100-500">₹100 - ₹500</option>
+                            <option value="500-1000">₹500 - ₹1000</option>
+                            <option value="1000+">Above ₹1000</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="filter-group">
+                        <label class="filter-label">Sort By</label>
+                        <select class="form-select" id="sortFilter">
+                            <option value="newest">Newest First</option>
+                            <option value="price_low">Price ↑</option>
+                            <option value="price_high">Price ↓</option>
+                            <option value="title">A-Z</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Info -->
+        <div class="results-info">
+            <div class="results-count" id="resultsCount">Loading stationery...</div>
+            <div class="view-options">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary active" id="gridView">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" id="listView">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stationery Grid -->
+        <div class="row g-4" id="stationeryGrid">
+            <!-- Stationery items will be loaded here -->
+        </div>
+
+        <!-- Loading Skeleton -->
+        <div class="row g-4" id="loadingSkeleton" style="display: none;">
+            <!-- Skeleton cards will be added here -->
+        </div>
+
+        <!-- No Results -->
+        <div id="noResults" class="text-center py-5" style="display: none;">
+            <i class="fas fa-search fa-4x text-muted mb-3"></i>
+            <h4>No stationery items found</h4>
+            <p class="text-muted">Try adjusting your filters or search terms</p>
+            <button class="btn btn-primary" onclick="clearFilters()">Clear All Filters</button>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+    <script>
+        let currentUser = null;
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthStatus();
+            loadStationery();
+            initializeFilters();
+        });
+
+        async function checkAuthStatus() {
+            try {
+                const response = await fetch('/check-session', { credentials: 'same-origin' });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.authenticated) {
+                        currentUser = data.user;
+                        updateAuthUI();
+                    }
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+            }
+        }
+
+        function updateAuthUI() {
+            const authButtons = document.getElementById('authButtons');
+            const userMenu = document.getElementById('userMenu');
+            const userName = document.getElementById('userName');
+            
+            if (currentUser) {
+                authButtons.classList.add('d-none');
+                userMenu.classList.remove('d-none');
+                userName.textContent = currentUser.full_name || currentUser.email;
+            }
+        }
+
+        function initializeFilters() {
+            // Filter event listeners
+            document.getElementById('searchInput').addEventListener('input', debounce(loadStationery, 500));
+            document.getElementById('conditionFilter').addEventListener('change', loadStationery);
+            document.getElementById('yearFilter').addEventListener('change', loadStationery);
+            document.getElementById('priceFilter').addEventListener('change', loadStationery);
+            document.getElementById('sortFilter').addEventListener('change', loadStationery);
+
+            // Quick filter pills
+            document.querySelectorAll('.filter-pill').forEach(pill => {
+                pill.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+                    this.classList.add('active');
+                    loadStationery();
+                });
+            });
+        }
+
+        async function loadStationery() {
+            showLoading();
+            
+            try {
+                const params = new URLSearchParams({
+                    category: 'stationery',
+                    q: document.getElementById('searchInput').value,
+                    condition: document.getElementById('conditionFilter').value,
+                    study_year: document.getElementById('yearFilter').value,
+                    price_range: document.getElementById('priceFilter').value,
+                    sort_by: document.getElementById('sortFilter').value,
+                    product_type: getActiveQuickFilter()
+                });
+
+                const response = await fetch(`/listings?${params}`, { credentials: 'same-origin' });
+                if (!response.ok) throw new Error('Failed to load stationery');
+
+                const { listings } = await response.json();
+                displayStationery(listings);
+                updateResultsCount(listings.length);
+
+            } catch (error) {
+                console.error('Error loading stationery:', error);
+                showError();
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function getActiveQuickFilter() {
+            const activePill = document.querySelector('.filter-pill.active');
+            return activePill.dataset.filter === 'all' ? '' : activePill.dataset.filter;
+        }
+
+        function displayStationery(items) {
+            const grid = document.getElementById('stationeryGrid');
+            const noResults = document.getElementById('noResults');
+
+            if (items.length === 0) {
+                grid.style.display = 'none';
+                noResults.style.display = 'block';
+                return;
+            }
+
+            grid.style.display = 'flex';
+            noResults.style.display = 'none';
+            grid.innerHTML = '';
+
+            items.forEach(item => {
+                const itemCard = createStationeryCard(item);
+                grid.appendChild(itemCard);
+            });
+        }
+
+        function createStationeryCard(item) {
+            const card = document.createElement('div');
+            card.className = 'col-12 col-sm-6 col-lg-4 mb-3';
+
+            const imageUrl = item.image_url?.startsWith('http') 
+                ? item.image_url 
+                : `/static/${item.image_url || 'images/placeholder.jpg'}`;
+
+            const productTypeLabels = {
+                'drafter': '📐 Drafter',
+                'chart_holder': '📋 Chart Holder',
+                'geometry_box': '📏 Geometry Box',
+                'drawing_board': '🎨 Drawing Board',
+                'compass': '🧭 Compass Set',
+                'scale_ruler': '📐 Scale & Ruler'
+            };
+
+            const productTypeName = productTypeLabels[item.product_type] || '✏️ Stationery';
+
+            card.innerHTML = `
+                <div class="listing-card-horizontal-clean">
+                    <div class="row g-0 h-100">
+                        <!-- Left side - Image -->
+                        <div class="col-4">
+                            <div class="listing-image-section">
+                                <img src="${imageUrl}" 
+                                    class="listing-image-pro" 
+                                    alt="${item.title || 'Stationery'}"
+                                    loading="lazy">
+                                
+                                <div class="listing-badges-overlay">
+                                    <span class="badge-category">Stationery</span>
+                                    ${item.study_year ? `<span class="badge-year">${item.study_year}${getOrdinalSuffix(item.study_year)} Yr</span>` : ''}
+                                    ${item.is_for_rent ? '<span class="badge-rental">Rent</span>' : ''}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Right side - Details -->
+                        <div class="col-8">
+                            <div class="listing-content-section">
+                                <div class="content-top">
+                                    <h3 class="listing-title-pro">${item.title || 'Untitled Item'}</h3>
+                                    
+                                    <div class="listing-details">
+                                        <div class="detail-row">
+                                            <i class="fas fa-tag"></i>
+                                            <span class="detail-text">${productTypeName}</span>
+                                        </div>
+                                        
+                                        ${item.condition ? `
+                                        <div class="detail-row">
+                                            <i class="fas fa-check-circle"></i>
+                                            <span class="detail-text">${item.condition}</span>
+                                        </div>` : ''}
+                                        
+                                        <div class="detail-row">
+                                            <i class="fas fa-user-circle"></i>
+                                            <span class="detail-text">${item.seller?.name || 'Unknown Seller'}</span>
+                                        </div>
+                                        
+                                        <div class="detail-row">
+                                            <i class="fas fa-university"></i>
+                                            <span class="detail-text">${item.seller?.college || 'College not specified'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="content-bottom">
+                                    <div class="listing-price-section">
+                                        <div class="price-display">
+                                            ${item.is_for_rent ?
+                                                `₹${item.rent_price || 0}<span class="price-period">/month</span>` :
+                                                `₹${item.price || 0}`}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="listing-actions-section">
+                                        <button class="btn-primary-action" 
+                                                onclick="contactSeller(${item.id})">
+                                            <i class="fas fa-envelope"></i>
+                                            Contact
+                                        </button>
+                                        
+                                        <button class="btn-secondary-action" 
+                                                onclick="addToWishlist(${item.id})"
+                                                title="Add to Wishlist">
+                                            <i class="fas fa-heart"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        function showLoading() {
+            const skeleton = document.getElementById('loadingSkeleton');
+            const grid = document.getElementById('stationeryGrid');
+            
+            grid.style.display = 'none';
+            skeleton.style.display = 'flex';
+            
+            skeleton.innerHTML = Array(8).fill().map(() => `
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="skeleton-card">
+                        <div class="skeleton-image mb-3"></div>
+                        <div class="skeleton-text"></div>
+                        <div class="skeleton-text medium"></div>
+                        <div class="skeleton-text short"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function hideLoading() {
+            const skeleton = document.getElementById('loadingSkeleton');
+            const grid = document.getElementById('stationeryGrid');
+            
+            skeleton.style.display = 'none';
+            grid.style.display = 'flex';
+        }
+
+        function updateResultsCount(count) {
+            const resultsCount = document.getElementById('resultsCount');
+            resultsCount.textContent = `${count} stationery item${count !== 1 ? 's' : ''} found`;
+        }
+
+        function showError() {
+            const grid = document.getElementById('stationeryGrid');
+            grid.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <i class="fas fa-exclamation-triangle fa-4x text-warning mb-3"></i>
+                    <h4>Error Loading Stationery</h4>
+                    <p class="text-muted">Please try again later</p>
+                    <button class="btn btn-primary" onclick="loadStationery()">Retry</button>
+                </div>
+            `;
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('conditionFilter').value = '';
+            document.getElementById('yearFilter').value = '';
+            document.getElementById('priceFilter').value = '';
+            document.getElementById('sortFilter').value = 'newest';
+            
+            document.querySelectorAll('.filter-pill').forEach(pill => {
+                pill.classList.remove('active');
+            });
+            document.querySelector('.filter-pill[data-filter="all"]').classList.add('active');
+            
+            loadStationery();
+        }
+
+        async function contactSeller(listingId) {
+            if (!currentUser) {
+                showAlert('Please Login', 'You need to login to contact sellers', 'warning');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/listings/${listingId}`, { credentials: 'same-origin' });
+                if (!response.ok) throw new Error('Failed to fetch listing details');
+                
+                const listing = await response.json();
+                
+                const { value: message } = await Swal.fire({
+                    title: 'Send Message to Seller',
+                    input: 'textarea',
+                    inputLabel: 'Your message',
+                    inputPlaceholder: 'Hi! I\'m interested in your item...',
+                    showCancelButton: true,
+                    confirmButtonText: 'Send Message',
+                    inputValidator: (value) => {
+                        if (!value) return 'You need to write something!';
+                    }
+                });
+                
+                if (message) {
+                    const messageResponse = await fetch('/api/messages/send', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            receiver_id: listing.seller.id,
+                            listing_id: listingId,
+                            content: message
+                        }),
+                        credentials: 'same-origin'
+                    });
+                    
+                    if (messageResponse.ok) {
+                        Swal.fire({
+                            title: 'Message Sent!',
+                            text: 'Your message has been sent to the seller.',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    }
+                }
+            } catch (error) {
+                showAlert('Error', error.message, 'error');
+            }
+        }
+
+        async function addToWishlist(listingId) {
+            if (!currentUser) {
+                showAlert('Please Login', 'You need to login to add items to wishlist', 'warning');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/wishlist/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ listing_id: listingId }),
+                    credentials: 'same-origin'
+                });
+                
+                if (response.ok) {
+                    Swal.fire({
+                        title: 'Added to Wishlist!',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+            } catch (error) {
+                showAlert('Error', error.message, 'error');
+            }
+        }
+
+        function getOrdinalSuffix(num) {
+            const j = num % 10;
+            const k = num % 100;
+            if (j == 1 && k != 11) return "st";
+            if (j == 2 && k != 12) return "nd";
+            if (j == 3 && k != 13) return "rd";
+            return "th";
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function showAlert(title, message, type = 'info') {
+            Swal.fire({
+                title: title,
+                text: message,
+                icon: type,
+                timer: type === 'success' ? 2000 : undefined,
+                showConfirmButton: type !== 'success'
+            });
+        }
+
+        function handlePathSelection(path) {
+            if (!currentUser) {
+                showLoginModal();
+                return;
+            }
+            if (path === 'sell') {
+                window.location.href = 'buy.html?action=sell';
+            }
+        }
+
+        function showLoginModal() {
+            window.location.href = 'index.html?modal=login';
+        }
+
+        function showRegisterModal() {
+            window.location.href = 'index.html?modal=register';
+        }
+
+        function showMyListings() {
+            window.open('/my-listings.html', '_blank');
+        }
+
+        function showWishlist() {
+            window.open('/my-wishlist.html', '_blank');
+        }
+
+        async function logout() {
+            try {
+                await fetch('/logout', { method: 'GET', credentials: 'same-origin' });
+                currentUser = null;
+                updateAuthUI();
+                Swal.fire({
+                    title: 'Success',
+                    text: 'Logged out successfully',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                setTimeout(() => window.location.href = '/', 2000);
+            } catch (error) {
+                showAlert('Error', 'Failed to logout', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

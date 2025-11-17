@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding - Education & Interests | StudentSmart</title>
+    <link rel="icon" href="https://i.ibb.co/1YBpx2KS/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --primary-light: #A29BFE;
+            --secondary: #00CEC9;
+            --accent: #FD79A8;
+            --dark: #2D3436;
+            --light: #F5F6FA;
+            --white: #FFFFFF;
+            --success: #00B894;
+            --border-radius: 12px;
+            --border-radius-lg: 20px;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .onboarding-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .onboarding-container {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        .preview-container {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 2rem;
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+            max-height: calc(100vh - 4rem);
+            overflow-y: auto;
+        }
+
+        .preview-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .preview-title i {
+            color: var(--primary);
+        }
+
+        .preview-profile {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .preview-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--light);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .preview-name {
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .preview-meta {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.25rem;
+        }
+
+        .preview-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--light);
+        }
+
+        .preview-section-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .preview-text {
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .preview-placeholder {
+            font-style: italic;
+            color: #999;
+        }
+
+        .preview-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .preview-tag {
+            background: var(--primary);
+            color: var(--white);
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .preview-item {
+            background: var(--light);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 0.75rem;
+        }
+
+        .preview-item-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+
+        .preview-item-subtitle {
+            font-size: 0.85rem;
+            color: var(--primary);
+        }
+
+        .onboarding-header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 2.5rem 2rem;
+            text-align: center;
+        }
+
+        .onboarding-header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .onboarding-header p {
+            opacity: 0.95;
+            font-size: 1rem;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            padding: 1.5rem 2rem;
+            background: var(--light);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background: #ddd;
+            z-index: 0;
+        }
+
+        .step:last-child::after {
+            display: none;
+        }
+
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #ddd;
+            color: #666;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            position: relative;
+            z-index: 1;
+            transition: var(--transition);
+        }
+
+        .step.active .step-circle {
+            background: var(--primary);
+            color: var(--white);
+            box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.2);
+        }
+
+        .step.completed .step-circle {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .step-label {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 0.5rem;
+            display: block;
+        }
+
+        .onboarding-content {
+            padding: 2.5rem 2rem;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        .form-group label .required {
+            color: #e74c3c;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .edu-entry {
+            border: 2px solid var(--light);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: var(--border-radius);
+            background: var(--light);
+            position: relative;
+        }
+
+        .btn-add, .btn-remove {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-add {
+            background: var(--secondary);
+            color: var(--white);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-remove {
+            background: #e74c3c;
+            color: var(--white);
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-remove:hover {
+            background: #c0392b;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .help-text {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        /* Interests Section */
+        .interests-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .interest-option {
+            position: relative;
+        }
+
+        .interest-option input[type="checkbox"] {
+            display: none;
+        }
+
+        .interest-label {
+            display: flex;
+            align-items: center;
+            padding: 0.875rem 1rem;
+            background: var(--light);
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .interest-option input[type="checkbox"]:checked + .interest-label {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .interest-label i {
+            margin-right: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .custom-interest-container {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .custom-interest-container.show {
+            display: block;
+        }
+
+        .custom-interests-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .custom-interest-tag {
+            background: var(--accent);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .custom-interest-tag button {
+            background: none;
+            border: none;
+            color: var(--white);
+            cursor: pointer;
+            padding: 0;
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        @media (max-width: 1024px) {
+            .onboarding-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-container {
+                position: relative;
+                top: 0;
+                max-height: none;
+            }
+
+            .interests-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+
+            .onboarding-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .onboarding-content {
+                padding: 1.5rem 1rem;
+            }
+
+            .step-label {
+                font-size: 0.65rem;
+            }
+
+            .preview-container {
+                padding: 1.5rem;
+            }
+
+            .interests-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="onboarding-wrapper">
+        <div class="onboarding-container">
+            <div class="onboarding-header">
+                <h1><i class="fas fa-graduation-cap"></i> Education & Interests</h1>
+                <p>Tell us about your educational background and career interests</p>
+            </div>
+
+            <div class="progress-steps">
+                <div class="step completed">
+                    <span class="step-circle">1</span>
+                    <span class="step-label">Personal Info</span>
+                </div>
+                <div class="step active">
+                    <span class="step-circle">2</span>
+                    <span class="step-label">Education</span>
+                </div>
+                <div class="step">
+                    <span class="step-circle">3</span>
+                    <span class="step-label">Experience</span>
+                </div>
+                <div class="step">
+                    <span class="step-circle">4</span>
+                    <span class="step-label">Skills</span>
+                </div>
+                <div class="step">
+                    <span class="step-circle">5</span>
+                    <span class="step-label">Complete</span>
+                </div>
+            </div>
+
+            <div class="onboarding-content">
+                <form id="step2Form">
+                    <!-- Interests Section -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-bullseye"></i>
+                            Career Interests
+                        </h3>
+                        <p class="help-text" style="margin-bottom: 1rem;">Select areas you're interested in pursuing (select multiple)</p>
+
+                        <div class="interests-grid" id="interestsGrid">
+                            <div class="interest-option">
+                                <input type="checkbox" id="interest_frontend" value="Frontend Developer">
+                                <label for="interest_frontend" class="interest-label">
+                                    <i class="fas fa-laptop-code"></i> Frontend Developer
+                                </label>
+                            </div>
+                            <div class="interest-option">
+                                <input type="checkbox" id="interest_backend" value="Backend Developer">
+                                <label for="interest_backend" class="interest-label">
+                                    <i class="fas fa-server"></i> Backend Developer
+                                </label>
+                            </div>
+                            <div class="interest-option">
+                                <input type="checkbox" id="interest_fullstack" value="Full Stack Developer">
+                                <label for="interest_fullstack" class="interest-label">
+                                    <i class="fas fa-layer-group"></i> Full Stack Developer
+                                </label>
+                            </div>
+                            <div class="interest-option">
+                                <input type="checkbox" id="interest_mobile" value="Mobile App Developer">
+                                <label for="interest_mobile" class="interest-label">
+                                    <i class="fas fa-mobile-alt"></i> Mobile App Developer
+                                </label>
+                            </div>
+                            <div class="interest-option">
+                                <input type="checkbox" id="interest_data" value="Data Scientist/Analyst">
+                                <label for="interest_data" class="interest-label">
+                                    <i class="fas fa-chart-line"></i> Data Scientist/Analyst
+                                </label>
+                            </div>
+                            <div class="interest-option">
+                                <input type="checkbox" id="interest_devops" value="DevOps Engineer">
+                                <label for="interest_devops" class="interest-label">
+                                    <i class="fas fa-cogs"></i> DevOps Engineer
+                                </label>
+                            </div>
+                            <div class="interest-option">
+                                <input type="checkbox" id="interest_uiux" value="UI/UX Designer">
+                                <label for="interest_uiux" class="interest-label">
+                                    <i class="fas fa-palette"></i> UI/UX Designer
+                                </label>
+                            </div>
+                            <div class="interest-option">
+                                <input type="checkbox" id="interest_ml" value="Machine Learning Engineer">
+                                <label for="interest_ml" class="interest-label">
+                                    <i class="fas fa-robot"></i> ML Engineer
+                                </label>
+                            </div>
+                            <div class="interest-option">
+                                <input type="checkbox" id="interest_cloud" value="Cloud Architect">
+                                <label for="interest_cloud" class="interest-label">
+                                    <i class="fas fa-cloud"></i> Cloud Architect
+                                </label>
+                            </div>
+                            <div class="interest-option">
+                                <input type="checkbox" id="interest_security" value="Cybersecurity Specialist">
+                                <label for="interest_security" class="interest-label">
+                                    <i class="fas fa-shield-alt"></i> Cybersecurity
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn-add" onclick="toggleCustomInterest()">
+                            <i class="fas fa-plus"></i> Add Custom Interest
+                        </button>
+
+                        <div class="custom-interest-container" id="customInterestContainer">
+                            <div class="form-group">
+                                <label>Custom Interest</label>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <input type="text" id="customInterestInput" class="form-control" placeholder="e.g., Game Development">
+                                    <button type="button" class="btn-add" onclick="addCustomInterest()" style="white-space: nowrap;">
+                                        <i class="fas fa-check"></i> Add
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="custom-interests-list" id="customInterestsList"></div>
+                    </div>
+
+                    <!-- Education Section -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-graduation-cap"></i>
+                            Educational Background
+                        </h3>
+
+                        <div id="educationList"></div>
+                        <button type="button" class="btn-add" onclick="addEducation()">
+                            <i class="fas fa-plus"></i> Add Education
+                        </button>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        Continue to Experience
+                        <i class="fas fa-arrow-right ms-2"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Live Preview Panel -->
+        <div class="preview-container">
+            <h3 class="preview-title">
+                <i class="fas fa-eye"></i>
+                Profile Preview
+            </h3>
+
+            <div class="preview-profile">
+                <div class="preview-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="preview-name">Your Name</div>
+                <div class="preview-meta">Your College</div>
+            </div>
+
+            <div class="preview-section">
+                <div class="preview-section-title">
+                    <i class="fas fa-bullseye"></i>
+                    Interests
+                </div>
+                <div class="preview-tags" id="previewInterests">
+                    <span class="preview-text preview-placeholder">Select your interests above...</span>
+                </div>
+            </div>
+
+            <div class="preview-section">
+                <div class="preview-section-title">
+                    <i class="fas fa-graduation-cap"></i>
+                    Education
+                </div>
+                <div id="previewEducation">
+                    <div class="preview-text preview-placeholder">Add your education above...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let eduCount = 0;
+        const customInterests = [];
+
+        function addEducation() {
+            eduCount++;
+            const div = document.createElement('div');
+            div.className = 'edu-entry';
+            div.id = `edu_${eduCount}`;
+            div.innerHTML = `
+                <button type="button" class="btn-remove" onclick="removeEducation(${eduCount})">
+                    <i class="fas fa-times"></i> Remove
+                </button>
+                <div class="form-group">
+                    <label>Degree <span class="required">*</span></label>
+                    <input type="text" id="degree_${eduCount}" class="form-control" placeholder="e.g., Bachelor of Technology" required>
+                </div>
+                <div class="form-group">
+                    <label>Institution <span class="required">*</span></label>
+                    <input type="text" id="institution_${eduCount}" class="form-control" placeholder="e.g., IIT Delhi" required>
+                </div>
+                <div class="form-group">
+                    <label>Field of Study <span class="required">*</span></label>
+                    <input type="text" id="field_${eduCount}" class="form-control" placeholder="e.g., Computer Science" required>
+                </div>
+                <div class="form-group">
+                    <label>Grade/CGPA <span class="required">*</span></label>
+                    <input type="text" id="grade_${eduCount}" class="form-control" placeholder="e.g., 8.5/10" required>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Start Date <span class="required">*</span></label>
+                        <input type="date" id="start_${eduCount}" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>End Date <span class="required">*</span></label>
+                        <input type="date" id="end_${eduCount}" class="form-control" required>
+                    </div>
+                </div>
+            `;
+            document.getElementById('educationList').appendChild(div);
+
+            // Add event listeners for preview
+            document.getElementById(`degree_${eduCount}`).addEventListener('input', updatePreview);
+            document.getElementById(`institution_${eduCount}`).addEventListener('input', updatePreview);
+        }
+
+        function removeEducation(id) {
+            const elem = document.getElementById(`edu_${id}`);
+            if (elem) {
+                elem.remove();
+                updatePreview();
+            }
+        }
+
+        function toggleCustomInterest() {
+            const container = document.getElementById('customInterestContainer');
+            container.classList.toggle('show');
+        }
+
+        function addCustomInterest() {
+            const input = document.getElementById('customInterestInput');
+            const value = input.value.trim();
+
+            if (value && !customInterests.includes(value)) {
+                customInterests.push(value);
+
+                const tag = document.createElement('span');
+                tag.className = 'custom-interest-tag';
+                tag.innerHTML = `
+                    ${value}
+                    <button onclick="removeCustomInterest('${value}')" type="button">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+
+                document.getElementById('customInterestsList').appendChild(tag);
+                input.value = '';
+                updatePreview();
+            }
+        }
+
+        function removeCustomInterest(value) {
+            const index = customInterests.indexOf(value);
+            if (index > -1) {
+                customInterests.splice(index, 1);
+            }
+
+            const tags = document.getElementById('customInterestsList');
+            tags.innerHTML = '';
+            customInterests.forEach(interest => {
+                const tag = document.createElement('span');
+                tag.className = 'custom-interest-tag';
+                tag.innerHTML = `
+                    ${interest}
+                    <button onclick="removeCustomInterest('${interest}')" type="button">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                tags.appendChild(tag);
+            });
+
+            updatePreview();
+        }
+
+        function updatePreview() {
+            // Update interests preview
+            const selectedInterests = [];
+            document.querySelectorAll('.interest-option input[type="checkbox"]:checked').forEach(checkbox => {
+                selectedInterests.push(checkbox.value);
+            });
+
+            const allInterests = [...selectedInterests, ...customInterests];
+            const previewInterests = document.getElementById('previewInterests');
+
+            if (allInterests.length > 0) {
+                previewInterests.innerHTML = allInterests.map(interest =>
+                    `<span class="preview-tag">${interest}</span>`
+                ).join('');
+            } else {
+                previewInterests.innerHTML = '<span class="preview-text preview-placeholder">Select your interests above...</span>';
+            }
+
+            // Update education preview
+            const previewEducation = document.getElementById('previewEducation');
+            let educationHTML = '';
+
+            for (let i = 1; i <= eduCount; i++) {
+                const degreeElem = document.getElementById(`degree_${i}`);
+                const institutionElem = document.getElementById(`institution_${i}`);
+
+                if (degreeElem && institutionElem) {
+                    const degree = degreeElem.value;
+                    const institution = institutionElem.value;
+
+                    if (degree || institution) {
+                        educationHTML += `
+                            <div class="preview-item">
+                                <div class="preview-item-title">${degree || 'Degree not specified'}</div>
+                                <div class="preview-item-subtitle">${institution || 'Institution not specified'}</div>
+                            </div>
+                        `;
+                    }
+                }
+            }
+
+            previewEducation.innerHTML = educationHTML || '<div class="preview-text preview-placeholder">Add your education above...</div>';
+        }
+
+        // Add event listeners for interests
+        document.querySelectorAll('.interest-option input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', updatePreview);
+        });
+
+        document.getElementById('customInterestInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addCustomInterest();
+            }
+        });
+
+        document.getElementById('step2Form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = e.target.querySelector('.btn-submit');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            submitBtn.disabled = true;
+
+            try {
+                // Collect interests
+                const selectedInterests = [];
+                document.querySelectorAll('.interest-option input[type="checkbox"]:checked').forEach(checkbox => {
+                    selectedInterests.push(checkbox.value);
+                });
+                const allInterests = [...selectedInterests, ...customInterests];
+
+                // Collect education
+                const education = [];
+                for (let i = 1; i <= eduCount; i++) {
+                    const degreeElem = document.getElementById(`degree_${i}`);
+                    if (degreeElem && document.getElementById(`edu_${i}`)) {
+                        const degree = degreeElem.value;
+                        const institution = document.getElementById(`institution_${i}`).value;
+
+                        if (degree && institution) {
+                            education.push({
+                                degree: degree,
+                                institution: institution,
+                                field_of_study: document.getElementById(`field_${i}`).value,
+                                grade: document.getElementById(`grade_${i}`).value,
+                                start_date: document.getElementById(`start_${i}`).value,
+                                end_date: document.getElementById(`end_${i}`).value
+                            });
+                        }
+                    }
+                }
+
+                const response = await fetch('/student/onboarding/step2', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        interests: allInterests,
+                        education: education
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    alert('Error: ' + (data.message || 'Failed to save'));
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Initialize
+        addEducation();
+        updatePreview();
+    </script>
+</body>
+</html>

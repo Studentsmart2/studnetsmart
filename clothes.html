@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clothes - StudentsMart</title>
+    <link rel="icon" href="https://i.ibb.co/1YBpx2KS/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --primary-light: #A29BFE;
+            --secondary: #00CEC9;
+            --accent: #FD79A8;
+            --accent-light: #FFEAA7;
+            --dark: #2D3436;
+            --light: #F5F6FA;
+            --white: #FFFFFF;
+            --success: #00B894;
+            --warning: #FDCB6E;
+            --danger: #E17055;
+            --border-radius: 12px;
+            --border-radius-lg: 20px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.15);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            padding-top: 80px;
+            background-image: url('https://i.ibb.co/0RRcdrfm/doodle-homepage.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1.2rem 0;
+            background: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .navbar-brand {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .logo {
+            height: 42px;
+            transition: var(--transition);
+        }
+
+        .category-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .category-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .breadcrumb-nav {
+            background: var(--white);
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb {
+            background: none;
+            margin: 0;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .filters-section {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .filter-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .quick-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-pill {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            background: var(--white);
+            color: var(--dark);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .filter-pill:hover, .filter-pill.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* REPLACE ALL CARD-RELATED CSS IN YOUR CLOTHES.HTML WITH THIS */
+
+/* Main card styling - horizontal layout */
+        .listing-card-new {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            height: 240px; /* Fixed height for consistency */
+            border: 1px solid #e9ecef;
+            margin-bottom: 20px;
+        }
+
+        .listing-card-new:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border-color: var(--primary);
+        }
+
+        /* Remove the old image container styling and replace with this */
+        .listing-image-container {
+            position: relative;
+            height: 100%;
+            overflow: hidden;
+            width: 33.333%; /* Left side takes 1/3 of card */
+            float: left;
+        }
+
+        .listing-image-new {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .listing-card-new:hover .listing-image-new {
+            transform: scale(1.05);
+        }
+
+        .listing-badges {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .listing-badge {
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: white;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-transform: capitalize;
+        }
+
+        .listing-badge.size {
+            background: rgba(0, 184, 148, 0.9);
+        }
+
+        .listing-badge.gender {
+            background: rgba(253, 121, 168, 0.9);
+        }
+
+        .listing-badge.rental {
+            background: rgba(255, 107, 0, 0.9);
+        }
+
+        /* Content section - right side */
+        .listing-content {
+            width: 66.667%; /* Right side takes 2/3 of card */
+            float: left;
+            padding: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+        }
+
+        .listing-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--dark);
+            line-height: 1.4;
+            display: -webkit-box;
+            --webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            max-height: 3.4em;
+        }
+
+        .listing-details {
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+
+        .listing-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            color: var(--gray-dark);
+        }
+
+        .listing-detail-item i {
+            width: 14px;
+            color: var(--primary);
+            font-size: 0.8rem;
+        }
+
+        /* Price and actions container */
+        .listing-price-container {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .listing-price {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0;
+            flex-shrink: 0;
+        }
+
+        .listing-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .listing-action-btn.primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .listing-action-btn.primary:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .listing-action-btn.wishlist {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            background: rgba(255, 71, 87, 0.1);
+            color: #ff4757;
+            border: 1px solid rgba(255, 71, 87, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .listing-action-btn.wishlist:hover {
+            background: rgba(255, 71, 87, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Fix float clearing */
+        .listing-card-new::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1199px) {
+            .listing-card-new {
+                height: 220px;
+            }
+            
+            .listing-title {
+                font-size: 1.1rem;
+                margin-bottom: 10px;
+            }
+            
+            .listing-content {
+                padding: 18px;
+            }
+            
+            .listing-detail-item {
+                font-size: 0.8rem;
+            }
+            
+            .listing-price {
+                font-size: 1.3rem;
+            }
+            
+            .listing-action-btn.primary {
+                padding: 9px 12px;
+                font-size: 0.8rem;
+            }
+            
+            .listing-action-btn.wishlist {
+                width: 36px;
+                height: 36px;
+            }
+        }
+
+        @media (max-width: 991px) {
+            .listing-card-new {
+                height: 200px;
+            }
+            
+            .listing-title {
+                font-size: 1rem;
+                --webkit-line-clamp: 2;
+                max-height: 2.8em;
+                margin-bottom: 8px;
+            }
+            
+            .listing-content {
+                padding: 16px;
+            }
+            
+            .listing-detail-item {
+                font-size: 0.75rem;
+                gap: 6px;
+                margin-bottom: 5px;
+            }
+            
+            .listing-detail-item i {
+                width: 12px;
+                font-size: 0.75rem;
+            }
+            
+            .listing-price {
+                font-size: 1.2rem;
+            }
+            
+            .listing-action-btn.primary {
+                padding: 8px 10px;
+                font-size: 0.75rem;
+            }
+            
+            .listing-action-btn.wishlist {
+                width: 34px;
+                height: 34px;
+            }
+            
+            .listing-price-container {
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .listing-card-new {
+                height: 180px;
+            }
+            
+            .listing-content {
+                padding: 14px;
+            }
+            
+            .listing-title {
+                font-size: 0.95rem;
+            }
+            
+            .listing-price-container {
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 575px) {
+            /* Keep horizontal layout on mobile */
+            .listing-card-new {
+                height: 200px;
+                margin-bottom: 15px;
+            }
+            
+            .listing-image-container {
+                width: 33.333%;
+            }
+            
+            .listing-content {
+                width: 66.667%;
+                padding: 12px;
+            }
+            
+            .listing-title {
+                font-size: 0.95rem;
+                margin-bottom: 8px;
+                --webkit-line-clamp: 2;
+                max-height: 2.8em;
+            }
+            
+            .listing-detail-item {
+                font-size: 0.75rem;
+                gap: 6px;
+                margin-bottom: 4px;
+            }
+            
+            .listing-detail-item i {
+                width: 12px;
+                font-size: 0.7rem;
+            }
+            
+            .listing-price {
+                font-size: 1.1rem;
+            }
+            
+            .listing-action-btn.primary {
+                padding: 8px 10px;
+                font-size: 0.75rem;
+                gap: 4px;
+            }
+            
+            .listing-action-btn.wishlist {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .listing-price-container {
+                gap: 6px;
+            }
+        }
+        /* ============================================
+   ENHANCED MODERN MOBILE MENU STYLES
+   ============================================ */
+
+/* Custom Hamburger Button */
+        /* ============================================
+   MODERN MOBILE MENU - FIXED VERSION
+   ============================================ */
+
+/* Custom Hamburger Button */
+        /* ============================================
+   MODERN MOBILE MENU - SPACIOUS VERSION
+   ============================================ */
+
+        .navbar-toggler {
+            border: none;
+            padding: 0.5rem;
+            background: transparent;
+            position: relative;
+            z-index: 1001;
+            display: none;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: none;
+            outline: none;
+        }
+
+        .navbar-toggler-icon {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 26px;
+            cursor: pointer;
+            background-image: none !important;
+        }
+
+        .navbar-toggler-icon span {
+            width: 26px;
+            height: 3px;
+            background: var(--dark);
+            border-radius: 3px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: block;
+        }
+
+        /* Animated Hamburger to X */
+        .navbar-toggler.active .navbar-toggler-icon span:nth-child(1) {
+            transform: rotate(45deg) translate(7px, 7px);
+        }
+
+        .navbar-toggler.active .navbar-toggler-icon span:nth-child(2) {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+
+        .navbar-toggler.active .navbar-toggler-icon span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Backdrop Overlay */
+        .mobile-menu-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-menu-backdrop.show {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 991px) {
+            /* Show hamburger */
+            .navbar-toggler {
+                display: flex;
+            }
+
+            /* Hide desktop auth buttons on mobile */
+            #authButtons {
+                display: none !important;
+            }
+
+            /* Mobile Sidebar - MORE SPACIOUS */
+            #navbarNav {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 320px; /* Increased from 280px */
+                max-width: 85vw;
+                height: 100vh;
+                background: var(--white);
+                box-shadow: -5px 0 30px rgba(0, 0, 0, 0.2);
+                transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 999;
+                overflow-y: auto;
+                display: flex !important;
+                flex-direction: column;
+                padding: 0;
+            }
+
+            #navbarNav.show {
+                right: 0;
+            }
+
+            /* Mobile Menu Header - MORE SPACIOUS */
+            .mobile-menu-header {
+                background: linear-gradient(135deg, #6C5CE7 0%, #A29BFE 100%);
+                padding: 1.75rem 1.25rem; /* Increased padding */
+                color: var(--white);
+                display: flex;
+                flex-direction: column;
+                gap: 1rem; /* Increased gap */
+                box-shadow: 0 2px 10px rgba(108, 92, 231, 0.2);
+                flex-shrink: 0;
+            }
+
+            .mobile-menu-close {
+                align-self: flex-end;
+                background: rgba(255, 255, 255, 0.2);
+                border: none;
+                color: var(--white);
+                width: 36px; /* Slightly bigger */
+                height: 36px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: var(--transition);
+                font-size: 1.2rem;
+                padding: 0;
+                margin: 0;
+            }
+
+            .mobile-menu-close:hover {
+                background: rgba(255, 255, 255, 0.3);
+                transform: rotate(90deg);
+            }
+
+            /* User Profile Section - MORE SPACIOUS */
+            .mobile-user-section {
+                display: flex;
+                align-items: center;
+                gap: 1rem; /* Increased gap */
+                background: rgba(255, 255, 255, 0.15);
+                backdrop-filter: blur(10px);
+                padding: 1rem; /* Increased padding */
+                border-radius: 12px;
+            }
+
+            .mobile-user-avatar {
+                width: 50px; /* Increased from 42px */
+                height: 50px;
+                min-width: 50px;
+                border-radius: 50%;
+                background: var(--white);
+                color: var(--primary);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.4rem; /* Larger text */
+                font-weight: 700;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .mobile-user-info {
+                flex: 1;
+                overflow: hidden;
+            }
+
+            .mobile-user-name {
+                font-weight: 600;
+                font-size: 1rem; /* Slightly bigger */
+                margin-bottom: 0.2rem;
+                color: var(--white);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .mobile-user-email {
+                font-size: 0.8rem;
+                opacity: 0.9;
+                color: var(--white);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            /* Auth Buttons - MORE SPACIOUS */
+            .mobile-auth-section {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem; /* Increased gap */
+            }
+
+            .mobile-auth-section .btn {
+                width: 100%;
+                padding: 0.85rem; /* Increased padding */
+                border-radius: 10px;
+                font-weight: 600;
+                font-size: 0.9rem; /* Slightly bigger */
+                transition: var(--transition);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+
+            .mobile-auth-section .btn-outline-primary {
+                background: rgba(255, 255, 255, 0.15);
+                border: 2px solid var(--white);
+                color: var(--white);
+            }
+
+            .mobile-auth-section .btn-outline-primary:hover {
+                background: rgba(255, 255, 255, 0.25);
+            }
+
+            .mobile-auth-section .btn-primary {
+                background: var(--white);
+                color: var(--primary);
+                border: none;
+            }
+
+            .mobile-auth-section .btn-primary:hover {
+                box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+            }
+
+            /* Navigation List - MORE SPACIOUS */
+            .navbar-nav {
+                padding: 1rem 0; /* Increased padding */
+                flex-direction: column;
+                gap: 0;
+                margin: 0;
+                flex: 1;
+                overflow-y: auto;
+            }
+
+            .nav-item {
+                margin: 0;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            }
+
+            .nav-item:last-child {
+                border-bottom: none;
+            }
+
+            .nav-link {
+                display: flex;
+                align-items: center;
+                gap: 1rem; /* Increased gap */
+                padding: 1.15rem 1.25rem; /* More padding */
+                color: var(--dark);
+                font-weight: 500;
+                font-size: 0.95rem; /* Slightly bigger */
+                transition: var(--transition);
+                position: relative;
+                text-decoration: none;
+            }
+
+            .nav-link::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 0;
+                background: var(--primary);
+                transition: width 0.3s ease;
+            }
+
+            .nav-link:hover,
+            .nav-link:active {
+                background: rgba(108, 92, 231, 0.08);
+                color: var(--primary);
+                text-decoration: none;
+            }
+
+            .nav-link:hover::before {
+                width: 4px; /* Thicker line */
+            }
+
+            .nav-link i {
+                font-size: 1.2rem; /* Bigger icons */
+                width: 24px;
+                text-align: center;
+                transition: var(--transition);
+            }
+
+            .nav-link:hover i {
+                transform: scale(1.15);
+            }
+
+            /* Badge Styling */
+            .nav-link .badge,
+            #navReportsBadge {
+                margin-left: auto;
+                background: var(--danger);
+                color: var(--white);
+                padding: 0.3rem 0.6rem; /* More padding */
+                border-radius: 12px;
+                font-size: 0.7rem;
+                font-weight: 700;
+            }
+
+            /* Notification Badge */
+            #notificationBadge {
+                position: static !important;
+                transform: none !important;
+                margin-left: auto;
+            }
+
+            /* Dropdown Menu - MORE SPACIOUS */
+            .nav-item.dropdown .dropdown-toggle::after {
+                margin-left: auto;
+                transition: transform 0.3s ease;
+            }
+
+            .dropdown-menu {
+                position: static !important;
+                transform: none !important;
+                border: none;
+                background: #f8f9fa;
+                box-shadow: none;
+                margin: 0;
+                padding: 0.5rem 0; /* More padding */
+                border-radius: 0;
+            }
+
+            .dropdown-item {
+                padding: 1rem 1.25rem 1rem 3rem; /* More padding */
+                color: var(--dark);
+                font-size: 0.9rem; /* Slightly bigger */
+                transition: var(--transition);
+                position: relative;
+            }
+
+            .dropdown-item::before {
+                content: '•';
+                position: absolute;
+                left: 2rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--primary);
+                opacity: 0;
+                transition: var(--transition);
+                font-size: 1.1rem;
+            }
+
+            .dropdown-item:hover {
+                background: rgba(108, 92, 231, 0.08);
+                color: var(--primary);
+            }
+
+            .dropdown-item:hover::before {
+                opacity: 1;
+            }
+
+            .dropdown-item i {
+                margin-right: 0.75rem;
+                width: 18px;
+                text-align: center;
+                font-size: 0.9rem;
+            }
+
+            .dropdown-divider {
+                margin: 0.5rem 1.25rem; /* More margin */
+                opacity: 0.5;
+            }
+
+            /* Scrollbar */
+            #navbarNav::-webkit-scrollbar {
+                width: 4px; /* Slightly thicker */
+            }
+
+            #navbarNav::-webkit-scrollbar-thumb {
+                background: rgba(108, 92, 231, 0.3);
+                border-radius: 4px;
+            }
+        }
+
+        /* Tablet Adjustments */
+        @media (max-width: 768px) {
+            #navbarNav {
+                width: 300px;
+            }
+        }
+
+        /* Small Mobile */
+        @media (max-width: 480px) {
+            #navbarNav {
+                width: 280px;
+            }
+
+            .mobile-menu-header {
+                padding: 1.5rem 1rem;
+            }
+
+            .nav-link {
+                padding: 1rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Prevent body scroll */
+        body.menu-open {
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/" style="flex-grow: 1; max-width: 400px;">
+                <div class="logo-container">
+                    <img src="https://i.ibb.co/Z05RbY8/logo-removebg-preview-5.png"
+                        alt="StudentsMart - Learn.Sell.Repeat" 
+                        class="logo">
+                </div>
+            </a>
+            
+            <!-- UPDATED: Modern Hamburger Button -->
+            <button class="navbar-toggler" type="button" onclick="toggleMobileMenu()">
+                <div class="navbar-toggler-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </button>
+            
+            <!-- UPDATED: Mobile Menu with Header -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Mobile Menu Header (Only visible on mobile) -->
+                
+
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-2"></i>Home
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="handlePathSelection('sell')">
+                            <i class="fas fa-plus me-2"></i>Create Listing
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item"><a class="nav-link" href="books.html"><i class="fas fa-book me-2"></i>Books</a></li>
+                    <li class="nav-item"><a class="nav-link" href="electronics.html"><i class="fas fa-laptop me-2"></i>Electronics</a></li>
+                    
+                                        
+                    <li class="nav-item dropdown d-none" id="adminMenu">
+                        <a class="nav-link" href="#" onclick="showAdminDashboard()">
+                            <i class="fas fa-tools me-2"></i>Admin Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item d-none" id="reportsMenu">
+                        <a class="nav-link" href="#" onclick="showAdminDashboard('reports')">
+                            <i class="fas fa-flag me-2"></i>Reports
+                            <span class="badge bg-danger" id="navReportsBadge">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" id="authButtons">
+                        <button class="btn btn-outline-primary me-2" onclick="showLoginModal()">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </button>
+                        <button class="btn btn-primary" onclick="showRegisterModal()">
+                            <i class="fas fa-user-plus me-2"></i>Register
+                        </button>
+                    </li>
+                    <li class="nav-item d-none" id="notificationMenu">
+                        <a class="nav-link position-relative" href="/notifications">
+                            <i class="fas fa-bell"></i>
+                            <span id="notificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">
+                                0
+                            </span>
+                            Notifications
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown d-none" id="userMenu">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-2"></i><span id="userName"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="showMyListings()">
+                                <i class="fas fa-list me-2"></i>My Listings
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="showWishlist()">
+                                <i class="fas fa-heart me-2"></i>Wishlist
+                            </a></li>
+                            <li><a class="dropdown-item" href="/profiledashboard"><i class="fas fa-user me-2"></i>Profile Dashboard</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-nav">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                    <li class="breadcrumb-item"><a href="buy.html">Marketplace</a></li>
+                    <li class="breadcrumb-item active">Clothes</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <h5 class="mb-3"><i class="fas fa-filter me-2"></i>Filter Clothes</h5>
+            
+            <!-- Quick Filters -->
+            <div class="quick-filters">
+                <span class="filter-pill active" data-filter="all">All Clothes</span>
+                <span class="filter-pill" data-filter="casual">Casual</span>
+                <span class="filter-pill" data-filter="formal">Formal</span>
+                <span class="filter-pill" data-filter="apron">Aprons</span>
+                <span class="filter-pill" data-filter="uniform">Uniforms</span>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="filter-group">
+                        <label class="filter-label">Search Clothes</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search by brand, type, color...">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="filter-group">
+                        <label class="filter-label">Size</label>
+                        <select class="form-select" id="sizeFilter">
+                            <option value="">All Sizes</option>
+                            <option value="XS">XS</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="XXL">XXL</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="filter-group">
+                        <label class="filter-label">Gender</label>
+                        <select class="form-select" id="genderFilter">
+                            <option value="">All</option>
+                            <option value="male">Men</option>
+                            <option value="female">Women</option>
+                            <option value="unisex">Unisex</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="filter-group">
+                        <label class="filter-label">Academic Year</label>
+                        <select class="form-select" id="yearFilter">
+                            <option value="">All Years</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="filter-group">
+                        <label class="filter-label">Price Range</label>
+                        <select class="form-select" id="priceFilter">
+                            <option value="">All Prices</option>
+                            <option value="0-500">Under ₹500</option>
+                            <option value="500-1000">₹500 - ₹1,000</option>
+                            <option value="1000-2000">₹1,000 - ₹2,000</option>
+                            <option value="2000-5000">₹2,000 - ₹5,000</option>
+                            <option value="5000+">Above ₹5,000</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="filter-group">
+                        <label class="filter-label">Sort</label>
+                        <select class="form-select" id="sortFilter">
+                            <option value="newest">Newest</option>
+                            <option value="price_low">Price ↑</option>
+                            <option value="price_high">Price ↓</option>
+                            <option value="title">A-Z</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Info -->
+        <div class="results-info">
+            <div class="results-count" id="resultsCount">Loading clothes...</div>
+            <div class="view-options">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary active" id="gridView">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" id="listView">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clothes Grid -->
+        <div class="row g-4" id="clothesGrid">
+            <!-- Clothes will be loaded here -->
+        </div>
+
+        <!-- Loading Skeleton -->
+        <div class="row g-4" id="loadingSkeleton" style="display: none;">
+            <!-- Skeleton cards will be added here -->
+        </div>
+
+        <!-- No Results -->
+        <div id="noResults" class="text-center py-5" style="display: none;">
+            <i class="fas fa-search fa-4x text-muted mb-3"></i>
+            <h4>No clothes found</h4>
+            <p class="text-muted">Try adjusting your filters or search terms</p>
+            <button class="btn btn-primary" onclick="clearFilters()">Clear All Filters</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthStatus();
+            loadClothes();
+            initializeFilters();
+        });
+
+        async function checkAuthStatus() {
+            try {
+                const response = await fetch('/check-session', { credentials: 'same-origin' });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.authenticated) {
+                        currentUser = data.user;
+                        updateAuthUI();
+                    }
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+            }
+        }
+
+        function updateAuthUI() {
+            const authButtons = document.getElementById('authButtons');
+            const userMenu = document.getElementById('userMenu');
+            const userName = document.getElementById('userName');
+            
+            if (currentUser) {
+                authButtons.classList.add('d-none');
+                userMenu.classList.remove('d-none');
+                userName.textContent = currentUser.full_name || currentUser.email;
+            }
+        }
+
+        function initializeFilters() {
+            document.getElementById('searchInput').addEventListener('input', debounce(loadClothes, 500));
+            document.getElementById('sizeFilter').addEventListener('change', loadClothes);
+            document.getElementById('genderFilter').addEventListener('change', loadClothes);
+            document.getElementById('yearFilter').addEventListener('change', loadClothes);
+            document.getElementById('priceFilter').addEventListener('change', loadClothes);
+            document.getElementById('sortFilter').addEventListener('change', loadClothes);
+
+            document.querySelectorAll('.filter-pill').forEach(pill => {
+                pill.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+                    this.classList.add('active');
+                    loadClothes();
+                });
+            });
+        }
+
+        async function loadClothes() {
+            showLoading();
+            
+            try {
+                const params = new URLSearchParams({
+                    category: 'clothes',
+                    q: document.getElementById('searchInput').value,
+                    size: document.getElementById('sizeFilter').value,
+                    gender: document.getElementById('genderFilter').value,
+                    study_year: document.getElementById('yearFilter').value,
+                    price_range: document.getElementById('priceFilter').value,
+                    sort_by: document.getElementById('sortFilter').value,
+                    product_type: getActiveQuickFilter()
+                });
+
+                const response = await fetch(`/listings?${params}`, { credentials: 'same-origin' });
+                if (!response.ok) throw new Error('Failed to load clothes');
+
+                const { listings } = await response.json();
+                displayClothes(listings);
+                updateResultsCount(listings.length);
+
+            } catch (error) {
+                console.error('Error loading clothes:', error);
+                showError();
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function getActiveQuickFilter() {
+            const activePill = document.querySelector('.filter-pill.active');
+            return activePill.dataset.filter === 'all' ? '' : activePill.dataset.filter;
+        }
+
+        function displayClothes(clothes) {
+            const grid = document.getElementById('clothesGrid');
+            const noResults = document.getElementById('noResults');
+
+            if (clothes.length === 0) {
+                grid.style.display = 'none';
+                noResults.style.display = 'block';
+                return;
+            }
+
+            grid.style.display = 'flex';
+            noResults.style.display = 'none';
+            grid.innerHTML = '';
+
+            clothes.forEach(item => {
+                const itemCard = createClothesCard(item);
+                grid.appendChild(itemCard);
+            });
+        }
+
+        // REPLACE YOUR createClothesCard FUNCTION WITH THIS
+        function createClothesCard(item) {
+            const card = document.createElement('div');
+            // Updated to show 3 cards per row on large screens
+            card.className = 'col-12 col-sm-6 col-lg-4 mb-3';
+
+            const imageUrl = item.image_url?.startsWith('http') 
+                ? item.image_url 
+                : `/static/${item.image_url || 'images/placeholder.jpg'}`;
+
+            card.innerHTML = `
+                <div class="listing-card-new">
+                    <!-- Left side - Image (33% width) -->
+                    <div class="listing-image-container">
+                        <img src="${imageUrl}" class="listing-image-new" alt="${item.title}" loading="lazy">
+                        <div class="listing-badges">
+                            ${item.size ? `<span class="listing-badge size">Size ${item.size}</span>` : ''}
+                            ${item.gender ? `<span class="listing-badge gender">${item.gender}</span>` : ''}
+                            ${item.is_for_rent ? '<span class="listing-badge rental">For Rent</span>' : ''}
+                        </div>
+                    </div>
+                    
+                    <!-- Right side - Content (67% width) -->
+                    <div class="listing-content">
+                        <div class="content-top">
+                            <h3 class="listing-title">${item.title}</h3>
+                            
+                            <div class="listing-details">
+                                ${item.size ? `
+                                    <div class="listing-detail-item">
+                                        <i class="fas fa-ruler"></i>
+                                        <span>Size: ${item.size}</span>
+                                    </div>
+                                ` : ''}
+                                ${item.gender ? `
+                                    <div class="listing-detail-item">
+                                        <i class="fas fa-venus-mars"></i>
+                                        <span>Gender: ${item.gender}</span>
+                                    </div>
+                                ` : ''}
+                                <div class="listing-detail-item">
+                                    <i class="fas fa-user"></i>
+                                    <span>${item.seller?.name || 'Unknown Seller'}</span>
+                                </div>
+                                <div class="listing-detail-item">
+                                    <i class="fas fa-university"></i>
+                                    <span>${item.seller?.college || 'College not specified'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Bottom section with price and actions -->
+                        <div class="listing-price-container">
+                            <div class="listing-price">
+                                ${item.is_for_rent ?
+                                    `₹${item.rent_price || 0}<span style="font-size: 0.8em; color: #6c757d;">/day</span>` :
+                                    `₹${item.price || 0}`
+                                }
+                            </div>
+                            
+                            <div class="listing-actions">
+                                <button class="listing-action-btn primary" onclick="contactSeller(${item.id})">
+                                    <i class="fas fa-envelope"></i> Contact
+                                </button>
+                                <button class="listing-action-btn wishlist" onclick="addToWishlist(${item.id})">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        function showLoading() {
+            const skeleton = document.getElementById('loadingSkeleton');
+            const grid = document.getElementById('clothesGrid');
+            
+            grid.style.display = 'none';
+            skeleton.style.display = 'flex';
+            
+            skeleton.innerHTML = Array(8).fill().map(() => `
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="skeleton-card">
+                        <div class="skeleton-image mb-3"></div>
+                        <div class="skeleton-text"></div>
+                        <div class="skeleton-text medium"></div>
+                        <div class="skeleton-text short"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function hideLoading() {
+            const skeleton = document.getElementById('loadingSkeleton');
+            const grid = document.getElementById('clothesGrid');
+            
+            skeleton.style.display = 'none';
+            grid.style.display = 'flex';
+        }
+
+        function updateResultsCount(count) {
+            const resultsCount = document.getElementById('resultsCount');
+            resultsCount.textContent = `${count} clothing item${count !== 1 ? 's' : ''} found`;
+        }
+
+        function showError() {
+            const grid = document.getElementById('clothesGrid');
+            grid.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <i class="fas fa-exclamation-triangle fa-4x text-warning mb-3"></i>
+                    <h4>Error Loading Clothes</h4>
+                    <p class="text-muted">Please try again later</p>
+                    <button class="btn btn-primary" onclick="loadClothes()">Retry</button>
+                </div>
+            `;
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('sizeFilter').value = '';
+            document.getElementById('genderFilter').value = '';
+            document.getElementById('yearFilter').value = '';
+            document.getElementById('priceFilter').value = '';
+            document.getElementById('sortFilter').value = 'newest';
+            
+            document.querySelectorAll('.filter-pill').forEach(pill => {
+                pill.classList.remove('active');
+            });
+            document.querySelector('.filter-pill[data-filter="all"]').classList.add('active');
+            
+            loadClothes();
+        }
+
+        async function contactSeller(listingId) {
+            if (!currentUser) {
+                showAlert('Please Login', 'You need to login to contact sellers', 'warning');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/listings/${listingId}`, { credentials: 'same-origin' });
+                if (!response.ok) throw new Error('Failed to fetch listing details');
+                
+                const listing = await response.json();
+                
+                const { value: message } = await Swal.fire({
+                    title: 'Send Message to Seller',
+                    input: 'textarea',
+                    inputLabel: 'Your message',
+                    inputPlaceholder: 'Hi! I\'m interested in your clothing item...',
+                    showCancelButton: true,
+                    confirmButtonText: 'Send Message',
+                    inputValidator: (value) => {
+                        if (!value) return 'You need to write something!';
+                    }
+                });
+                
+                if (message) {
+                    const messageResponse = await fetch('/api/messages/send', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            receiver_id: listing.seller.id,
+                            listing_id: listingId,
+                            content: message
+                        }),
+                        credentials: 'same-origin'
+                    });
+                    
+                    if (messageResponse.ok) {
+                        Swal.fire({
+                            title: 'Message Sent!',
+                            text: 'Your message has been sent to the seller.',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    }
+                }
+            } catch (error) {
+                showAlert('Error', error.message, 'error');
+            }
+        }
+
+        async function addToWishlist(listingId) {
+            if (!currentUser) {
+                showAlert('Please Login', 'You need to login to add items to wishlist', 'warning');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/wishlist/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ listing_id: listingId }),
+                    credentials: 'same-origin'
+                });
+                
+                if (response.ok) {
+                    Swal.fire({
+                        title: 'Added to Wishlist!',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+            } catch (error) {
+                showAlert('Error', error.message, 'error');
+            }
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function showAlert(title, message, type = 'info') {
+            Swal.fire({
+                title: title,
+                text: message,
+                icon: type,
+                timer: type === 'success' ? 2000 : undefined,
+                showConfirmButton: type !== 'success'
+            });
+        }
+
+        function handlePathSelection(path) {
+            if (!currentUser) {
+                showLoginModal();
+                return;
+            }
+            if (path === 'sell') {
+                window.location.href = 'buy.html?action=sell';
+            }
+        }
+
+        function showLoginModal() {
+            window.location.href = 'index.html?modal=login';
+        }
+
+        function showRegisterModal() {
+            window.location.href = 'index.html?modal=register';
+        }
+
+        function showMyListings() {
+            window.open('/my-listings.html', '_blank');
+        }
+
+        function showWishlist() {
+            window.open('/my-wishlist.html', '_blank');
+        }
+
+        async function logout() {
+            try {
+                await fetch('/logout', { method: 'GET', credentials: 'same-origin' });
+                currentUser = null;
+                updateAuthUI();
+                Swal.fire({
+                    title: 'Success',
+                    text: 'Logged out successfully',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                setTimeout(() => window.location.href = '/', 2000);
+            } catch (error) {
+                showAlert('Error', 'Failed to logout', 'error');
+            }
+        }
+        // Modern Mobile Menu Functions
+        function toggleMobileMenu() {
+            const toggler = document.querySelector('.navbar-toggler');
+            const navbarCollapse = document.getElementById('navbarNav');
+            const backdrop = document.querySelector('.mobile-menu-backdrop');
+            
+            toggler.classList.toggle('active');
+            navbarCollapse.classList.toggle('show');
+            backdrop.classList.toggle('show');
+            document.body.classList.toggle('menu-open');
+        }
+
+        function closeMobileMenu() {
+            const toggler = document.querySelector('.navbar-toggler');
+            const navbarCollapse = document.getElementById('navbarNav');
+            const backdrop = document.querySelector('.mobile-menu-backdrop');
+            
+            toggler.classList.remove('active');
+            navbarCollapse.classList.remove('show');
+            backdrop.classList.remove('show');
+            document.body.classList.remove('menu-open');
+        }
+
+        // Initialize mobile menu
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create backdrop
+            if (!document.querySelector('.mobile-menu-backdrop')) {
+                const backdrop = document.createElement('div');
+                backdrop.className = 'mobile-menu-backdrop';
+                backdrop.onclick = closeMobileMenu;
+                document.body.appendChild(backdrop);
+            }
+            
+            // Close menu on link clicks
+            document.querySelectorAll('#navbarNav .nav-link').forEach(link => {
+                link.addEventListener('click', function() {
+                    if (!this.classList.contains('dropdown-toggle')) {
+                        setTimeout(closeMobileMenu, 300);
+                    }
+                });
+            });
+            
+            // Update mobile user info
+            updateMobileUserInfo();
+        });
+
+        // Update mobile menu based on login status
+        function updateMobileUserInfo() {
+            const userName = document.getElementById('userName')?.textContent;
+            const mobileUserSection = document.getElementById('mobileUserSection');
+            const mobileAuthSection = document.getElementById('mobileAuthSection');
+            
+            if (userName && userName.trim()) {
+                // User is logged in
+                mobileUserSection?.classList.remove('d-none');
+                if (mobileAuthSection) mobileAuthSection.style.display = 'none';
+                
+                document.getElementById('mobileUserName').textContent = userName;
+                document.getElementById('mobileUserAvatar').textContent = userName.charAt(0).toUpperCase();
+            } else {
+                // User is logged out
+                mobileUserSection?.classList.add('d-none');
+                if (mobileAuthSection) mobileAuthSection.style.display = 'flex';
+            }
+        }
+    </script>
+</body>
+</html>

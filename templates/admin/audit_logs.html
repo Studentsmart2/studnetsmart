@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Logs - Admin | StudentSmart</title>
+    <link rel="icon" href="https://i.ibb.co/1YBpx2KS/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --primary-light: #A29BFE;
+            --secondary: #00CEC9;
+            --accent: #FD79A8;
+            --dark: #2D3436;
+            --light: #F5F6FA;
+            --white: #FFFFFF;
+            --success: #00B894;
+            --border-radius: 12px;
+            --border-radius-lg: 20px;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-link {
+            color: var(--dark);
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .nav-link:hover { color: var(--primary); }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: var(--white);
+            padding: 2.5rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .info-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            margin-top: 1rem;
+        }
+
+        .search-filter-section {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 500px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .logs-section {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i { color: var(--primary); }
+
+        .logs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .logs-table th {
+            background: var(--light);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .logs-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .logs-table tr:hover { background: var(--light); }
+
+        .log-timestamp {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .log-admin {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .log-action {
+            color: var(--dark);
+        }
+
+        .log-ip {
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        .action-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.5rem;
+            background: rgba(108, 92, 231, 0.1);
+            color: var(--primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-title { font-size: 2rem; }
+            .logs-table { font-size: 0.85rem; }
+            .logs-table th, .logs-table td { padding: 0.75rem 0.5rem; }
+            .logs-table thead { display: none; }
+            .logs-table tr {
+                display: block;
+                margin-bottom: 1rem;
+                border: 1px solid #eee;
+                border-radius: var(--border-radius);
+                padding: 1rem;
+            }
+            .logs-table td {
+                display: block;
+                text-align: right;
+                padding: 0.5rem 0;
+                border: none;
+            }
+            .logs-table td:before {
+                content: attr(data-label);
+                float: left;
+                font-weight: 600;
+                font-family: 'Poppins', sans-serif;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <a href="/" class="navbar-brand">StudentSmart Admin</a>
+                <div class="d-flex gap-3">
+                    <a href="/admin/dashboard" class="nav-link">
+                        <i class="fas fa-home me-1"></i> Dashboard
+                    </a>
+                    <a href="/admin/students" class="nav-link">
+                        <i class="fas fa-users me-1"></i> Students
+                    </a>
+                    <a href="/admin/companies" class="nav-link">
+                        <i class="fas fa-building me-1"></i> Companies
+                    </a>
+                    <a href="/admin/colleges" class="nav-link">
+                        <i class="fas fa-university me-1"></i> Colleges
+                    </a>
+                    <a href="/admin/internships" class="nav-link">
+                        <i class="fas fa-briefcase me-1"></i> Internships
+                    </a>
+                    <a href="/admin/applications" class="nav-link">
+                        <i class="fas fa-file-alt me-1"></i> Applications
+                    </a>
+                    <a href="/admin/audit-logs" class="nav-link">
+                        <i class="fas fa-history me-1"></i> Audit Logs
+                    </a>
+                    <a href="/admin/manage-accounts" class="nav-link">
+                        <i class="fas fa-users-cog me-1"></i> Manage
+                    </a>
+                    <a href="/logout" class="nav-link">
+                        <i class="fas fa-sign-out-alt me-1"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-header">
+        <div class="container">
+            <h1 class="dashboard-title">Audit Logs 🔍</h1>
+            <p class="opacity-90">Track and monitor all administrative actions</p>
+            <div class="info-badge">
+                <i class="fas fa-info-circle me-2"></i>
+                Showing last 100 admin actions
+            </div>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        <div class="search-filter-section">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search by admin name, action, or IP address...">
+            </div>
+        </div>
+
+        <div class="logs-section">
+            <h2 class="section-title">
+                <i class="fas fa-list-alt"></i> System Audit Trail
+            </h2>
+            
+            {% if logs %}
+            <div class="table-responsive">
+                <table class="logs-table" id="logsTable">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Admin</th>
+                            <th>Action</th>
+                            <th>IP Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                        <tr>
+                            <td data-label="Timestamp" class="log-timestamp">
+                                <i class="fas fa-clock me-2"></i>
+                                {{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}
+                            </td>
+                            <td data-label="Admin" class="log-admin">
+                                <span class="action-icon">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                {{ log.admin.full_name if log.admin else 'System' }}
+                            </td>
+                            <td data-label="Action" class="log-action">
+                                {{ log.action }}
+                            </td>
+                            <td data-label="IP Address" class="log-ip">
+                                <i class="fas fa-network-wired me-2"></i>
+                                {{ log.ip_address or 'N/A' }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-history"></i>
+                <h3>No Audit Logs Yet</h3>
+                <p>Admin actions and system events will be logged here for audit purposes.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const filter = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#logsTable tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(filter) ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>

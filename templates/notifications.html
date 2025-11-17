@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - StudentsMart</title>
+    <link rel="icon" href="https://i.ibb.co/1YBpx2KS/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --primary-light: #A29BFE;
+            --secondary: #00CEC9;
+            --accent: #FD79A8;
+            --accent-light: #FFEAA7;
+            --dark: #2D3436;
+            --light: #F5F6FA;
+            --white: #FFFFFF;
+            --success: #00B894;
+            --warning: #FDCB6E;
+            --danger: #E17055;
+            --info: #0984E3;
+            --border-radius: 12px;
+            --border-radius-lg: 20px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: var(--light);
+            padding-top: 80px;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1.2rem 0;
+            background: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar-brand {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .logo {
+            height: 42px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .notification-bell {
+            position: relative;
+            font-size: 1.5rem;
+            color: var(--dark);
+            cursor: pointer;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--danger);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: var(--white);
+            padding: 3rem 0;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 1.5rem 4rem;
+        }
+
+        /* Notification Controls */
+        .notification-controls {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .filter-tab {
+            padding: 0.5rem 1.5rem;
+            border: 2px solid transparent;
+            border-radius: var(--border-radius);
+            background: transparent;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-tab.active {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .filter-tab:not(.active):hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .mark-all-read-btn {
+            padding: 0.5rem 1.5rem;
+            background: var(--secondary);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .mark-all-read-btn:hover {
+            background: #00A8A0;
+            transform: translateY(-2px);
+        }
+
+        /* Notifications List */
+        .notifications-container {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .notification-item {
+            padding: 1.5rem;
+            border-bottom: 1px solid #E9ECEF;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item:hover {
+            background: var(--light);
+        }
+
+        .notification-item.unread {
+            background: #F8F9FF;
+            border-left: 4px solid var(--primary);
+        }
+
+        .notification-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .notification-icon.message {
+            background: #E3F2FD;
+            color: var(--info);
+        }
+
+        .notification-icon.listing_sold {
+            background: #FFF3E0;
+            color: var(--warning);
+        }
+
+        .notification-icon.sale_confirmation {
+            background: #E8F5E9;
+            color: var(--success);
+        }
+
+        .notification-icon.general {
+            background: #F3E5F5;
+            color: var(--accent);
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 0.5rem;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: var(--dark);
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .notification-time {
+            font-size: 0.85rem;
+            color: #6C757D;
+            white-space: nowrap;
+        }
+
+        .notification-message {
+            color: #495057;
+            margin: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .notification-meta {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+
+        .notification-badge-type {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .notification-badge-type.message {
+            background: #E3F2FD;
+            color: var(--info);
+        }
+
+        .notification-badge-type.listing_sold {
+            background: #FFF3E0;
+            color: var(--warning);
+        }
+
+        .notification-badge-type.sale_confirmation {
+            background: #E8F5E9;
+            color: var(--success);
+        }
+
+        .sender-name {
+            font-size: 0.9rem;
+            color: #6C757D;
+        }
+
+        .sender-name i {
+            margin-right: 0.25rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #CED4DA;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: #6C757D;
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner-border {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/index.html" class="navbar-brand">
+                <img src="https://i.ibb.co/1YBpx2KS/logo.png" alt="StudentsMart Logo" class="logo">
+                StudentsMart
+            </a>
+            <div class="nav-links">
+                <a href="/index.html" class="nav-link">Home</a>
+                <a href="/buy.html" class="nav-link">Browse</a>
+                <a href="/my-listings.html" class="nav-link">My Listings</a>
+                <a href="/notifications" class="nav-link active">
+                    <div class="notification-bell">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="navNotificationCount" style="display: none;">0</span>
+                    </div>
+                </a>
+                {% if current_user.is_authenticated %}
+                <a href="/profiledashboard.html" class="nav-link">Profile</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container text-center">
+            <h1 class="page-title">Notifications</h1>
+            <p class="page-subtitle">Stay updated with your messages and activities</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Notification Controls -->
+        <div class="notification-controls">
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-filter="all">All</button>
+                <button class="filter-tab" data-filter="message">Messages</button>
+                <button class="filter-tab" data-filter="listing_sold">Sold Listings</button>
+                <button class="filter-tab" data-filter="unread">Unread</button>
+            </div>
+            <button class="mark-all-read-btn" onclick="markAllAsRead()">
+                <i class="fas fa-check-double"></i> Mark All as Read
+            </button>
+        </div>
+
+        <!-- Notifications Container -->
+        <div class="notifications-container">
+            <div class="loading-spinner">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let allNotifications = [];
+        let currentFilter = 'all';
+
+        // Load notifications on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadNotifications();
+            updateNotificationBadge();
+
+            // Setup filter tabs
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.getAttribute('data-filter');
+                    renderNotifications();
+                });
+            });
+        });
+
+        // Load notifications from API
+        function loadNotifications() {
+            fetch('/api/notifications/all')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        allNotifications = data.notifications;
+                        renderNotifications();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading notifications:', error);
+                    showEmptyState('Error loading notifications. Please refresh the page.');
+                });
+        }
+
+        // Render notifications based on current filter
+        function renderNotifications() {
+            const container = document.querySelector('.notifications-container');
+            let filtered = allNotifications;
+
+            // Apply filter
+            if (currentFilter === 'unread') {
+                filtered = allNotifications.filter(n => !n.is_read);
+            } else if (currentFilter === 'listing_sold') {
+                // Show both listing_sold and purchase_confirmed for Sold Listings tab
+                filtered = allNotifications.filter(n => n.type === 'listing_sold' || n.type === 'purchase_confirmed');
+            } else if (currentFilter !== 'all') {
+                filtered = allNotifications.filter(n => n.type === currentFilter);
+            }
+
+            if (filtered.length === 0) {
+                showEmptyState(getEmptyMessage());
+                return;
+            }
+
+            // Render notifications
+            container.innerHTML = filtered.map(notification => `
+                <div class="notification-item ${!notification.is_read ? 'unread' : ''}"
+                     onclick="handleNotificationClick(${notification.id}, '${notification.action_url || ''}', ${notification.listing_id})">
+                    <div class="notification-icon ${notification.type}">
+                        ${getNotificationIcon(notification.type)}
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-header">
+                            <h5 class="notification-title">${notification.title}</h5>
+                            <span class="notification-time">${formatTime(notification.created_at)}</span>
+                        </div>
+                        <p class="notification-message">${notification.message}</p>
+                        <div class="notification-meta">
+                            <span class="notification-badge-type ${notification.type}">
+                                ${formatType(notification.type)}
+                            </span>
+                            ${notification.sender_name ? `
+                                <span class="sender-name">
+                                    <i class="fas fa-user"></i> ${notification.sender_name}
+                                </span>
+                            ` : ''}
+                            ${notification.listing_title ? `
+                                <span class="sender-name">
+                                    <i class="fas fa-tag"></i> ${notification.listing_title}
+                                </span>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Get icon for notification type
+        function getNotificationIcon(type) {
+            const icons = {
+                'message': '<i class="fas fa-comment"></i>',
+                'listing_sold': '<i class="fas fa-check-circle"></i>',
+                'purchase_confirmed': '<i class="fas fa-check-double"></i>',
+                'sale_confirmation': '<i class="fas fa-shopping-cart"></i>',
+                'general': '<i class="fas fa-info-circle"></i>'
+            };
+            return icons[type] || icons['general'];
+        }
+
+        // Format notification type
+        function formatType(type) {
+            const types = {
+                'message': 'Message',
+                'listing_sold': 'Sold',
+                'purchase_confirmed': 'Confirmed',
+                'sale_confirmation': 'Sale',
+                'general': 'General'
+            };
+            return types[type] || 'Notification';
+        }
+
+        // Format time ago
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = Math.floor((now - date) / 1000); // seconds
+
+            if (diff < 60) return 'Just now';
+            if (diff < 3600) return Math.floor(diff / 60) + ' min ago';
+            if (diff < 86400) return Math.floor(diff / 3600) + ' hrs ago';
+            if (diff < 604800) return Math.floor(diff / 86400) + ' days ago';
+
+            return date.toLocaleDateString();
+        }
+
+        // Handle notification click
+        function handleNotificationClick(notificationId, actionUrl, listingId) {
+            // Mark as read
+            fetch(`/api/notifications/${notificationId}/mark-read`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(() => {
+                // Update local state
+                const notification = allNotifications.find(n => n.id === notificationId);
+                if (notification) {
+                    notification.is_read = true;
+                }
+                updateNotificationBadge();
+            });
+
+            // Navigate to action URL
+            if (actionUrl) {
+                window.location.href = actionUrl;
+            } else if (listingId) {
+                window.location.href = `/buy.html?listing=${listingId}`;
+            }
+        }
+
+        // Mark all as read
+        function markAllAsRead() {
+            fetch('/api/notifications/mark-all-read', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    allNotifications.forEach(n => n.is_read = true);
+                    renderNotifications();
+                    updateNotificationBadge();
+                }
+            });
+        }
+
+        // Update notification badge
+        function updateNotificationBadge() {
+            const unreadCount = allNotifications.filter(n => !n.is_read).length;
+            const badge = document.getElementById('navNotificationCount');
+
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount;
+                badge.style.display = 'block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        // Show empty state
+        function showEmptyState(message) {
+            const container = document.querySelector('.notifications-container');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-bell-slash"></i>
+                    <h3>No Notifications</h3>
+                    <p>${message || 'You have no notifications at the moment.'}</p>
+                </div>
+            `;
+        }
+
+        // Get empty message based on filter
+        function getEmptyMessage() {
+            const messages = {
+                'all': 'You have no notifications at the moment.',
+                'message': 'You have no message notifications.',
+                'listing_sold': 'No listings have been sold.',
+                'unread': 'You have no unread notifications.'
+            };
+            return messages[currentFilter] || messages['all'];
+        }
+    </script>
+</body>
+</html>

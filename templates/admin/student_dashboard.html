@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ profile.user.full_name }} - Student Dashboard | Admin</title>
+    <link rel="icon" href="https://i.ibb.co/1YBpx2KS/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f6fa;
+        }
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 1rem 0;
+        }
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2.5rem 0;
+            margin-bottom: 2rem;
+        }
+        .profile-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 5px solid white;
+            object-fit: cover;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+            margin-bottom: 1.5rem;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 1.25rem 1.5rem;
+            font-weight: 600;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        .stat-total { color: #667eea; }
+        .stat-pending { color: #f39c12; }
+        .stat-shortlisted { color: #00b894; }
+        .stat-accepted { color: #6c5ce7; }
+        .stat-rejected { color: #e74c3c; }
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-shortlisted { background: #d4edda; color: #155724; }
+        .status-accepted { background: #d1ecf1; color: #0c5460; }
+        .status-rejected { background: #f8d7da; color: #721c24; }
+        .application-card {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .application-card:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        .info-item {
+            display: flex;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            font-weight: 600;
+            color: #667eea;
+            width: 150px;
+        }
+        .info-value {
+            flex: 1;
+            color: #333;
+        }
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e0e0e0;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: -26px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #667eea;
+        }
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Hamburger Button */
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 30px;
+            height: 25px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 30px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1050;
+        }
+
+        .mobile-nav-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -350px;
+            width: 300px;
+            height: 100vh;
+            background: var(--white);
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 1051;
+            overflow-y: auto;
+        }
+
+        .mobile-nav.active {
+            right: 0;
+        }
+
+        .mobile-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--white);
+        }
+
+        .mobile-nav-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: var(--white);
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .mobile-nav-content {
+            padding: 1rem 0;
+        }
+
+        .mobile-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .mobile-nav-link:hover {
+            background: var(--light);
+            border-left-color: var(--primary);
+            color: var(--primary);
+        }
+
+        @media (max-width: 991px) {
+            .navbar-collapse:not(.d-none) {
+                display: none !important;
+            }
+        }
+
+    </style>
+</head>
+<body>
+        <nav class="navbar">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <a href="/" class="navbar-brand">StudentSmart Admin</a>
+
+                <!-- Desktop Navigation -->
+                <div class="collapse navbar-collapse justify-content-end d-none d-lg-flex">
+                    <a href="/admin/dashboard" class="nav-link"><i class="fas fa-home me-1"></i>Dashboard</a>
+                    <a href="/admin/students" class="nav-link"><i class="fas fa-users me-1"></i>Students</a>
+                    <a href="/admin/companies" class="nav-link"><i class="fas fa-building me-1"></i>Companies</a>
+                    <a href="/admin/colleges" class="nav-link"><i class="fas fa-university me-1"></i>Colleges</a>
+                    <a href="/admin/internships" class="nav-link"><i class="fas fa-briefcase me-1"></i>Internships</a>
+                    <a href="/admin/applications" class="nav-link"><i class="fas fa-file-alt me-1"></i>Applications</a>
+                    <a href="/admin/audit-logs" class="nav-link"><i class="fas fa-history me-1"></i>Audit Logs</a>
+                    <a href="/admin/manage-accounts" class="nav-link"><i class="fas fa-users-cog me-1"></i>Manage Accounts</a>
+                    <a href="/logout" class="nav-link"><i class="fas fa-sign-out-alt me-1"></i>Logout</a>
+                </div>
+
+                <!-- Mobile Hamburger Button -->
+                <button class="hamburger d-lg-none" id="hamburgerBtn" onclick="toggleMobileMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Sidebar -->
+    <div class="mobile-nav-backdrop" id="mobileNavBackdrop" onclick="toggleMobileMenu()"></div>
+    <div class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-header">
+            <h5>Admin Menu</h5>
+            <button class="close-btn" onclick="toggleMobileMenu()">×</button>
+        </div>
+        <div class="mobile-nav-content">
+            <a href="/admin/dashboard" class="mobile-nav-link"><i class="fas fa-home me-2"></i>Dashboard</a>
+            <a href="/admin/students" class="mobile-nav-link"><i class="fas fa-users me-2"></i>Students</a>
+            <a href="/admin/companies" class="mobile-nav-link"><i class="fas fa-building me-2"></i>Companies</a>
+            <a href="/admin/colleges" class="mobile-nav-link"><i class="fas fa-university me-2"></i>Colleges</a>
+            <a href="/admin/internships" class="mobile-nav-link"><i class="fas fa-briefcase me-2"></i>Internships</a>
+            <a href="/admin/applications" class="mobile-nav-link"><i class="fas fa-file-alt me-2"></i>Applications</a>
+            <a href="/admin/audit-logs" class="mobile-nav-link"><i class="fas fa-history me-2"></i>Audit Logs</a>
+            <a href="/admin/manage-accounts" class="mobile-nav-link"><i class="fas fa-users-cog me-2"></i>Manage Accounts</a>
+            <a href="/logout" class="mobile-nav-link"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+        </div>
+    </div>
+
+    <div class="page-header">
+        <div class="container">
+            <div class="d-flex align-items-center gap-4">
+                {% if profile.profile_photo %}
+                <img src="/{{ profile.profile_photo }}" alt="{{ profile.user.full_name }}" class="profile-photo">
+                {% else %}
+                <div class="profile-photo bg-white d-flex align-items-center justify-content-center" style="font-size: 3rem; color: #667eea;">
+                    <i class="fas fa-user"></i>
+                </div>
+                {% endif %}
+                <div>
+                    <h1 class="mb-2">{{ profile.user.full_name }}</h1>
+                    <p class="mb-1"><i class="fas fa-envelope me-2"></i>{{ profile.user.email }}</p>
+                    <p class="mb-0"><i class="fas fa-university me-2"></i>{{ profile.user.college }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        <!-- Application Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value stat-total">{{ stats.total }}</div>
+                <div class="stat-label">Total Applications</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value stat-pending">{{ stats.pending }}</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value stat-shortlisted">{{ stats.shortlisted }}</div>
+                <div class="stat-label">Shortlisted</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value stat-accepted">{{ stats.accepted }}</div>
+                <div class="stat-label">Accepted</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value stat-rejected">{{ stats.rejected }}</div>
+                <div class="stat-label">Rejected</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Student Profile Information -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-user me-2"></i>Profile Information
+                    </div>
+                    <div class="card-body">
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-phone me-2"></i>Phone</div>
+                            <div class="info-value">{{ profile.phone or 'Not provided' }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-map-marker-alt me-2"></i>Location</div>
+                            <div class="info-value">{{ profile.location or 'Not provided' }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-graduation-cap me-2"></i>Department</div>
+                            <div class="info-value">{{ profile.user.department or 'Not provided' }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-calendar me-2"></i>Year</div>
+                            <div class="info-value">{{ profile.user.year or 'Not provided' }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-check-circle me-2"></i>Onboarding</div>
+                            <div class="info-value">
+                                {% if profile.onboarding_complete %}
+                                <span class="badge bg-success">Complete</span>
+                                {% else %}
+                                <span class="badge bg-warning">Incomplete</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-user-check me-2"></i>Verified</div>
+                            <div class="info-value">
+                                {% if profile.user.is_verified %}
+                                <span class="badge bg-success">Verified</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Not Verified</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Links -->
+                {% if profile.linkedin_url or profile.github_url or profile.portfolio_url or profile.leetcode_url %}
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-link me-2"></i>Professional Links
+                    </div>
+                    <div class="card-body">
+                        {% if profile.linkedin_url %}
+                        <div class="info-item">
+                            <div class="info-label"><i class="fab fa-linkedin me-2"></i>LinkedIn</div>
+                            <div class="info-value">
+                                <a href="{{ profile.linkedin_url }}" target="_blank">View Profile</a>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if profile.github_url %}
+                        <div class="info-item">
+                            <div class="info-label"><i class="fab fa-github me-2"></i>GitHub</div>
+                            <div class="info-value">
+                                <a href="{{ profile.github_url }}" target="_blank">View Profile</a>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if profile.portfolio_url %}
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-globe me-2"></i>Portfolio</div>
+                            <div class="info-value">
+                                <a href="{{ profile.portfolio_url }}" target="_blank">Visit Website</a>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if profile.leetcode_url %}
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-code me-2"></i>LeetCode</div>
+                            <div class="info-value">
+                                <a href="{{ profile.leetcode_url }}" target="_blank">View Profile</a>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Application History -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-history me-2"></i>Application History
+                    </div>
+                    <div class="card-body">
+                        {% if applications %}
+                        <div class="timeline">
+                            {% for app in applications %}
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="application-card">
+                                    <h5 class="mb-2">{{ app.internship.title }}</h5>
+                                    <p class="text-muted mb-2">
+                                        <strong>Company:</strong>
+                                        {% if app.internship.company %}
+                                        {{ app.internship.company.company_name }}
+                                        {% else %}
+                                        Admin Posted
+                                        {% endif %}
+                                    </p>
+                                    <p class="text-muted mb-2">
+                                        <strong>Applied:</strong> {{ app.applied_at.strftime('%B %d, %Y') }}
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="status-badge status-{{ app.status }}">
+                                            {{ app.status }}
+                                        </span>
+                                        <a href="/student/internships/{{ app.internship_id }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            View Details
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="text-center py-5 text-muted">
+                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                            <p>No applications yet</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bio Section -->
+        {% if profile.bio %}
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-user-circle me-2"></i>About
+            </div>
+            <div class="card-body">
+                <p style="line-height: 1.8;">{{ profile.bio }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Education -->
+        {% if profile.education %}
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-graduation-cap me-2"></i>Education ({{ profile.education|length }})
+            </div>
+            <div class="card-body">
+                {% for edu in profile.education %}
+                <div class="application-card">
+                    <h5>{{ edu.degree }}{% if edu.field_of_study %} - {{ edu.field_of_study }}{% endif %}</h5>
+                    <p class="mb-1"><strong>{{ edu.institution }}</strong></p>
+                    <p class="text-muted mb-0">
+                        <i class="fas fa-calendar me-2"></i>
+                        {% if edu.start_date %}{{ edu.start_date.year }}{% endif %} -
+                        {% if edu.end_date %}{{ edu.end_date.year }}{% else %}Present{% endif %}
+                        {% if edu.grade %}| Grade: {{ edu.grade }}{% endif %}
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Work Experience -->
+        {% if profile.work_experience %}
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-briefcase me-2"></i>Work Experience ({{ profile.work_experience|length }})
+            </div>
+            <div class="card-body">
+                {% for exp in profile.work_experience %}
+                <div class="application-card">
+                    <h5>{{ exp.position }}</h5>
+                    <p class="mb-1"><strong>{{ exp.company }}</strong></p>
+                    <p class="text-muted mb-2">
+                        <i class="fas fa-calendar me-2"></i>
+                        {% if exp.start_date %}{{ exp.start_date.year }}{% endif %} -
+                        {% if exp.end_date %}{{ exp.end_date.year }}{% else %}Present{% endif %}
+                    </p>
+                    {% if exp.description %}
+                    <p class="mb-0">{{ exp.description }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Skills -->
+        {% if profile.skills %}
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-cogs me-2"></i>Skills ({{ profile.skills|length }})
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-2">
+                    {% for skill in profile.skills %}
+                    <span class="badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); font-size: 0.95rem; padding: 0.5rem 1rem;">
+                        {{ skill.name }}{% if skill.proficiency_level %} ({{ skill.proficiency_level }}){% endif %}
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Certifications -->
+        {% if profile.certifications %}
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-certificate me-2"></i>Certifications ({{ profile.certifications|length }})
+            </div>
+            <div class="card-body">
+                {% for cert in profile.certifications %}
+                <div class="application-card">
+                    <h5>{{ cert.name }}</h5>
+                    <p class="mb-1"><strong>{{ cert.issuing_organization }}</strong></p>
+                    <p class="text-muted mb-0">
+                        {% if cert.issue_date %}
+                        <i class="fas fa-calendar me-2"></i>Issued: {{ cert.issue_date.year }}
+                        {% endif %}
+                        {% if cert.credential_url %}
+                        | <a href="{{ cert.credential_url }}" target="_blank"><i class="fas fa-external-link-alt me-1"></i>View Credential</a>
+                        {% endif %}
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+        function toggleMobileMenu() {
+            const nav = document.getElementById('mobileNav');
+            const backdrop = document.getElementById('mobileNavBackdrop');
+            const hamburger = document.getElementById('hamburgerBtn');
+
+            nav.classList.toggle('active');
+            backdrop.classList.toggle('active');
+            if (hamburger) hamburger.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

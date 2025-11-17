@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile | StudentSmart</title>
+    <link rel="icon" href="https://i.ibb.co/1YBpx2KS/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --primary-light: #A29BFE;
+            --secondary: #00CEC9;
+            --dark: #2D3436;
+            --light: #F5F6FA;
+            --white: #FFFFFF;
+            --success: #00B894;
+            --danger: #E17055;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            min-height: 100vh;
+            padding-bottom: 3rem;
+        }
+
+        .navbar {
+            background: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .page-header {
+            background: var(--primary);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .section-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-add {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-add:hover {
+            background: #00a17a;
+            transform: translateY(-2px);
+        }
+
+        .item-card {
+            background: var(--light);
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            position: relative;
+            border-left: 4px solid var(--primary);
+        }
+
+        .item-actions {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-icon {
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .btn-icon:hover {
+            color: var(--danger);
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            padding: 0.75rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108,92,231,0.1);
+        }
+
+        .btn-save {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-save:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .skill-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.25rem;
+        }
+
+        .modal-content {
+            border-radius: var(--border-radius);
+        }
+
+        .modal-header {
+            background: var(--primary);
+            color: white;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+
+        /* Mobile Hamburger Menu Styles */
+        .navbar-toggler {
+            border: none;
+            padding: 0.5rem;
+            background: transparent;
+            position: relative;
+            z-index: 1001;
+            display: none;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: none;
+            outline: none;
+        }
+
+        .navbar-toggler-icon {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 26px;
+            cursor: pointer;
+            background-image: none !important;
+        }
+
+        .navbar-toggler-icon span {
+            width: 26px;
+            height: 3px;
+            background: var(--dark);
+            border-radius: 3px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: block;
+        }
+
+        .navbar-toggler.active .navbar-toggler-icon span:nth-child(1) {
+            transform: rotate(45deg) translate(7px, 7px);
+        }
+
+        .navbar-toggler.active .navbar-toggler-icon span:nth-child(2) {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+
+        .navbar-toggler.active .navbar-toggler-icon span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        .mobile-menu-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-menu-backdrop.show {
+            display: block;
+            opacity: 1;
+        }
+
+        body.menu-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-toggler {
+                display: flex;
+            }
+
+            .navbar .d-flex > a.btn {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 320px;
+                max-width: 85vw;
+                height: 100vh;
+                background: var(--white);
+                box-shadow: -5px 0 30px rgba(0, 0, 0, 0.2);
+                transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 999;
+                overflow-y: auto;
+                display: flex !important;
+                flex-direction: column;
+                padding: 5rem 2rem 2rem;
+                border-radius: 0;
+                justify-content: flex-start;
+                align-items: flex-start;
+                border: none;
+                font-size: 1.05rem;
+            }
+
+            .navbar .d-flex > a.btn.show {
+                right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <a href="/" style="text-decoration: none; color: var(--primary); font-weight: 700; font-size: 1.5rem;">StudentSmart</a>
+
+                <button class="navbar-toggler" type="button" onclick="toggleMobileMenu()">
+                    <div class="navbar-toggler-icon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </button>
+
+                <a href="/student/dashboard" class="btn btn-outline-primary" id="navbarNav">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="mobile-menu-backdrop" onclick="closeMobileMenu()"></div>
+
+    <div class="page-header">
+        <div class="container">
+            <h1><i class="fas fa-user-edit me-2"></i>Edit Your Profile</h1>
+            <p class="mb-0">Update your information to keep your profile current</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Personal Information -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-user-circle"></i>
+                    Personal Information
+                </h2>
+            </div>
+            <form id="personalInfoForm">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" class="form-control" id="phone" value="{{ profile.phone or '' }}">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Location</label>
+                        <input type="text" class="form-control" id="location" value="{{ profile.location or '' }}">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Bio</label>
+                    <textarea class="form-control" id="bio" rows="4">{{ profile.bio or '' }}</textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">LinkedIn URL</label>
+                        <input type="url" class="form-control" id="linkedin_url" value="{{ profile.linkedin_url or '' }}">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">GitHub URL</label>
+                        <input type="url" class="form-control" id="github_url" value="{{ profile.github_url or '' }}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Portfolio URL</label>
+                        <input type="url" class="form-control" id="portfolio_url" value="{{ profile.portfolio_url or '' }}">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">LeetCode URL</label>
+                        <input type="url" class="form-control" id="leetcode_url" value="{{ profile.leetcode_url or '' }}">
+                    </div>
+                </div>
+                <button type="submit" class="btn-save">
+                    <i class="fas fa-save me-2"></i>Save Personal Info
+                </button>
+            </form>
+        </div>
+
+        <!-- Education -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-graduation-cap"></i>
+                    Education
+                </h2>
+                <button class="btn-add" onclick="showEducationModal()">
+                    <i class="fas fa-plus me-2"></i>Add Education
+                </button>
+            </div>
+            <div id="educationList">
+                {% for edu in profile.education %}
+                <div class="item-card" data-id="{{ edu.id }}">
+                    <div class="item-actions">
+                        <button class="btn-icon" onclick="editEducation({{ edu.id }})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-icon" onclick="deleteEducation({{ edu.id }})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <h5>{{ edu.degree }}{% if edu.field_of_study %} - {{ edu.field_of_study }}{% endif %}</h5>
+                    <p class="mb-1"><strong>{{ edu.institution }}</strong></p>
+                    <p class="text-muted mb-0">
+                        {% if edu.start_date %}{{ edu.start_date.year }}{% endif %} -
+                        {% if edu.end_date %}{{ edu.end_date.year }}{% else %}Present{% endif %}
+                        {% if edu.grade %}| Grade: {{ edu.grade }}{% endif %}
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Work Experience -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-briefcase"></i>
+                    Work Experience
+                </h2>
+                <button class="btn-add" onclick="showExperienceModal()">
+                    <i class="fas fa-plus me-2"></i>Add Experience
+                </button>
+            </div>
+            <div id="experienceList">
+                {% for exp in profile.work_experience %}
+                <div class="item-card" data-id="{{ exp.id }}">
+                    <div class="item-actions">
+                        <button class="btn-icon" onclick="editExperience({{ exp.id }})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-icon" onclick="deleteExperience({{ exp.id }})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <h5>{{ exp.position }}</h5>
+                    <p class="mb-1"><strong>{{ exp.company }}</strong></p>
+                    <p class="text-muted mb-1">
+                        {% if exp.start_date %}{{ exp.start_date.year }}{% endif %} -
+                        {% if exp.end_date %}{{ exp.end_date.year }}{% else %}Present{% endif %}
+                    </p>
+                    {% if exp.description %}<p class="mb-0">{{ exp.description }}</p>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Skills -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-cogs"></i>
+                    Skills
+                </h2>
+                <button class="btn-add" onclick="showSkillModal()">
+                    <i class="fas fa-plus me-2"></i>Add Skill
+                </button>
+            </div>
+            <div id="skillsList">
+                {% for skill in profile.skills %}
+                <span class="skill-badge" data-id="{{ skill.id }}">
+                    {{ skill.name }} ({{ skill.proficiency_level }})
+                    <button class="btn-icon" style="color: white; padding: 0;" onclick="deleteSkill({{ skill.id }})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </span>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Certifications -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-certificate"></i>
+                    Certifications
+                </h2>
+                <button class="btn-add" onclick="showCertificationModal()">
+                    <i class="fas fa-plus me-2"></i>Add Certification
+                </button>
+            </div>
+            <div id="certificationsList">
+                {% for cert in profile.certifications %}
+                <div class="item-card" data-id="{{ cert.id }}">
+                    <div class="item-actions">
+                        <button class="btn-icon" onclick="editCertification({{ cert.id }})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-icon" onclick="deleteCertification({{ cert.id }})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <h5>{{ cert.name }}</h5>
+                    <p class="mb-1"><strong>{{ cert.issuing_organization }}</strong></p>
+                    <p class="text-muted mb-0">
+                        {% if cert.issue_date %}Issued: {{ cert.issue_date.year }}{% endif %}
+                        {% if cert.credential_url %}
+                        | <a href="{{ cert.credential_url }}" target="_blank">View Credential</a>
+                        {% endif %}
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Education Modal -->
+    <div class="modal fade" id="educationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add/Edit Education</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="educationForm">
+                        <input type="hidden" id="edu_id">
+                        <div class="mb-3">
+                            <label class="form-label">Degree *</label>
+                            <input type="text" class="form-control" id="edu_degree" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Institution *</label>
+                            <input type="text" class="form-control" id="edu_institution" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Field of Study</label>
+                            <input type="text" class="form-control" id="edu_field">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Grade/GPA</label>
+                            <input type="text" class="form-control" id="edu_grade">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Start Date</label>
+                                <input type="date" class="form-control" id="edu_start">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">End Date</label>
+                                <input type="date" class="form-control" id="edu_end">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-save w-100">Save Education</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Experience Modal -->
+    <div class="modal fade" id="experienceModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add/Edit Experience</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="experienceForm">
+                        <input type="hidden" id="exp_id">
+                        <div class="mb-3">
+                            <label class="form-label">Position *</label>
+                            <input type="text" class="form-control" id="exp_position" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Company *</label>
+                            <input type="text" class="form-control" id="exp_company" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="exp_description" rows="3"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Start Date</label>
+                                <input type="date" class="form-control" id="exp_start">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">End Date</label>
+                                <input type="date" class="form-control" id="exp_end">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-save w-100">Save Experience</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skill Modal -->
+    <div class="modal fade" id="skillModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Skill</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="skillForm">
+                        <div class="mb-3">
+                            <label class="form-label">Skill Name *</label>
+                            <input type="text" class="form-control" id="skill_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Proficiency Level *</label>
+                            <select class="form-select" id="skill_level" required>
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate" selected>Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-save w-100">Add Skill</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Certification Modal -->
+    <div class="modal fade" id="certificationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add/Edit Certification</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="certificationForm">
+                        <input type="hidden" id="cert_id">
+                        <div class="mb-3">
+                            <label class="form-label">Certificate Name *</label>
+                            <input type="text" class="form-control" id="cert_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Issuing Organization *</label>
+                            <input type="text" class="form-control" id="cert_org" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Issue Date</label>
+                            <input type="date" class="form-control" id="cert_date">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Credential URL</label>
+                            <input type="url" class="form-control" id="cert_url">
+                        </div>
+                        <button type="submit" class="btn-save w-100">Save Certification</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Personal Info Form
+        document.getElementById('personalInfoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const response = await fetch('/student/profile/edit', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    phone: document.getElementById('phone').value,
+                    bio: document.getElementById('bio').value,
+                    location: document.getElementById('location').value,
+                    linkedin_url: document.getElementById('linkedin_url').value,
+                    github_url: document.getElementById('github_url').value,
+                    portfolio_url: document.getElementById('portfolio_url').value,
+                    leetcode_url: document.getElementById('leetcode_url').value
+                })
+            });
+            const data = await response.json();
+            if (data.success) {
+                Swal.fire('Success!', 'Personal information updated!', 'success');
+            }
+        });
+
+        // Education Functions
+        function showEducationModal(eduId = null) {
+            document.getElementById('educationForm').reset();
+            document.getElementById('edu_id').value = '';
+            const modal = new bootstrap.Modal(document.getElementById('educationModal'));
+            modal.show();
+        }
+
+        document.getElementById('educationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const eduId = document.getElementById('edu_id').value;
+            const url = eduId ? `/student/profile/education/${eduId}` : '/student/profile/education';
+            const method = eduId ? 'PUT' : 'POST';
+
+            const response = await fetch(url, {
+                method: method,
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    degree: document.getElementById('edu_degree').value,
+                    institution: document.getElementById('edu_institution').value,
+                    field_of_study: document.getElementById('edu_field').value,
+                    grade: document.getElementById('edu_grade').value,
+                    start_date: document.getElementById('edu_start').value,
+                    end_date: document.getElementById('edu_end').value
+                })
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                bootstrap.Modal.getInstance(document.getElementById('educationModal')).hide();
+                Swal.fire('Success!', 'Education saved!', 'success').then(() => location.reload());
+            }
+        });
+
+        async function deleteEducation(id) {
+            const result = await Swal.fire({
+                title: 'Delete Education?',
+                text: 'This action cannot be undone',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#E17055',
+                confirmButtonText: 'Yes, delete it'
+            });
+
+            if (result.isConfirmed) {
+                const response = await fetch(`/student/profile/education/${id}`, {method: 'DELETE'});
+                const data = await response.json();
+                if (data.success) {
+                    Swal.fire('Deleted!', 'Education removed', 'success').then(() => location.reload());
+                }
+            }
+        }
+
+        // Experience Functions
+        function showExperienceModal() {
+            document.getElementById('experienceForm').reset();
+            document.getElementById('exp_id').value = '';
+            const modal = new bootstrap.Modal(document.getElementById('experienceModal'));
+            modal.show();
+        }
+
+        document.getElementById('experienceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const expId = document.getElementById('exp_id').value;
+            const url = expId ? `/student/profile/experience/${expId}` : '/student/profile/experience';
+            const method = expId ? 'PUT' : 'POST';
+
+            const response = await fetch(url, {
+                method: method,
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    position: document.getElementById('exp_position').value,
+                    company: document.getElementById('exp_company').value,
+                    description: document.getElementById('exp_description').value,
+                    start_date: document.getElementById('exp_start').value,
+                    end_date: document.getElementById('exp_end').value
+                })
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                bootstrap.Modal.getInstance(document.getElementById('experienceModal')).hide();
+                Swal.fire('Success!', 'Experience saved!', 'success').then(() => location.reload());
+            }
+        });
+
+        async function deleteExperience(id) {
+            const result = await Swal.fire({
+                title: 'Delete Experience?',
+                text: 'This action cannot be undone',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#E17055',
+                confirmButtonText: 'Yes, delete it'
+            });
+
+            if (result.isConfirmed) {
+                const response = await fetch(`/student/profile/experience/${id}`, {method: 'DELETE'});
+                const data = await response.json();
+                if (data.success) {
+                    Swal.fire('Deleted!', 'Experience removed', 'success').then(() => location.reload());
+                }
+            }
+        }
+
+        // Skill Functions
+        function showSkillModal() {
+            document.getElementById('skillForm').reset();
+            const modal = new bootstrap.Modal(document.getElementById('skillModal'));
+            modal.show();
+        }
+
+        document.getElementById('skillForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const response = await fetch('/student/profile/skill', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    name: document.getElementById('skill_name').value,
+                    proficiency_level: document.getElementById('skill_level').value
+                })
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                bootstrap.Modal.getInstance(document.getElementById('skillModal')).hide();
+                Swal.fire('Success!', 'Skill added!', 'success').then(() => location.reload());
+            }
+        });
+
+        async function deleteSkill(id) {
+            const response = await fetch(`/student/profile/skill/${id}`, {method: 'DELETE'});
+            const data = await response.json();
+            if (data.success) {
+                Swal.fire('Deleted!', 'Skill removed', 'success').then(() => location.reload());
+            }
+        }
+
+        // Certification Functions
+        function showCertificationModal() {
+            document.getElementById('certificationForm').reset();
+            document.getElementById('cert_id').value = '';
+            const modal = new bootstrap.Modal(document.getElementById('certificationModal'));
+            modal.show();
+        }
+
+        document.getElementById('certificationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const certId = document.getElementById('cert_id').value;
+            const url = certId ? `/student/profile/certification/${certId}` : '/student/profile/certification';
+            const method = certId ? 'PUT' : 'POST';
+
+            const response = await fetch(url, {
+                method: method,
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    name: document.getElementById('cert_name').value,
+                    issuing_organization: document.getElementById('cert_org').value,
+                    issue_date: document.getElementById('cert_date').value,
+                    credential_url: document.getElementById('cert_url').value
+                })
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                bootstrap.Modal.getInstance(document.getElementById('certificationModal')).hide();
+                Swal.fire('Success!', 'Certification saved!', 'success').then(() => location.reload());
+            }
+        });
+
+        async function deleteCertification(id) {
+            const result = await Swal.fire({
+                title: 'Delete Certification?',
+                text: 'This action cannot be undone',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#E17055',
+                confirmButtonText: 'Yes, delete it'
+            });
+
+            if (result.isConfirmed) {
+                const response = await fetch(`/student/profile/certification/${id}`, {method: 'DELETE'});
+                const data = await response.json();
+                if (data.success) {
+                    Swal.fire('Deleted!', 'Certification removed', 'success').then(() => location.reload());
+                }
+            }
+        }
+
+        function editEducation(id) {
+            // You can implement edit functionality
+            showEducationModal(id);
+        }
+
+        function editExperience(id) {
+            showExperienceModal();
+        }
+
+        function editCertification(id) {
+            showCertificationModal();
+        }
+
+        function toggleMobileMenu() {
+            const toggler = document.querySelector('.navbar-toggler');
+            const navbarNav = document.getElementById('navbarNav');
+            const backdrop = document.querySelector('.mobile-menu-backdrop');
+
+            toggler.classList.toggle('active');
+            navbarNav.classList.toggle('show');
+            backdrop.classList.toggle('show');
+            document.body.classList.toggle('menu-open');
+        }
+
+        function closeMobileMenu() {
+            const toggler = document.querySelector('.navbar-toggler');
+            const navbarNav = document.getElementById('navbarNav');
+            const backdrop = document.querySelector('.mobile-menu-backdrop');
+
+            toggler.classList.remove('active');
+            navbarNav.classList.remove('show');
+            backdrop.classList.remove('show');
+            document.body.classList.remove('menu-open');
+        }
+    </script>
+</body>
+</html>

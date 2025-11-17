@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - StudentsMart</title>
+    <link rel="icon" href="https://i.ibb.co/1YBpx2KS/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --primary-light: #A29BFE;
+            --secondary: #00CEC9;
+            --accent: #FD79A8;
+            --accent-light: #FFEAA7;
+            --dark: #2D3436;
+            --light: #F5F6FA;
+            --white: #FFFFFF;
+            --success: #00B894;
+            --warning: #FDCB6E;
+            --danger: #E17055;
+            --border-radius: 12px;
+            --border-radius-lg: 20px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.15);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: linear-gradient(135deg, var(--light) 0%, #FFE8E8 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-container {
+            max-width: 500px;
+            width: 100%;
+            margin: 2rem;
+        }
+
+        .status-card {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-xl);
+            padding: 3rem 2rem;
+            text-align: center;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--danger), #FF6B6B);
+        }
+
+        .status-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--danger), #FF6B6B);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            color: var(--white);
+            font-size: 2rem;
+            box-shadow: var(--shadow-lg);
+            animation: shake 0.8s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .status-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, rgba(225, 112, 85, 0.1), rgba(255, 107, 107, 0.1));
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--danger);
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            color: var(--dark);
+        }
+
+        .status-message {
+            font-size: 1.1rem;
+            color: var(--dark);
+            opacity: 0.8;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-home {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border: none;
+            padding: 0.875rem 2rem;
+            border-radius: var(--border-radius);
+            color: var(--white);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-home:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            color: var(--white);
+        }
+
+        .btn-retry {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--success) 100%);
+            border: none;
+            padding: 0.875rem 2rem;
+            border-radius: var(--border-radius);
+            color: var(--white);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            cursor: pointer;
+        }
+
+        .btn-retry:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            color: var(--white);
+        }
+
+        .logo-container {
+            position: absolute;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .logo {
+            height: 40px;
+            opacity: 0.1;
+        }
+
+        .divider {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--danger), #FF6B6B);
+            margin: 1.5rem auto;
+            border-radius: 2px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                margin: 1rem;
+            }
+            
+            .status-card {
+                padding: 2rem 1.5rem;
+            }
+            
+            .status-title {
+                font-size: 1.5rem;
+            }
+            
+            .btn-container {
+                flex-direction: column;
+            }
+            
+            .btn-home,
+            .btn-retry {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Animation for card entrance */
+        .status-card {
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="status-card">
+            <div class="logo-container">
+                <img src="https://i.ibb.co/Z05RbY8/logo-removebg-preview-5.png" alt="StudentsMart" class="logo">
+            </div>
+            
+            <div class="status-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            
+            <h1 class="status-title">Error Processing Purchase</h1>
+            <div class="divider"></div>
+            
+            <div class="error-message">
+                <i class="fas fa-info-circle me-2"></i>
+                {{ error_message }}
+            </div>
+            
+            <p class="status-message">
+                Please try again or contact support if the problem persists.
+            </p>
+            
+            <div class="btn-container">
+                <button class="btn-retry" onclick="window.history.back()">
+                    <i class="fas fa-redo"></i>
+                    Try Again
+                </button>
+                <a href="/" class="btn-home">
+                    <i class="fas fa-home"></i>
+                    Return to StudentsMart
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

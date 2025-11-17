@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Admin | Super Admin</title>
+    <link rel="icon" href="https://i.ibb.co/1YBpx2KS/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 2rem 0;
+        }
+        .form-container {
+            max-width: 600px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 3rem;
+        }
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .form-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .form-control {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 0.875rem 1rem;
+            transition: all 0.3s;
+        }
+        .form-control:focus {
+            border-color: #f093fb;
+            box-shadow: 0 0 0 3px rgba(240,147,251,0.1);
+        }
+        .role-selector {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .role-option {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .role-option input[type="radio"] {
+            display: none;
+        }
+        .role-option:hover {
+            border-color: #f093fb;
+        }
+        .role-option input[type="radio"]:checked + .role-content {
+            border-color: #f093fb;
+        }
+        .role-option input[type="radio"]:checked ~ * {
+            color: #f093fb;
+        }
+        .role-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+        .role-desc {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(240,147,251,0.3);
+        }
+        .btn-back {
+            display: inline-block;
+            color: #f093fb;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+        .btn-back:hover {
+            color: #f5576c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="form-container">
+                    <a href="/admin/manage-accounts" class="btn-back">
+                        <i class="fas fa-arrow-left me-1"></i> Back to Account Management
+                    </a>
+                    <div class="form-header">
+                        <h1><i class="fas fa-user-shield me-2"></i>Create Admin Account</h1>
+                        <p class="text-muted">Add a new admin user to the platform</p>
+                    </div>
+
+                    <form id="createAdminForm">
+                        <div class="form-group">
+                            <label>Full Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="full_name" placeholder="Enter full name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="email" placeholder="admin@example.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="password" placeholder="Create a secure password" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>College/Institution</label>
+                            <input type="text" class="form-control" id="college" placeholder="Enter college name" value="Admin College">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Admin Role <span class="text-danger">*</span></label>
+                            <div class="role-selector">
+                                <label class="role-option">
+                                    <input type="radio" name="admin_role" value="super_admin" required>
+                                    <div class="role-content">
+                                        <div class="role-title">
+                                            <i class="fas fa-crown me-2"></i>Super Admin
+                                        </div>
+                                        <div class="role-desc">
+                                            Full access to all features including creating companies, managing all admins, and complete system control
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <label class="role-option">
+                                    <input type="radio" name="admin_role" value="normal_admin">
+                                    <div class="role-content">
+                                        <div class="role-title">
+                                            <i class="fas fa-user-tie me-2"></i>Normal Admin
+                                        </div>
+                                        <div class="role-desc">
+                                            Manage students, companies, and internships. Can view applications and moderate content. Cannot create other admins
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <label class="role-option">
+                                    <input type="radio" name="admin_role" value="intern_admin">
+                                    <div class="role-content">
+                                        <div class="role-title">
+                                            <i class="fas fa-briefcase me-2"></i>Intern Admin
+                                        </div>
+                                        <div class="role-desc">
+                                            Limited to creating and managing internship postings only. No access to user management or other admin features
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-plus-circle me-2"></i>Create Admin Account
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add visual feedback for role selection
+        document.querySelectorAll('.role-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.role-option').forEach(opt => {
+                    opt.style.borderColor = '#e0e0e0';
+                    opt.style.backgroundColor = 'white';
+                });
+                this.style.borderColor = '#f093fb';
+                this.style.backgroundColor = 'rgba(240,147,251,0.05)';
+            });
+        });
+
+        document.getElementById('createAdminForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const selectedRole = document.querySelector('input[name="admin_role"]:checked');
+            if (!selectedRole) {
+                alert('Please select an admin role');
+                return;
+            }
+
+            const submitBtn = e.target.querySelector('.btn-submit');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch('/admin/create-admin', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        full_name: document.getElementById('full_name').value,
+                        email: document.getElementById('email').value,
+                        password: document.getElementById('password').value,
+                        college: document.getElementById('college').value || 'Admin College',
+                        admin_role: selectedRole.value
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert(data.message || 'Admin created successfully!');
+                    window.location.href = '/admin/manage-accounts';
+                } else {
+                    alert('Error: ' + (data.message || 'Failed to create admin'));
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

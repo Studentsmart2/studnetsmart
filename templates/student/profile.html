@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ profile.user.full_name }} - Profile | StudentSmart</title>
+    <link rel="icon" href="https://i.ibb.co/1YBpx2KS/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --primary-light: #A29BFE;
+            --secondary: #00CEC9;
+            --accent: #FD79A8;
+            --dark: #2D3436;
+            --light: #F5F6FA;
+            --white: #FFFFFF;
+            --success: #00B894;
+            --border-radius: 12px;
+            --border-radius-lg: 20px;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-link {
+            color: var(--dark);
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .profile-header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .profile-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid var(--white);
+            object-fit: cover;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .profile-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .profile-meta {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            margin-top: 0.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+
+        .social-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        .btn-download-resume {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: var(--success);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            transition: var(--transition);
+            margin-top: 1rem;
+        }
+
+        .btn-download-resume:hover {
+            background: #00a17a;
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .section-card {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        .section-card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .item-card {
+            background: var(--light);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .item-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .item-subtitle {
+            color: var(--primary);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-meta {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .skill-badge {
+            background: var(--primary);
+            color: var(--white);
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .skill-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            background: var(--primary-light);
+        }
+
+        .bio-text {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #999;
+            padding: 2rem;
+            font-style: italic;
+        }
+
+        /* Mobile Hamburger Menu Styles */
+        .navbar-toggler {
+            border: none;
+            padding: 0.5rem;
+            background: transparent;
+            position: relative;
+            z-index: 1001;
+            display: none;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: none;
+            outline: none;
+        }
+
+        .navbar-toggler-icon {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 26px;
+            cursor: pointer;
+            background-image: none !important;
+        }
+
+        .navbar-toggler-icon span {
+            width: 26px;
+            height: 3px;
+            background: var(--dark);
+            border-radius: 3px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: block;
+        }
+
+        .navbar-toggler.active .navbar-toggler-icon span:nth-child(1) {
+            transform: rotate(45deg) translate(7px, 7px);
+        }
+
+        .navbar-toggler.active .navbar-toggler-icon span:nth-child(2) {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+
+        .navbar-toggler.active .navbar-toggler-icon span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        .mobile-menu-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-menu-backdrop.show {
+            display: block;
+            opacity: 1;
+        }
+
+        body.menu-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .profile-name {
+                font-size: 2rem;
+            }
+
+            .profile-meta {
+                font-size: 1rem;
+            }
+
+            .social-links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .section-card {
+                padding: 1.5rem;
+            }
+
+            .navbar-toggler {
+                display: flex;
+            }
+
+            .navbar .d-flex.gap-3 {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 320px;
+                max-width: 85vw;
+                height: 100vh;
+                background: var(--white);
+                box-shadow: -5px 0 30px rgba(0, 0, 0, 0.2);
+                transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 999;
+                overflow-y: auto;
+                display: flex !important;
+                flex-direction: column;
+                padding: 5rem 2rem 2rem;
+                gap: 0 !important;
+            }
+
+            .navbar .d-flex.gap-3.show {
+                right: 0;
+            }
+
+            .navbar .nav-link {
+                padding: 1rem 1.5rem;
+                margin: 0;
+                border-bottom: 1px solid var(--light);
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                font-size: 1.05rem;
+            }
+
+            .navbar .nav-link:hover {
+                background: var(--light);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <a href="/" class="navbar-brand">StudentSmart</a>
+
+                <button class="navbar-toggler" type="button" onclick="toggleMobileMenu()">
+                    <div class="navbar-toggler-icon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </button>
+
+                <div class="d-flex gap-3" id="navbarNav">
+                    <a href="/student/dashboard" class="nav-link">
+                        <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                    </a>
+                    <a href="/student/internships" class="nav-link">
+                        <i class="fas fa-briefcase me-1"></i> Browse Internships
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="mobile-menu-backdrop" onclick="closeMobileMenu()"></div>
+
+    <div class="profile-header">
+        <div class="container text-center">
+            {% if profile.profile_photo %}
+            <img src="/static/uploads/{{ profile.profile_photo }}" alt="{{ profile.user.full_name }}" class="profile-photo">
+            {% else %}
+            <div class="profile-photo d-flex align-items-center justify-content-center bg-white text-primary" style="font-size: 3rem;">
+                <i class="fas fa-user"></i>
+            </div>
+            {% endif %}
+            
+            <h1 class="profile-name">{{ profile.user.full_name }}</h1>
+            <p class="profile-meta">
+                <i class="fas fa-envelope me-2"></i>{{ profile.user.email }}
+                {% if profile.location %}
+                <span class="mx-3">|</span>
+                <i class="fas fa-map-marker-alt me-2"></i>{{ profile.location }}{% if profile.state %}, {{ profile.state }}{% endif %}
+                {% elif profile.state %}
+                <span class="mx-3">|</span>
+                <i class="fas fa-map-marker-alt me-2"></i>{{ profile.state }}
+                {% endif %}
+            </p>
+            <p class="profile-meta">
+                <i class="fas fa-university me-2"></i>{{ profile.user.college }}
+                {% if profile.user.department %}
+                <span class="mx-2">•</span>
+                {{ profile.user.department }}
+                {% endif %}
+            </p>
+
+            {% if profile.linkedin_url or profile.github_url or profile.portfolio_url or profile.leetcode_url %}
+            <div class="social-links">
+                {% if profile.linkedin_url %}
+                <a href="{{ profile.linkedin_url }}" target="_blank" class="social-link">
+                    <i class="fab fa-linkedin"></i> LinkedIn
+                </a>
+                {% endif %}
+                {% if profile.github_url %}
+                <a href="{{ profile.github_url }}" target="_blank" class="social-link">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+                {% endif %}
+                {% if profile.portfolio_url %}
+                <a href="{{ profile.portfolio_url }}" target="_blank" class="social-link">
+                    <i class="fas fa-globe"></i> Portfolio
+                </a>
+                {% endif %}
+                {% if profile.leetcode_url %}
+                <a href="{{ profile.leetcode_url }}" target="_blank" class="social-link">
+                    <i class="fas fa-code"></i> LeetCode
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% if profile.resume_url %}
+            <div>
+                <a href="/static/uploads/{{ profile.resume_url }}" target="_blank" download class="btn-download-resume">
+                    <i class="fas fa-download"></i> Download Resume
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        {% if profile.bio %}
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-user-circle"></i> About
+            </h2>
+            <p class="bio-text">{{ profile.bio }}</p>
+            {% if profile.phone %}
+            <p class="mt-3"><strong><i class="fas fa-phone me-2"></i>Phone:</strong> {{ profile.phone }}</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if profile.interests %}
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-bullseye"></i> Career Interests
+            </h2>
+            <div class="skills-container">
+                {% set interests_list = profile.interests | fromjson %}
+                {% for interest in interests_list %}
+                <span class="skill-badge">
+                    <i class="fas fa-star"></i>
+                    {{ interest }}
+                </span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if profile.education %}
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-graduation-cap"></i> Education
+            </h2>
+            {% for edu in profile.education %}
+            <div class="item-card">
+                <div class="item-title">{{ edu.degree }}{% if edu.field_of_study %} - {{ edu.field_of_study }}{% endif %}</div>
+                <div class="item-subtitle">{{ edu.institution }}</div>
+                <div class="item-meta">
+                    <i class="fas fa-calendar me-2"></i>
+                    {% if edu.start_date %}{{ edu.start_date.year }}{% endif %}
+                    -
+                    {% if edu.end_date %}{{ edu.end_date.year }}{% else %}Present{% endif %}
+                    {% if edu.grade %}
+                    <span class="mx-3">|</span>
+                    <i class="fas fa-award me-2"></i>Grade: {{ edu.grade }}
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if profile.work_experience %}
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-briefcase"></i> Work Experience
+            </h2>
+            {% for exp in profile.work_experience %}
+            <div class="item-card">
+                <div class="item-title">{{ exp.position }}</div>
+                <div class="item-subtitle">{{ exp.company }}</div>
+                <div class="item-meta mb-2">
+                    <i class="fas fa-calendar me-2"></i>
+                    {% if exp.start_date %}{{ exp.start_date.year }}{% endif %}
+                    -
+                    {% if exp.end_date %}{{ exp.end_date.year }}{% else %}Present{% endif %}
+                </div>
+                {% if exp.description %}
+                <p class="mb-0">{{ exp.description }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if profile.skills %}
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-cogs"></i> Skills
+            </h2>
+            <div class="skills-container">
+                {% for skill in profile.skills %}
+                <span class="skill-badge">
+                    <i class="fas fa-check-circle"></i>
+                    {{ skill.name }} {% if skill.proficiency_level %}({{ skill.proficiency_level }}){% endif %}
+                </span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if profile.certifications %}
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-certificate"></i> Certifications
+            </h2>
+            {% for cert in profile.certifications %}
+            <div class="item-card">
+                <div class="item-title">{{ cert.name }}</div>
+                <div class="item-subtitle">{{ cert.issuing_organization }}</div>
+                <div class="item-meta">
+                    {% if cert.issue_date %}
+                    <i class="fas fa-calendar me-2"></i>Issued: {{ cert.issue_date.year }}
+                    {% endif %}
+                    {% if cert.credential_url %}
+                    <span class="mx-3">|</span>
+                    <a href="{{ cert.credential_url }}" target="_blank" style="color: var(--primary);">
+                        <i class="fas fa-external-link-alt me-1"></i>View Credential
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if not profile.education and not profile.work_experience and not profile.skills and not profile.certifications %}
+        <div class="section-card">
+            <div class="no-data">
+                <i class="fas fa-info-circle fa-3x mb-3" style="color: #ccc;"></i>
+                <p>Profile is still being built. Check back soon!</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleMobileMenu() {
+            const toggler = document.querySelector('.navbar-toggler');
+            const navbarNav = document.getElementById('navbarNav');
+            const backdrop = document.querySelector('.mobile-menu-backdrop');
+
+            toggler.classList.toggle('active');
+            navbarNav.classList.toggle('show');
+            backdrop.classList.toggle('show');
+            document.body.classList.toggle('menu-open');
+        }
+
+        function closeMobileMenu() {
+            const toggler = document.querySelector('.navbar-toggler');
+            const navbarNav = document.getElementById('navbarNav');
+            const backdrop = document.querySelector('.mobile-menu-backdrop');
+
+            toggler.classList.remove('active');
+            navbarNav.classList.remove('show');
+            backdrop.classList.remove('show');
+            document.body.classList.remove('menu-open');
+        }
+
+        document.querySelectorAll('#navbarNav .nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                setTimeout(closeMobileMenu, 300);
+            });
+        });
+    </script>
+</body>
+</html>

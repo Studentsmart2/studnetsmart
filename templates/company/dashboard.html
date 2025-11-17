@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Dashboard | StudentSmart</title>
+    <link rel="icon" href="https://i.ibb.co/1YBpx2KS/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --primary-light: #A29BFE;
+            --secondary: #00CEC9;
+            --accent: #FD79A8;
+            --dark: #2D3436;
+            --light: #F5F6FA;
+            --white: #FFFFFF;
+            --success: #00B894;
+            --warning: #FDCB6E;
+            --border-radius: 12px;
+            --border-radius-lg: 20px;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-link {
+            color: var(--dark);
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .dashboard-header {
+            background: var(--white);
+            color: var(--dark);
+            padding: 2.5rem 0;
+            margin-bottom: 2rem;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .dashboard-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .kpi-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border-left: 5px solid var(--primary);
+        }
+
+        .kpi-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-5px);
+        }
+
+        .kpi-card.secondary {
+            border-left-color: var(--secondary);
+        }
+
+        .kpi-card.accent {
+            border-left-color: var(--accent);
+        }
+
+        .kpi-card.success {
+            border-left-color: var(--success);
+        }
+
+        .kpi-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .kpi-icon.primary {
+            background: rgba(108, 92, 231, 0.1);
+            color: var(--primary);
+        }
+
+        .kpi-icon.secondary {
+            background: rgba(0, 206, 201, 0.1);
+            color: var(--secondary);
+        }
+
+        .kpi-icon.accent {
+            background: rgba(253, 121, 168, 0.1);
+            color: var(--accent);
+        }
+
+        .kpi-icon.success {
+            background: rgba(0, 184, 148, 0.1);
+            color: var(--success);
+        }
+
+        .kpi-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .kpi-label {
+            color: #666;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .quick-actions {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            background: var(--light);
+            color: var(--dark);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .recent-jobs {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .job-card {
+            border-left: 4px solid var(--primary);
+            background: var(--light);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .job-card:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow);
+        }
+
+        .job-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .job-meta {
+            color: #666;
+            font-size: 0.9rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .job-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: rgba(0, 184, 148, 0.2);
+            color: var(--success);
+        }
+
+        .status-inactive {
+            background: rgba(239, 68, 68, 0.2);
+            color: #dc2626;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-title {
+                font-size: 2rem;
+            }
+
+            .kpi-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <a href="/" class="navbar-brand">StudentSmart</a>
+                <div class="d-flex gap-3">
+                    <a href="/company/post-job" class="nav-link">
+                        <i class="fas fa-plus-circle me-1"></i> Post Job
+                    </a>
+                    <a href="/company/jobs" class="nav-link">
+                        <i class="fas fa-briefcase me-1"></i> My Jobs
+                    </a>
+                    <a href="/company/applications" class="nav-link">
+                        <i class="fas fa-file-alt me-1"></i> Applications
+                    </a>
+                    <a href="/company/profile/edit" class="nav-link">
+                        <i class="fas fa-building me-1"></i> Profile
+                    </a>
+                    <a href="/logout" class="nav-link">
+                        <i class="fas fa-sign-out-alt me-1"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-header">
+        <div class="container">
+            <h1 class="dashboard-title">Welcome, {{ company.company_name }}! 👋</h1>
+            <p class="opacity-90">Manage your internship postings and track applications</p>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        <div class="kpi-cards">
+            <div class="kpi-card primary">
+                <div class="kpi-icon primary">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <div class="kpi-value">{{ internships|length }}</div>
+                <div class="kpi-label">Total Jobs Posted</div>
+            </div>
+
+            <div class="kpi-card success">
+                <div class="kpi-icon success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="kpi-value">
+                    {{ internships|selectattr('active', 'equalto', True)|list|length }}
+                </div>
+                <div class="kpi-label">Active Jobs</div>
+            </div>
+
+            <div class="kpi-card secondary">
+                <div class="kpi-icon secondary">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="kpi-value">{{ total_applications }}</div>
+                <div class="kpi-label">Total Applications</div>
+            </div>
+
+            <div class="kpi-card accent">
+                <div class="kpi-icon accent">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <div class="kpi-value">{{ internships|sum(attribute='view_count') or 0 }}</div>
+                <div class="kpi-label">Total Views</div>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <h2 class="section-title">
+                <i class="fas fa-bolt"></i> Quick Actions
+            </h2>
+            <div class="action-buttons">
+                <a href="/company/post-job" class="action-btn">
+                    <i class="fas fa-plus-circle"></i>
+                    Post New Job
+                </a>
+                <a href="/company/jobs" class="action-btn">
+                    <i class="fas fa-list"></i>
+                    View All Jobs
+                </a>
+                <a href="/company/applications" class="action-btn">
+                    <i class="fas fa-users"></i>
+                    View Applications
+                </a>
+                <a href="/company/profile/edit" class="action-btn">
+                    <i class="fas fa-edit"></i>
+                    Edit Company Profile
+                </a>
+            </div>
+        </div>
+
+        <div class="recent-jobs">
+            <h2 class="section-title">
+                <i class="fas fa-clock"></i> Recent Job Posts
+            </h2>
+            {% if internships %}
+            {% for job in internships[:5] %}
+            <div class="job-card">
+                <div class="job-title">{{ job.title }}</div>
+                <div class="job-meta">
+                    <span><i class="fas fa-map-marker-alt"></i> {{ job.location or 'Not specified' }}</span>
+                    <span><i class="fas fa-eye"></i> {{ job.view_count or 0 }} views</span>
+                    <span><i class="fas fa-calendar"></i> Posted: {{ job.created_at.strftime('%Y-%m-%d') }}</span>
+                </div>
+                <span class="status-badge status-{{ 'active' if job.active else 'inactive' }}">
+                    {{ 'Active' if job.active else 'Inactive' }}
+                </span>
+            </div>
+            {% endfor %}
+            {% if internships|length > 5 %}
+            <div class="text-center mt-3">
+                <a href="/company/jobs" style="color: var(--primary); text-decoration: none; font-weight: 500;">
+                    View All {{ internships|length }} Jobs <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-briefcase"></i>
+                <h3>No Job Posts Yet</h3>
+                <p>Start attracting top talent by posting your first internship!</p>
+                <a href="/company/post-job" style="display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--primary); color: var(--white); text-decoration: none; border-radius: var(--border-radius); font-weight: 500;">
+                    <i class="fas fa-plus-circle me-2"></i> Post Your First Job
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

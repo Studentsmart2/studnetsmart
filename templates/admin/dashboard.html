@@ -1,0 +1,2142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - StudentsMart</title>
+    <link rel="icon" href="https://i.ibb.co/1YBpx2KS/logo.png">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --success: #00B894;
+            --warning: #FDCB6E;
+            --danger: #E17055;
+            --info: #0984E3;
+            --dark: #2D3436;
+            --light: #F5F6FA;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light);
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #A29BFE 100%);
+            color: white;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .stats-card {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .sidebar {
+            background-color: white;
+            min-height: 100vh;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-pills .nav-link {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-pills .nav-link:hover {
+            background-color: rgba(108, 92, 231, 0.1);
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: var(--primary);
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(108, 92, 231, 0.05);
+        }
+
+        .badge {
+            padding: 0.5rem 0.75rem;
+            font-weight: 500;
+        }
+
+        .btn-group-sm .btn {
+            padding: 0.25rem 0.5rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Header -->
+    <div class="admin-header">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-0"><i class="fas fa-user-shield me-2"></i>Admin Dashboard</h2>
+                    <small>Welcome back, Admin</small>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-light" onclick="window.location.href='/'">
+                        <i class="fas fa-home me-2"></i>Back to Home
+                    </button>
+                    <button class="btn btn-success" onclick="window.location.href='/admin/students'">
+                        <i class="fas fa-shopping-cart me-2"></i>Interships/Companies
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar p-3">
+                <div class="nav flex-column nav-pills" id="adminTabs" role="tablist">
+                    <button class="nav-link active" id="dashboard-tab" data-bs-toggle="pill" data-bs-target="#dashboard" type="button" role="tab">
+                        <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                    </button>
+                    <button class="nav-link" id="users-tab" data-bs-toggle="pill" data-bs-target="#users" type="button" role="tab">
+                        <i class="fas fa-users me-2"></i> Users
+                    </button>
+                    <button class="nav-link" id="listings-tab" data-bs-toggle="pill" data-bs-target="#listings" type="button" role="tab">
+                        <i class="fas fa-list me-2"></i> Listings
+                    </button>
+                    <button class="nav-link" id="reports-tab" data-bs-toggle="pill" data-bs-target="#reports" type="button" role="tab">
+                        <i class="fas fa-flag me-2"></i> Reports
+                        <span class="badge bg-danger ms-2" id="reportsBadge">0</span>
+                    </button>
+                    <button class="nav-link" id="colleges-tab" data-bs-toggle="pill" data-bs-target="#colleges" type="button" role="tab">
+                        <i class="fas fa-university me-2"></i> Colleges
+                    </button>
+                    <button class="nav-link" id="activity-tab" data-bs-toggle="pill" data-bs-target="#activity" type="button" role="tab">
+                        <i class="fas fa-history me-2"></i> Activity Log
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 p-4">
+                <div class="tab-content">
+                    <!-- Dashboard Tab -->
+                    <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
+                        <!-- Stats Cards -->
+                        <div class="row mb-4">
+                            <div class="col-md-3 mb-3">
+                                <div class="card stats-card bg-primary text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Users</h5>
+                                        <h2 id="totalUsers">0</h2>
+                                        <small>Last 30 days: <span id="newUsers">0</span></small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card stats-card bg-success text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Verified Users</h5>
+                                        <h2 id="verifiedUsers">0</h2>
+                                        <small>Unverified: <span id="unverifiedUsers">0</span></small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card stats-card bg-info text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Listings</h5>
+                                        <h2 id="totalListings">0</h2>
+                                        <small>Last 30 days: <span id="newListings">0</span></small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card stats-card bg-warning text-dark">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Fake Warnings</h5>
+                                        <h2 id="fakeWarnings">0</h2>
+                                        <small>Pending: <span id="pendingReports">0</span></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sales Stats Row -->
+                        <div class="row mb-4">
+                            <div class="col-md-3 mb-3">
+                                <div class="card stats-card bg-success text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Sales</h5>
+                                        <h2 id="totalSalesCount">0</h2>
+                                        <small>Confirmed transactions</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card stats-card bg-warning text-dark">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Pending Sales</h5>
+                                        <h2 id="pendingSalesCount">0</h2>
+                                        <small>Awaiting confirmation</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card stats-card bg-info text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Recent Sales</h5>
+                                        <h2 id="recentSalesCount">0</h2>
+                                        <small>Last 30 days</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card stats-card bg-danger text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Denied Sales</h5>
+                                        <h2 id="deniedSalesCount">0</h2>
+                                        <small>Buyer declined</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Charts -->
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-header bg-white">
+                                        <h5 class="mb-0">User Growth</h5>
+                                    </div>
+                                    <div class="card-body chart-container">
+                                        <canvas id="userGrowthChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-header bg-white">
+                                        <h5 class="mb-0">Listing Growth</h5>
+                                    </div>
+                                    <div class="card-body chart-container">
+                                        <canvas id="listingGrowthChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-header bg-white">
+                                        <h5 class="mb-0">Categories Distribution</h5>
+                                    </div>
+                                    <div class="card-body chart-container">
+                                        <canvas id="categoryChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-header bg-white">
+                                        <h5 class="mb-0">Sales by Category</h5>
+                                    </div>
+                                    <div class="card-body chart-container">
+                                        <canvas id="salesByCategoryChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sales Transactions Table -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Sales Transactions</h5>
+                                        <div class="d-flex gap-2">
+                                            <select class="form-select form-select-sm" id="salesStatusFilter" style="width: 150px;">
+                                                <option value="">All Sales</option>
+                                                <option value="confirmed">Confirmed</option>
+                                                <option value="pending">Pending</option>
+                                                <option value="denied">Denied</option>
+                                            </select>
+                                            <button class="btn btn-sm btn-success" onclick="exportSalesData()">
+                                                <i class="fas fa-download me-1"></i>Export CSV
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover mb-0">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>Item</th>
+                                                        <th>Price</th>
+                                                        <th>Category</th>
+                                                        <th>Seller</th>
+                                                        <th>Buyer</th>
+                                                        <th>College</th>
+                                                        <th>Status</th>
+                                                        <th>Sold Date</th>
+                                                        <th>Confirmed</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="salesTableBody">
+                                                    <tr>
+                                                        <td colspan="10" class="text-center py-3">
+                                                            <div class="spinner-border spinner-border-sm text-primary me-2"></div>
+                                                            Loading sales data...
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+                                        <div>
+                                            Showing <span id="salesStart">0</span> to <span id="salesEnd">0</span> of <span id="salesTotal">0</span> sales
+                                        </div>
+                                        <div class="d-flex gap-1">
+                                            <button class="btn btn-sm btn-outline-secondary" id="salesPrevPage" disabled>
+                                                <i class="fas fa-chevron-left"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-secondary" id="salesNextPage" disabled>
+                                                <i class="fas fa-chevron-right"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Users Tab -->
+                    <div class="tab-pane fade" id="users" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">User Management</h5>
+                                <div class="d-flex gap-2">
+                                    <div class="input-group input-group-sm" style="width: 250px;">
+                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                        <input type="text" class="form-control" id="userSearch" placeholder="Search users...">
+                                    </div>
+                                    <select class="form-select form-select-sm" id="userFilter" style="width: 150px;">
+                                        <option value="">All Users</option>
+                                        <option value="verified">Verified</option>
+                                        <option value="unverified">Unverified</option>
+                                        <option value="admin">Admins</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th width="50"><input type="checkbox" class="form-check-input" id="selectAllUsers"></th>
+                                                <th>ID</th>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>College</th>
+                                                <th>Verified</th>
+                                                <th>Listings</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="usersTableBody">
+                                            <tr><td colspan="8" class="text-center py-3">Loading users...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+                                <div class="d-flex gap-2">
+                                    <select class="form-select form-select-sm" id="bulkUserAction" style="width: 150px;">
+                                        <option value="">Bulk Actions</option>
+                                        <option value="verify">Verify Selected</option>
+                                        <option value="unverify">Unverify Selected</option>
+                                        <option value="delete">Delete Selected</option>
+                                    </select>
+                                    <button class="btn btn-sm btn-primary" id="applyBulkAction">Apply</button>
+                                </div>
+                                <div>
+                                    Showing <span id="userStart">1</span> to <span id="userEnd">10</span> of <span id="userTotal">0</span> users
+                                </div>
+                                <div class="d-flex gap-1">
+                                    <button class="btn btn-sm btn-outline-secondary" id="userPrevPage" disabled>
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary" id="userNextPage" disabled>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Listings Tab -->
+                    <div class="tab-pane fade" id="listings" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Listing Management</h5>
+                                <div class="d-flex gap-2">
+                                    <div class="input-group input-group-sm" style="width: 250px;">
+                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                        <input type="text" class="form-control" id="listingSearch" placeholder="Search listings...">
+                                    </div>
+                                    <select class="form-select form-select-sm" id="listingFilter" style="width: 150px;">
+                                        <option value="">All Listings</option>
+                                        <option value="fake">Fake Warnings</option>
+                                        <option value="recent">Recent</option>
+                                        <option value="old">Old</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th width="50"><input type="checkbox" class="form-check-input" id="selectAllListings"></th>
+                                                <th>ID</th>
+                                                <th>Title</th>
+                                                <th>Price</th>
+                                                <th>Category</th>
+                                                <th>Seller</th>
+                                                <th>Fake Warning</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="listingsTableBody">
+                                            <tr><td colspan="8" class="text-center py-3">Loading listings...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+                                <div class="d-flex gap-2">
+                                    <select class="form-select form-select-sm" id="bulkListingAction" style="width: 150px;">
+                                        <option value="">Bulk Actions</option>
+                                        <option value="flag">Flag as Fake</option>
+                                        <option value="unflag">Remove Flag</option>
+                                        <option value="delete">Delete</option>
+                                    </select>
+                                    <button class="btn btn-sm btn-primary" id="applyBulkListingAction">Apply</button>
+                                </div>
+                                <div>
+                                    Showing <span id="listingStart">1</span> to <span id="listingEnd">10</span> of <span id="listingTotal">0</span> listings
+                                </div>
+                                <div class="d-flex gap-1">
+                                    <button class="btn btn-sm btn-outline-secondary" id="listingPrevPage" disabled>
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary" id="listingNextPage" disabled>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reports Tab -->
+                    <div class="tab-pane fade" id="reports" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Reported Content</h5>
+                                <select class="form-select form-select-sm" id="reportFilter" style="width: 150px;">
+                                    <option value="">All Reports</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="resolved">Resolved</option>
+                                </select>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Listing</th>
+                                                <th>Reporter</th>
+                                                <th>Reason</th>
+                                                <th>Status</th>
+                                                <th>Date</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="reportsTableBody">
+                                            <tr><td colspan="7" class="text-center py-3">Loading reports...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+                                <div>
+                                    Showing <span id="reportStart">1</span> to <span id="reportEnd">10</span> of <span id="reportTotal">0</span> reports
+                                </div>
+                                <div class="d-flex gap-1">
+                                    <button class="btn btn-sm btn-outline-secondary" id="reportPrevPage" disabled>
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary" id="reportNextPage" disabled>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Colleges Tab -->
+                    <div class="tab-pane fade" id="colleges" role="tabpanel">
+                        <!-- Stats Cards -->
+                        <div class="row mb-4">
+                            <div class="col-md-3 mb-3">
+                                <div class="card stats-card bg-primary text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Colleges</h5>
+                                        <h2 id="totalColleges">0</h2>
+                                        <small>With student profiles</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card stats-card bg-success text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Students</h5>
+                                        <h2 id="totalStudents">0</h2>
+                                        <small>Across all colleges</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card stats-card bg-info text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">States</h5>
+                                        <h2 id="totalStates">0</h2>
+                                        <small>Represented</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card stats-card bg-warning text-dark">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Top Interest</h5>
+                                        <h6 id="topInterest">-</h6>
+                                        <small id="topInterestCount">0 students</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interest Filter Section -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Students by Interest</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Select Interests</label>
+                                        <select id="interestFilter" class="form-select" multiple size="6">
+                                            <option value="Frontend Developer">Frontend Developer</option>
+                                            <option value="Backend Developer">Backend Developer</option>
+                                            <option value="Full Stack Developer">Full Stack Developer</option>
+                                            <option value="Mobile Development">Mobile Development</option>
+                                            <option value="Data Science">Data Science</option>
+                                            <option value="DevOps">DevOps</option>
+                                            <option value="UI/UX Design">UI/UX Design</option>
+                                            <option value="Machine Learning">Machine Learning</option>
+                                            <option value="Cloud Computing">Cloud Computing</option>
+                                            <option value="Cybersecurity">Cybersecurity</option>
+                                            <option value="AI">Artificial Intelligence</option>
+                                            <option value="Blockchain">Blockchain</option>
+                                        </select>
+                                        <small class="text-muted">Hold Ctrl/Cmd to select multiple interests</small>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="row">
+                                            <div class="col-12 mb-3">
+                                                <label class="form-label">Filter by College</label>
+                                                <select id="collegeFilterForStudents" class="form-select">
+                                                    <option value="">All Colleges</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-12 mb-3">
+                                                <label class="form-label">Filter by State</label>
+                                                <select id="stateFilter" class="form-select">
+                                                    <option value="">All States</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-primary" onclick="filterStudentsByInterest()">
+                                        <i class="fas fa-search me-2"></i>Filter Students
+                                    </button>
+                                    <button class="btn btn-outline-secondary" onclick="resetStudentFilters()">
+                                        <i class="fas fa-redo me-2"></i>Reset Filters
+                                    </button>
+                                    <button class="btn btn-success ms-auto" onclick="exportFilteredStudents()">
+                                        <i class="fas fa-download me-2"></i>Export CSV
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Filtered Students Results -->
+                        <div class="card mb-4" id="filteredStudentsCard" style="display: none;">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="fas fa-users me-2"></i>Filtered Students</h5>
+                                <span class="badge bg-primary" id="filteredStudentsCount">0 results</span>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>College</th>
+                                                <th>State</th>
+                                                <th>Interests</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="filteredStudentsBody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interest Distribution Chart -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header bg-white">
+                                        <h5 class="mb-0">Interest Distribution</h5>
+                                    </div>
+                                    <div class="card-body chart-container">
+                                        <canvas id="interestChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header bg-white">
+                                        <h5 class="mb-0">State Distribution</h5>
+                                    </div>
+                                    <div class="card-body chart-container">
+                                        <canvas id="stateChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Colleges Table -->
+                        <div class="card">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">College Management</h5>
+                                <div class="input-group input-group-sm" style="width: 250px;">
+                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                    <input type="text" class="form-control" id="collegeSearch" placeholder="Search colleges...">
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>College Name</th>
+                                                <th>State</th>
+                                                <th>Total Students</th>
+                                                <th>Top Interests</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="collegesTableBody">
+                                            <tr><td colspan="5" class="text-center py-3">Loading colleges...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+                                <div>
+                                    Showing <span id="collegeStart">1</span> to <span id="collegeEnd">10</span> of <span id="collegeTotal">0</span> colleges
+                                </div>
+                                <div class="d-flex gap-1">
+                                    <button class="btn btn-sm btn-outline-secondary" id="collegePrevPage" disabled>
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary" id="collegeNextPage" disabled>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activity Log Tab -->
+                    <div class="tab-pane fade" id="activity" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">Admin Activity Log</h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Admin</th>
+                                                <th>Action</th>
+                                                <th>Target</th>
+                                                <th>Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="activityTableBody">
+                                            <tr><td colspan="5" class="text-center py-3">Loading activity...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+                                <div>
+                                    Showing <span id="activityStart">1</span> to <span id="activityEnd">10</span> of <span id="activityTotal">0</span> activities
+                                </div>
+                                <div class="d-flex gap-1">
+                                    <button class="btn btn-sm btn-outline-secondary" id="activityPrevPage" disabled>
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary" id="activityNextPage" disabled>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Global Variables
+        let currentUserPage = 1;
+        let currentListingPage = 1;
+        let currentReportPage = 1;
+        let currentCollegePage = 1;
+        let currentSalesPage = 1;
+        const usersPerPage = 10;
+        const listingsPerPage = 10;
+        const reportsPerPage = 10;
+        const collegesPerPage = 10;
+        const salesPerPage = 10;
+        let allSalesData = [];
+        let allCollegesData = [];
+        let salesChartsInitialized = false;
+
+        // Utility: Show Alert
+        function showAlert(title, message, type = 'info') {
+            Swal.fire({
+                title: title,
+                text: message,
+                icon: type,
+                confirmButtonColor: '#6C5CE7'
+            });
+        }
+
+        // ======================
+        // LOAD ADMIN DATA
+        // ======================
+        async function loadAdminData() {
+            try {
+                const response = await fetch('/admin/dashboard', {
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) throw new Error('Failed to load admin data');
+
+                const data = await response.json();
+
+                // Update stats
+                document.getElementById('totalUsers').textContent = data.stats.total_users || 0;
+                document.getElementById('verifiedUsers').textContent = data.stats.verified_users || 0;
+                document.getElementById('unverifiedUsers').textContent = (data.stats.total_users || 0) - (data.stats.verified_users || 0);
+                document.getElementById('totalListings').textContent = data.stats.total_listings || 0;
+                document.getElementById('fakeWarnings').textContent = data.stats.fake_warnings || 0;
+
+                if (data.stats.pending_reports) {
+                    document.getElementById('reportsBadge').textContent = data.stats.pending_reports;
+                } else {
+                    document.getElementById('reportsBadge').style.display = 'none';
+                }
+
+                // Load sales stats
+                await loadSalesStats();
+
+                // Load colleges
+                await loadColleges();
+
+                // Load users, listings, and reports
+                loadAdminUsers();
+                loadAdminListings();
+                loadAdminReports();
+
+                // Initialize charts
+                initCharts();
+
+            } catch (error) {
+                console.error('Error loading admin data:', error);
+                showAlert('Error', 'Failed to load admin dashboard', 'error');
+            }
+        }
+
+        // ======================
+        // SALES STATS
+        // ======================
+        async function loadSalesStats() {
+            try {
+                const response = await fetch('/api/admin/sales-stats', {
+                    credentials: 'same-origin'
+                });
+
+                if (!response.ok) throw new Error('Failed to load sales stats');
+
+                const data = await response.json();
+
+                document.getElementById('totalSalesCount').textContent = data.total_sales || 0;
+                document.getElementById('pendingSalesCount').textContent = data.pending_sales || 0;
+                document.getElementById('recentSalesCount').textContent = data.recent_sales || 0;
+                document.getElementById('deniedSalesCount').textContent = data.denied_sales || 0;
+
+                allSalesData = data.recent_sold_items || [];
+                displaySalesTable(allSalesData);
+
+                if (typeof Chart !== 'undefined') {
+                    createSalesCharts(data);
+                }
+
+            } catch (error) {
+                console.error('Error loading sales stats:', error);
+            }
+        }
+
+        function displaySalesTable(salesData, page = 1) {
+            const tableBody = document.getElementById('salesTableBody');
+            if (!tableBody) return;
+
+            const start = (page - 1) * salesPerPage;
+            const end = start + salesPerPage;
+            const paginatedData = salesData.slice(start, end);
+
+            if (!salesData || salesData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="10" class="text-center py-4">No sales transactions found</td></tr>';
+                return;
+            }
+
+            tableBody.innerHTML = paginatedData.map(sale => `
+                <tr>
+                    <td><span class="badge bg-secondary">#${sale.id}</span></td>
+                    <td><strong>${sale.listing_title || 'Deleted Listing'}</strong></td>
+                    <td><strong class="text-success">₹${sale.listing_price || 0}</strong></td>
+                    <td><span class="badge bg-info">${(sale.listing_category || 'N/A').toUpperCase()}</span></td>
+                    <td>${sale.seller_name}</td>
+                    <td>${sale.buyer_name}</td>
+                    <td><small>${sale.seller_college}</small></td>
+                    <td><span class="badge ${getSalesStatusBadgeClass(sale.status)}">${sale.status.toUpperCase()}</span></td>
+                    <td><small>${formatSalesDate(sale.sold_at)}</small></td>
+                    <td><small>${sale.confirmed_at ? formatSalesDate(sale.confirmed_at) : '-'}</small></td>
+                </tr>
+            `).join('');
+
+            updateSalesPagination(salesData.length, page);
+        }
+
+        function getSalesStatusBadgeClass(status) {
+            switch(status) {
+                case 'confirmed': return 'bg-success';
+                case 'pending': return 'bg-warning text-dark';
+                case 'denied': return 'bg-danger';
+                default: return 'bg-secondary';
+            }
+        }
+
+        function formatSalesDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-IN', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function updateSalesPagination(total, currentPage) {
+            const totalPages = Math.ceil(total / salesPerPage);
+            const start = total === 0 ? 0 : (currentPage - 1) * salesPerPage + 1;
+            const end = Math.min(currentPage * salesPerPage, total);
+
+            document.getElementById('salesStart').textContent = start;
+            document.getElementById('salesEnd').textContent = end;
+            document.getElementById('salesTotal').textContent = total;
+
+            document.getElementById('salesPrevPage').disabled = currentPage === 1;
+            document.getElementById('salesNextPage').disabled = currentPage === totalPages || totalPages === 0;
+        }
+
+        function exportSalesData() {
+            const filterValue = document.getElementById('salesStatusFilter').value;
+            let dataToExport = filterValue === '' ? allSalesData : allSalesData.filter(sale => sale.status === filterValue);
+
+            if (dataToExport.length === 0) {
+                showAlert('No Data', 'No sales data to export', 'info');
+                return;
+            }
+
+            let csv = 'ID,Item Title,Price,Category,Seller Name,Seller Email,Buyer Name,Buyer Email,College,Status,Sold Date,Confirmed Date\n';
+
+            dataToExport.forEach(sale => {
+                csv += `${sale.id},"${sale.listing_title}",${sale.listing_price},"${sale.listing_category || 'N/A'}","${sale.seller_name}","${sale.seller_email || ''}","${sale.buyer_name}","${sale.buyer_email}","${sale.seller_college}","${sale.status}","${sale.sold_at}","${sale.confirmed_at || 'N/A'}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `sales_report_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        // ======================
+        // USERS MANAGEMENT
+        // ======================
+        async function loadAdminUsers(page = 1, search = '', filter = '') {
+            try {
+                const response = await fetch(`/admin/dashboard?page=${page}&search=${search}&filter=${filter}`, {
+                    credentials: 'same-origin'
+                });
+
+                if (!response.ok) throw new Error('Failed to load users');
+
+                const data = await response.json();
+                const usersTable = document.getElementById('usersTableBody');
+                usersTable.innerHTML = data.users.map(user => `
+                    <tr>
+                        <td><input type="checkbox" class="form-check-input user-checkbox" value="${user.id}"></td>
+                        <td>${user.id}</td>
+                        <td><a href="#" onclick="showUserDetails(${user.id}); return false;">${user.full_name || 'N/A'}</a></td>
+                        <td>${user.email}</td>
+                        <td>${user.college ? `<a href="#" onclick="showCollegeDetails('${user.college}'); return false;">${user.college}</a>` : 'N/A'}</td>
+                        <td>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input toggle-verification" type="checkbox" data-user-id="${user.id}" ${user.is_verified ? 'checked' : ''}>
+                            </div>
+                        </td>
+                        <td>${user.listings_count}</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger" onclick="adminDeleteUser(${user.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                document.getElementById('userStart').textContent = (page - 1) * usersPerPage + 1;
+                document.getElementById('userEnd').textContent = Math.min(page * usersPerPage, data.stats.total_users);
+                document.getElementById('userTotal').textContent = data.stats.total_users;
+
+                document.getElementById('userPrevPage').disabled = page <= 1;
+                document.getElementById('userNextPage').disabled = page * usersPerPage >= data.stats.total_users;
+
+                currentUserPage = page;
+
+            } catch (error) {
+                showAlert('Error', error.message, 'error');
+            }
+        }
+
+        async function adminDeleteUser(userId) {
+            const result = await Swal.fire({
+                title: 'Are you sure?',
+                text: "This will delete the user and all their listings!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(`/admin/delete-user/${userId}`, {
+                        method: 'DELETE',
+                        credentials: 'same-origin'
+                    });
+
+                    if (!response.ok) throw new Error('Failed to delete user');
+
+                    showAlert('Success', 'User deleted successfully', 'success');
+                    loadAdminData();
+                } catch (error) {
+                    showAlert('Error', error.message, 'error');
+                }
+            }
+        }
+
+        // ======================
+        // LISTINGS MANAGEMENT
+        // ======================
+        async function loadAdminListings(page = 1, search = '', filter = '') {
+            try {
+                const response = await fetch(`/admin/dashboard?page=${page}&search=${search}&filter=${filter}`, {
+                    credentials: 'same-origin'
+                });
+
+                if (!response.ok) throw new Error('Failed to load listings');
+
+                const data = await response.json();
+                const listingsTable = document.getElementById('listingsTableBody');
+
+                if (!data.listings || data.listings.length === 0) {
+                    listingsTable.innerHTML = '<tr><td colspan="8" class="text-center py-3">No listings found</td></tr>';
+                    return;
+                }
+
+                listingsTable.innerHTML = data.listings.map(listing => `
+                    <tr>
+                        <td><input type="checkbox" class="form-check-input listing-checkbox" value="${listing.id}"></td>
+                        <td>${listing.id}</td>
+                        <td><a href="#" onclick="showListingDetails(${listing.id}); return false;">${listing.title}</a></td>
+                        <td>₹${listing.price}</td>
+                        <td>${listing.category}</td>
+                        <td><a href="#" onclick="showUserDetails(${listing.seller_id}); return false;">${listing.seller_name}</a></td>
+                        <td><span class="badge ${listing.is_fake_warning ? 'bg-danger' : 'bg-success'}">${listing.is_fake_warning ? 'Flagged' : 'Clean'}</span></td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-warning" onclick="adminToggleFakeWarning(${listing.id}, ${!listing.is_fake_warning})">
+                                    <i class="fas fa-flag"></i>
+                                </button>
+                                <button class="btn btn-outline-danger" onclick="adminDeleteListing(${listing.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+
+                document.getElementById('listingStart').textContent = (page - 1) * listingsPerPage + 1;
+                document.getElementById('listingEnd').textContent = Math.min(page * listingsPerPage, data.stats.total_listings);
+                document.getElementById('listingTotal').textContent = data.stats.total_listings;
+
+                currentListingPage = page;
+
+            } catch (error) {
+                showAlert('Error', error.message, 'error');
+            }
+        }
+
+        async function adminDeleteListing(listingId) {
+            const result = await Swal.fire({
+                title: 'Are you sure?',
+                text: "This will permanently delete the listing!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(`/admin/delete-listing/${listingId}`, {
+                        method: 'DELETE',
+                        credentials: 'same-origin'
+                    });
+
+                    if (!response.ok) throw new Error('Failed to delete listing');
+
+                    showAlert('Success', 'Listing deleted successfully', 'success');
+                    loadAdminData();
+                } catch (error) {
+                    showAlert('Error', error.message, 'error');
+                }
+            }
+        }
+
+        async function adminToggleFakeWarning(listingId, setFlagged) {
+            try {
+                const response = await fetch(`/admin/toggle-fake-warning/${listingId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin'
+                });
+
+                if (!response.ok) throw new Error('Failed to update warning');
+
+                showAlert('Success', 'Listing status updated', 'success');
+                loadAdminListings(currentListingPage);
+            } catch (error) {
+                showAlert('Error', error.message, 'error');
+            }
+        }
+
+        // ======================
+        // REPORTS MANAGEMENT
+        // ======================
+        async function loadAdminReports(page = 1, search = '', filter = '') {
+            try {
+                const response = await fetch(`/admin/dashboard?page=${page}&search=${search}&filter=${filter}`, {
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) throw new Error('Failed to load reports');
+
+                const data = await response.json();
+                const reportsTable = document.getElementById('reportsTableBody');
+
+                if (!data.reports || data.reports.length === 0) {
+                    reportsTable.innerHTML = '<tr><td colspan="7" class="text-center py-3">No reports found</td></tr>';
+                    return;
+                }
+
+                reportsTable.innerHTML = data.reports.map(report => {
+                    const statusBadge = report.status === 'pending' ? 'bg-warning' :
+                                       report.status === 'resolved' ? 'bg-success' : 'bg-danger';
+                    const reportDate = new Date(report.created_at).toLocaleDateString();
+                    const description = report.description ? (report.description.length > 50 ? report.description.substring(0, 50) + '...' : report.description) : 'N/A';
+
+                    return `
+                        <tr>
+                            <td>${report.id}</td>
+                            <td><a href="#" onclick="showReportDetails(${report.id}); return false;">${report.listing_title}</a></td>
+                            <td>${report.reporter_name}</td>
+                            <td>${description}</td>
+                            <td><span class="badge ${statusBadge}">${report.status}</span></td>
+                            <td>${reportDate}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-info" onclick="showReportDetails(${report.id})">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+                document.getElementById('reportStart').textContent = (page - 1) * reportsPerPage + 1;
+                document.getElementById('reportEnd').textContent = Math.min(page * reportsPerPage, data.stats.total_reports);
+                document.getElementById('reportTotal').textContent = data.stats.total_reports;
+
+                document.getElementById('reportPrevPage').disabled = page <= 1;
+                document.getElementById('reportNextPage').disabled = page * reportsPerPage >= data.stats.total_reports;
+
+                currentReportPage = page;
+
+            } catch (error) {
+                console.error('Error loading reports:', error);
+                showAlert('Error', error.message, 'error');
+            }
+        }
+
+        // ======================
+        // COLLEGES MANAGEMENT
+        // ======================
+        let filteredStudentsData = [];
+        let interestChartInstance = null;
+        let stateChartInstance = null;
+
+        async function loadColleges(page = 1, search = '') {
+            try {
+                const response = await fetch(`/api/admin/colleges`, {
+                    credentials: 'same-origin'
+                });
+
+                if (!response.ok) throw new Error('Failed to load colleges');
+
+                const data = await response.json();
+                allCollegesData = data.colleges || [];
+
+                // Update stats
+                updateCollegeStats(data.stats);
+
+                // Populate filter dropdowns
+                populateFilterDropdowns(data.colleges, data.states);
+
+                // Display colleges table
+                displayCollegesTable(allCollegesData, page);
+
+                // Create charts
+                if (data.interest_stats) {
+                    createInterestChart(data.interest_stats);
+                }
+                if (data.state_stats) {
+                    createStateChart(data.state_stats);
+                }
+
+            } catch (error) {
+                console.error('Error loading colleges:', error);
+            }
+        }
+
+        function updateCollegeStats(stats) {
+            if (!stats) return;
+
+            document.getElementById('totalColleges').textContent = stats.total_colleges || 0;
+            document.getElementById('totalStudents').textContent = stats.total_students || 0;
+            document.getElementById('totalStates').textContent = stats.total_states || 0;
+
+            if (stats.top_interest) {
+                document.getElementById('topInterest').textContent = stats.top_interest.name || '-';
+                document.getElementById('topInterestCount').textContent = `${stats.top_interest.count || 0} students`;
+            }
+        }
+
+        function populateFilterDropdowns(colleges, states) {
+            // Populate college dropdown
+            const collegeFilter = document.getElementById('collegeFilterForStudents');
+            if (collegeFilter && colleges) {
+                collegeFilter.innerHTML = '<option value="">All Colleges</option>';
+                const uniqueColleges = [...new Set(colleges.map(c => c.college_name))].sort();
+                uniqueColleges.forEach(college => {
+                    collegeFilter.innerHTML += `<option value="${college}">${college}</option>`;
+                });
+            }
+
+            // Populate state dropdown
+            const stateFilter = document.getElementById('stateFilter');
+            if (stateFilter && states) {
+                stateFilter.innerHTML = '<option value="">All States</option>';
+                states.sort().forEach(state => {
+                    if (state) {
+                        stateFilter.innerHTML += `<option value="${state}">${state}</option>`;
+                    }
+                });
+            }
+        }
+
+        function displayCollegesTable(colleges, page = 1) {
+            const tableBody = document.getElementById('collegesTableBody');
+            if (!tableBody) return;
+
+            const start = (page - 1) * collegesPerPage;
+            const end = start + collegesPerPage;
+            const paginatedData = colleges.slice(start, end);
+
+            if (!colleges || colleges.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4">No colleges found</td></tr>';
+                return;
+            }
+
+            tableBody.innerHTML = paginatedData.map(college => {
+                const topInterests = college.top_interests ? college.top_interests.slice(0, 3).map(i =>
+                    `<span class="badge bg-secondary me-1">${i}</span>`
+                ).join('') : '<span class="text-muted">-</span>';
+
+                return `
+                <tr>
+                    <td><a href="#" onclick="showCollegeDetails('${college.college_name}'); return false;"><strong>${college.college_name}</strong></a></td>
+                    <td>${college.state || '-'}</td>
+                    <td><span class="badge bg-primary">${college.student_count || 0}</span></td>
+                    <td>${topInterests}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewCollegeStudents('${college.college_name}')">
+                            <i class="fas fa-users me-1"></i>View Students
+                        </button>
+                    </td>
+                </tr>
+            `;
+            }).join('');
+
+            updateCollegesPagination(colleges.length, page);
+        }
+
+        function updateCollegesPagination(total, currentPage) {
+            const totalPages = Math.ceil(total / collegesPerPage);
+            const start = total === 0 ? 0 : (currentPage - 1) * collegesPerPage + 1;
+            const end = Math.min(currentPage * collegesPerPage, total);
+
+            document.getElementById('collegeStart').textContent = start;
+            document.getElementById('collegeEnd').textContent = end;
+            document.getElementById('collegeTotal').textContent = total;
+
+            document.getElementById('collegePrevPage').disabled = currentPage === 1;
+            document.getElementById('collegeNextPage').disabled = currentPage === totalPages || totalPages === 0;
+        }
+
+        // ======================
+        // INTEREST FILTERING
+        // ======================
+        async function filterStudentsByInterest() {
+            const interestSelect = document.getElementById('interestFilter');
+            const selectedInterests = Array.from(interestSelect.selectedOptions).map(opt => opt.value);
+            const college = document.getElementById('collegeFilterForStudents').value;
+            const state = document.getElementById('stateFilter').value;
+
+            if (selectedInterests.length === 0 && !college && !state) {
+                showAlert('Info', 'Please select at least one filter criteria', 'info');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/students/filter', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        interests: selectedInterests,
+                        college: college,
+                        state: state
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to filter students');
+
+                const data = await response.json();
+                filteredStudentsData = data.students || [];
+
+                displayFilteredStudents(filteredStudentsData);
+
+            } catch (error) {
+                console.error('Error filtering students:', error);
+                showAlert('Error', 'Failed to filter students', 'error');
+            }
+        }
+
+        function displayFilteredStudents(students) {
+            const card = document.getElementById('filteredStudentsCard');
+            const tbody = document.getElementById('filteredStudentsBody');
+            const countBadge = document.getElementById('filteredStudentsCount');
+
+            if (!students || students.length === 0) {
+                card.style.display = 'block';
+                countBadge.textContent = '0 results';
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">No students found matching your criteria</td></tr>';
+                return;
+            }
+
+            card.style.display = 'block';
+            countBadge.textContent = `${students.length} result${students.length > 1 ? 's' : ''}`;
+
+            tbody.innerHTML = students.map(student => {
+                const interests = student.interests ? JSON.parse(student.interests).map(i =>
+                    `<span class="badge bg-info me-1">${i}</span>`
+                ).join('') : '<span class="text-muted">-</span>';
+
+                return `
+                <tr>
+                    <td><strong>${student.name || 'N/A'}</strong></td>
+                    <td>${student.email}</td>
+                    <td>${student.college || '-'}</td>
+                    <td>${student.state || '-'}</td>
+                    <td>${interests}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewStudentProfile(${student.id})">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+            }).join('');
+
+            // Scroll to results
+            card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function resetStudentFilters() {
+            document.getElementById('interestFilter').selectedIndex = -1;
+            document.getElementById('collegeFilterForStudents').value = '';
+            document.getElementById('stateFilter').value = '';
+            document.getElementById('filteredStudentsCard').style.display = 'none';
+            filteredStudentsData = [];
+        }
+
+        function exportFilteredStudents() {
+            if (!filteredStudentsData || filteredStudentsData.length === 0) {
+                showAlert('No Data', 'Please filter students first before exporting', 'info');
+                return;
+            }
+
+            let csv = 'Name,Email,College,State,Department,Year,Interests,Phone,Profile Complete\n';
+
+            filteredStudentsData.forEach(student => {
+                const interests = student.interests ? JSON.parse(student.interests).join('; ') : '';
+                csv += `"${student.name || ''}","${student.email}","${student.college || ''}","${student.state || ''}","${student.department || ''}","${student.year || ''}","${interests}","${student.phone || ''}","${student.profile_complete ? 'Yes' : 'No'}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `filtered_students_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            showAlert('Success', 'Student list exported successfully', 'success');
+        }
+
+        function viewCollegeStudents(collegeName) {
+            document.getElementById('collegeFilterForStudents').value = collegeName;
+            filterStudentsByInterest();
+        }
+
+        function viewStudentProfile(studentId) {
+            window.open(`/admin/students/${studentId}/dashboard`, '_blank');
+        }
+
+        // ======================
+        // CHARTS
+        // ======================
+        function createInterestChart(interestStats) {
+            const ctx = document.getElementById('interestChart');
+            if (!ctx || !interestStats || interestStats.length === 0) return;
+
+            // Destroy existing chart if it exists
+            if (interestChartInstance) {
+                interestChartInstance.destroy();
+            }
+
+            interestChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: interestStats.map(item => item.interest),
+                    datasets: [{
+                        label: 'Number of Students',
+                        data: interestStats.map(item => item.count),
+                        backgroundColor: '#6C5CE7',
+                        borderColor: '#5F50D7',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createStateChart(stateStats) {
+            const ctx = document.getElementById('stateChart');
+            if (!ctx || !stateStats || stateStats.length === 0) return;
+
+            // Destroy existing chart if it exists
+            if (stateChartInstance) {
+                stateChartInstance.destroy();
+            }
+
+            stateChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: stateStats.map(item => item.state),
+                    datasets: [{
+                        data: stateStats.map(item => item.count),
+                        backgroundColor: ['#6C5CE7', '#00B894', '#FDCB6E', '#E17055', '#0984E3', '#E84393', '#A29BFE', '#74B9FF']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // ======================
+        // CHARTS
+        // ======================
+        function initCharts() {
+            if (typeof Chart === 'undefined') {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+                script.onload = renderCharts;
+                document.head.appendChild(script);
+            } else {
+                renderCharts();
+            }
+        }
+
+        function renderCharts() {
+            fetch('/admin/stats', { credentials: 'same-origin' })
+            .then(response => response.json())
+            .then(data => {
+                // User Growth Chart
+                if (data.user_growth && data.user_growth.length > 0) {
+                    const ctx = document.getElementById('userGrowthChart');
+                    if (ctx) {
+                        new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: data.user_growth.map(item => item.date),
+                                datasets: [{
+                                    label: 'New Users',
+                                    data: data.user_growth.map(item => item.count),
+                                    borderColor: '#6C5CE7',
+                                    backgroundColor: 'rgba(108, 92, 231, 0.1)',
+                                    tension: 0.4
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false
+                            }
+                        });
+                    }
+                }
+
+                // Listing Growth Chart
+                if (data.listing_growth && data.listing_growth.length > 0) {
+                    const ctx = document.getElementById('listingGrowthChart');
+                    if (ctx) {
+                        new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: data.listing_growth.map(item => item.date),
+                                datasets: [{
+                                    label: 'New Listings',
+                                    data: data.listing_growth.map(item => item.count),
+                                    borderColor: '#00B894',
+                                    backgroundColor: 'rgba(0, 184, 148, 0.1)',
+                                    tension: 0.4
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false
+                            }
+                        });
+                    }
+                }
+
+                // Category Distribution
+                if (data.category_distribution && data.category_distribution.length > 0) {
+                    const ctx = document.getElementById('categoryChart');
+                    if (ctx) {
+                        new Chart(ctx, {
+                            type: 'doughnut',
+                            data: {
+                                labels: data.category_distribution.map(item => item.category),
+                                datasets: [{
+                                    data: data.category_distribution.map(item => item.count),
+                                    backgroundColor: ['#6C5CE7', '#00B894', '#FDCB6E', '#E17055', '#0984E3']
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false
+                            }
+                        });
+                    }
+                }
+            })
+            .catch(error => console.error('Error loading chart data:', error));
+        }
+
+        function createSalesCharts(data) {
+            if (typeof Chart === 'undefined') return;
+            if (salesChartsInitialized) return;
+
+            // Sales by Category
+            if (data.sales_by_category && data.sales_by_category.length > 0) {
+                const ctx = document.getElementById('salesByCategoryChart');
+                if (ctx) {
+                    new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: data.sales_by_category.map(item => item.category.toUpperCase()),
+                            datasets: [{
+                                data: data.sales_by_category.map(item => item.count),
+                                backgroundColor: ['#6C5CE7', '#00B894', '#FDCB6E', '#E17055', '#0984E3', '#E84393']
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false
+                        }
+                    });
+                }
+            }
+
+            salesChartsInitialized = true;
+        }
+
+        // ======================
+        // DETAIL VIEW FUNCTIONS
+        // ======================
+        async function showUserDetails(userId) {
+            try {
+                const response = await fetch(`/admin/user-details/${userId}`, {
+                    credentials: 'same-origin'
+                });
+
+                if (!response.ok) throw new Error('Failed to load user details');
+
+                const user = await response.json();
+
+                const userDetailsHtml = `
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-3">
+                            ${user.profile_picture ?
+                                `<img src="/static/${user.profile_picture}" class="img-fluid rounded-circle" alt="Profile" style="max-height: 200px;">` :
+                                `<i class="fas fa-user-circle fa-5x text-muted"></i>`}
+                        </div>
+                        <div class="col-md-8">
+                            <h4>${user.full_name || 'N/A'}</h4>
+                            <p><strong>Email:</strong> ${user.email}</p>
+                            <p><strong>College:</strong> ${user.college || 'N/A'}</p>
+                            <p><strong>Department:</strong> ${user.department || 'N/A'}</p>
+                            <p><strong>Year:</strong> ${user.year || 'N/A'}</p>
+                            <p><strong>Registered:</strong> ${new Date(user.created_at).toLocaleString()}</p>
+                            <p><strong>Status:</strong>
+                                <span class="badge ${user.is_verified ? 'bg-success' : 'bg-warning'}">
+                                    ${user.is_verified ? 'Verified' : 'Unverified'}
+                                </span>
+                            </p>
+                            <p><strong>Listings Count:</strong> ${user.listings_count || 0}</p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h5>User's Listings</h5>
+                        <div class="row" id="userListingsContainer">
+                            <!-- Listings will be loaded here -->
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('userDetailsContent').innerHTML = userDetailsHtml;
+                const userDetailsModal = new bootstrap.Modal(document.getElementById('userDetailsModal'));
+                userDetailsModal.show();
+
+                loadUserListings(userId);
+
+            } catch (error) {
+                showAlert('Error', error.message, 'error');
+            }
+        }
+
+        async function loadUserListings(userId) {
+            try {
+                const response = await fetch(`/admin/user-listings/${userId}`, {
+                    credentials: 'same-origin'
+                });
+
+                if (!response.ok) throw new Error('Failed to load user listings');
+
+                const listings = await response.json();
+                const container = document.getElementById('userListingsContainer');
+
+                if (listings.length === 0) {
+                    container.innerHTML = '<div class="col-12 text-muted">No listings found</div>';
+                    return;
+                }
+
+                container.innerHTML = listings.map(listing => `
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <img src="/static/${listing.image_url}" class="card-img-top" alt="${listing.title}" style="height: 150px; object-fit: cover;">
+                            <div class="card-body">
+                                <h6 class="card-title">${listing.title}</h6>
+                                <p class="card-text">₹${listing.price}</p>
+                                <button class="btn btn-sm btn-primary" onclick="showListingDetails(${listing.id})">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading user listings:', error);
+            }
+        }
+
+        async function showListingDetails(listingId) {
+            try {
+                const response = await fetch(`/admin/listing-details/${listingId}`, {
+                    credentials: 'same-origin'
+                });
+
+                if (!response.ok) throw new Error('Failed to load listing details');
+
+                const listing = await response.json();
+
+                const listingDetailsHtml = `
+                    <div class="row">
+                        <div class="col-md-5">
+                            <img src="/static/${listing.image_url}" class="img-fluid rounded" alt="${listing.title}">
+                        </div>
+                        <div class="col-md-7">
+                            <h3>${listing.title}</h3>
+                            <p class="text-muted">Posted by: ${listing.seller.full_name} (ID: ${listing.seller_id})</p>
+                            <p><strong>Price:</strong> ₹${listing.price}</p>
+                            ${listing.rent_price ? `<p><strong>Rent Price:</strong> ₹${listing.rent_price}</p>` : ''}
+                            <p><strong>Category:</strong> ${listing.category}</p>
+                            <p><strong>Condition:</strong> ${listing.condition}</p>
+                            <p><strong>Posted:</strong> ${new Date(listing.created_at).toLocaleString()}</p>
+                            <p><strong>Status:</strong>
+                                <span class="badge ${listing.is_fake_warning ? 'bg-danger' : 'bg-success'}">
+                                    ${listing.is_fake_warning ? 'Marked as suspicious' : 'Verified'}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h5>Description</h5>
+                        <p>${listing.description}</p>
+                        ${listing.product_type ? `<p><strong>Product Type:</strong> ${listing.product_type}</p>` : ''}
+                        ${listing.branch ? `<p><strong>Branch:</strong> ${listing.branch}</p>` : ''}
+                        ${listing.study_year ? `<p><strong>Study Year:</strong> ${listing.study_year}</p>` : ''}
+                        ${listing.working_condition ? `<p><strong>Working Condition:</strong> ${listing.working_condition}</p>` : ''}
+                        ${listing.warranty_status ? `<p><strong>Warranty Status:</strong> ${listing.warranty_status}</p>` : ''}
+                        ${listing.subject ? `<p><strong>Subject:</strong> ${listing.subject}</p>` : ''}
+                    </div>
+                `;
+
+                document.getElementById('listingDetailsContent').innerHTML = listingDetailsHtml;
+                const listingDetailsModal = new bootstrap.Modal(document.getElementById('listingDetailsModal'));
+                listingDetailsModal.show();
+
+            } catch (error) {
+                showAlert('Error', error.message, 'error');
+            }
+        }
+
+        async function showReportDetails(reportId) {
+            try {
+                const response = await fetch(`/admin/reports/${reportId}`);
+
+                if (!response.ok) {
+                    throw new Error('Failed to load report details');
+                }
+
+                const report = await response.json();
+
+                const reportDate = new Date(report.created_at);
+                const formattedDate = reportDate.toLocaleDateString() + ' ' +
+                                    reportDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+                let statusBadge = '';
+                if (report.status === 'pending') {
+                    statusBadge = '<span class="badge bg-warning">Pending</span>';
+                } else if (report.status === 'reviewed') {
+                    statusBadge = '<span class="badge bg-primary">Reviewed</span>';
+                } else if (report.status === 'resolved') {
+                    statusBadge = '<span class="badge bg-success">Resolved</span>';
+                }
+
+                const modalContent = document.getElementById('reportDetailsContent');
+                modalContent.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Report Information</h6>
+                            <ul class="list-group mb-3">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Status
+                                    ${statusBadge}
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Reported On
+                                    <span>${formattedDate}</span>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Description:</strong>
+                                    <p class="mt-2">${report.description}</p>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Reporter Information</h6>
+                            <ul class="list-group mb-3">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Name
+                                    <span>${report.reporter.name || 'N/A'}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Email
+                                    <span>${report.reporter.email || 'N/A'}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    College
+                                    <span>${report.reporter.college || 'N/A'}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>Reported Person Information</h6>
+                            <ul class="list-group mb-3">
+                                ${report.listing ? `
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Name
+                                        <span>${report.listing.seller.name}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Email
+                                        <span>${report.listing.seller.email}</span>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Related Listing:</strong>
+                                        <p class="mt-2">${report.listing.title}</p>
+                                    </li>
+                                ` : report.message_thread ? `
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Sender
+                                        <span>${report.message_thread.sender.name}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Receiver
+                                        <span>${report.message_thread.receiver.name}</span>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Message Content:</strong>
+                                        <p class="mt-2">${report.message_thread.content}</p>
+                                    </li>
+                                ` : `
+                                    <li class="list-group-item">
+                                        <div class="alert alert-warning mb-0">
+                                            No specific person information available
+                                        </div>
+                                    </li>
+                                `}
+                            </ul>
+                        </div>
+                    </div>
+
+                    ${report.image_url ? `
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>Evidence Image</h6>
+                            <img src="/static/${report.image_url}" class="img-fluid rounded" style="max-height: 300px;" alt="Report Evidence">
+                        </div>
+                    </div>
+                    ` : ''}
+                `;
+
+                document.getElementById('resolveReportBtn').setAttribute('data-report-id', report.id);
+                document.getElementById('reviewReportBtn').setAttribute('data-report-id', report.id);
+
+                const reportModal = new bootstrap.Modal(document.getElementById('reportDetailsModal'));
+                reportModal.show();
+
+            } catch (error) {
+                console.error('Error viewing report details:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: error.message || 'Failed to load report details',
+                    icon: 'error'
+                });
+            }
+        }
+
+        async function showCollegeDetails(collegeName) {
+            try {
+                const response = await fetch(`/admin/college-details/${encodeURIComponent(collegeName)}`, {
+                    credentials: 'same-origin'
+                });
+
+                if (!response.ok) throw new Error('Failed to load college details');
+
+                const data = await response.json();
+
+                const collegeDetailsHtml = `
+                    <h4><i class="fas fa-university me-2"></i>${collegeName}</h4>
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body">
+                                    <h5>Total Users</h5>
+                                    <h2>${data.total_users}</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-success text-white">
+                                <div class="card-body">
+                                    <h5>Verified Users</h5>
+                                    <h2>${data.verified_users}</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-info text-white">
+                                <div class="card-body">
+                                    <h5>Total Listings</h5>
+                                    <h2>${data.total_listings}</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5>Recent Users</h5>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Verified</th>
+                                <th>Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.recent_users.map(user => `
+                                <tr>
+                                    <td>${user.full_name}</td>
+                                    <td>${user.email}</td>
+                                    <td><span class="badge ${user.is_verified ? 'bg-success' : 'bg-warning'}">${user.is_verified ? 'Verified' : 'Unverified'}</span></td>
+                                    <td>${new Date(user.created_at).toLocaleDateString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+
+                    <h5 class="mt-4">Recent Listings</h5>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Seller</th>
+                                <th>Posted</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.recent_listings.map(listing => `
+                                <tr>
+                                    <td>${listing.title}</td>
+                                    <td>${listing.category}</td>
+                                    <td>₹${listing.price}</td>
+                                    <td>${listing.seller}</td>
+                                    <td>${new Date(listing.created_at).toLocaleDateString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+
+                document.getElementById('collegeDetailsContent').innerHTML = collegeDetailsHtml;
+                const collegeDetailsModal = new bootstrap.Modal(document.getElementById('collegeDetailsModal'));
+                collegeDetailsModal.show();
+
+            } catch (error) {
+                showAlert('Error', error.message, 'error');
+            }
+        }
+
+        // ======================
+        // EVENT LISTENERS
+        // ======================
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAdminData();
+
+            // Sales filter
+            document.getElementById('salesStatusFilter')?.addEventListener('change', function() {
+                const filterValue = this.value;
+                let filteredData = filterValue === '' ? allSalesData : allSalesData.filter(sale => sale.status === filterValue);
+                displaySalesTable(filteredData, 1);
+            });
+
+            // Sales pagination
+            document.getElementById('salesPrevPage')?.addEventListener('click', function() {
+                if (currentSalesPage > 1) {
+                    currentSalesPage--;
+                    const filterValue = document.getElementById('salesStatusFilter').value;
+                    let filteredData = filterValue === '' ? allSalesData : allSalesData.filter(sale => sale.status === filterValue);
+                    displaySalesTable(filteredData, currentSalesPage);
+                }
+            });
+
+            document.getElementById('salesNextPage')?.addEventListener('click', function() {
+                const filterValue = document.getElementById('salesStatusFilter').value;
+                let filteredData = filterValue === '' ? allSalesData : allSalesData.filter(sale => sale.status === filterValue);
+                const totalPages = Math.ceil(filteredData.length / salesPerPage);
+
+                if (currentSalesPage < totalPages) {
+                    currentSalesPage++;
+                    displaySalesTable(filteredData, currentSalesPage);
+                }
+            });
+
+            // Users pagination
+            document.getElementById('userPrevPage')?.addEventListener('click', () => {
+                if (currentUserPage > 1) loadAdminUsers(currentUserPage - 1);
+            });
+
+            document.getElementById('userNextPage')?.addEventListener('click', () => {
+                loadAdminUsers(currentUserPage + 1);
+            });
+
+            // Listings pagination
+            document.getElementById('listingPrevPage')?.addEventListener('click', () => {
+                if (currentListingPage > 1) loadAdminListings(currentListingPage - 1);
+            });
+
+            document.getElementById('listingNextPage')?.addEventListener('click', () => {
+                loadAdminListings(currentListingPage + 1);
+            });
+
+            // Reports pagination
+            document.getElementById('reportPrevPage')?.addEventListener('click', () => {
+                if (currentReportPage > 1) loadAdminReports(currentReportPage - 1);
+            });
+
+            document.getElementById('reportNextPage')?.addEventListener('click', () => {
+                loadAdminReports(currentReportPage + 1);
+            });
+
+            // Colleges pagination
+            document.getElementById('collegePrevPage')?.addEventListener('click', () => {
+                if (currentCollegePage > 1) {
+                    currentCollegePage--;
+                    displayCollegesTable(allCollegesData, currentCollegePage);
+                }
+            });
+
+            document.getElementById('collegeNextPage')?.addEventListener('click', () => {
+                const totalPages = Math.ceil(allCollegesData.length / collegesPerPage);
+                if (currentCollegePage < totalPages) {
+                    currentCollegePage++;
+                    displayCollegesTable(allCollegesData, currentCollegePage);
+                }
+            });
+
+            // College search
+            document.getElementById('collegeSearch')?.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const filteredColleges = allCollegesData.filter(college =>
+                    college.college_name.toLowerCase().includes(searchTerm) ||
+                    (college.state && college.state.toLowerCase().includes(searchTerm))
+                );
+                currentCollegePage = 1;
+                displayCollegesTable(filteredColleges, currentCollegePage);
+            });
+        });
+    </script>
+
+    <!-- User Details Modal -->
+    <div class="modal fade" id="userDetailsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">User Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="userDetailsContent">
+                    <!-- User details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Listing Details Modal -->
+    <div class="modal fade" id="listingDetailsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Listing Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="listingDetailsContent">
+                    <!-- Listing details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Details Modal -->
+    <div class="modal fade" id="reportDetailsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Report Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="reportDetailsContent">
+                    <!-- Report details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="resolveReportBtn">Mark as Resolved</button>
+                    <button type="button" class="btn btn-primary" id="reviewReportBtn">Mark as Reviewed</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- College Details Modal -->
+    <div class="modal fade" id="collegeDetailsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">College Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="collegeDetailsContent">
+                    <!-- College details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

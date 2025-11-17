@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ profile.user.full_name }} - Admin | StudentSmart</title>
+    <link rel="icon" href="https://i.ibb.co/1YBpx2KS/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --primary-light: #A29BFE;
+            --secondary: #00CEC9;
+            --accent: #FD79A8;
+            --dark: #2D3436;
+            --light: #F5F6FA;
+            --white: #FFFFFF;
+            --success: #00B894;
+            --warning: #FDCB6E;
+            --border-radius: 12px;
+            --border-radius-lg: 20px;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-link {
+            color: var(--dark);
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .back-link:hover {
+            color: var(--primary-light);
+            transform: translateX(-5px);
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: var(--white);
+            padding: 2.5rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .profile-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-badges {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-approved {
+            background: rgba(0, 184, 148, 0.9);
+            color: var(--white);
+        }
+
+        .status-pending {
+            background: rgba(253, 203, 110, 0.9);
+            color: var(--dark);
+        }
+
+        .status-featured {
+            background: rgba(253, 121, 168, 0.9);
+            color: var(--white);
+        }
+
+        .section-card {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 1.05rem;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .item-card {
+            background: var(--light);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .item-card:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow);
+        }
+
+        .item-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .item-subtitle {
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-meta {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .skill-badge {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--white);
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: var(--light);
+            color: var(--dark);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .social-link:hover {
+            background: var(--primary);
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.85rem 1.75rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-approve {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .btn-approve:hover {
+            background: #00a085;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-feature {
+            background: var(--warning);
+            color: var(--dark);
+        }
+
+        .btn-feature:hover {
+            background: #f6bc53;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: var(--white);
+        }
+
+        .btn-secondary:hover {
+            background: #00b8b0;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        @media (max-width: 768px) {
+            .profile-title {
+                font-size: 2rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .status-badges {
+                flex-wrap: wrap;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn-action {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <a href="/" class="navbar-brand">StudentSmart Admin</a>
+                <div class="d-flex gap-3">
+                    <a href="/admin/dashboard" class="nav-link">
+                        <i class="fas fa-home me-1"></i> Dashboard
+                    </a>
+                    <a href="/admin/students" class="nav-link">
+                        <i class="fas fa-users me-1"></i> Students
+                    </a>
+                    <a href="/admin/companies" class="nav-link">
+                        <i class="fas fa-building me-1"></i> Companies
+                    </a>
+                    <a href="/admin/colleges" class="nav-link">
+                        <i class="fas fa-university me-1"></i> Colleges
+                    </a>
+                    <a href="/admin/internships" class="nav-link">
+                        <i class="fas fa-briefcase me-1"></i> Internships
+                    </a>
+                    <a href="/admin/applications" class="nav-link">
+                        <i class="fas fa-file-alt me-1"></i> Applications
+                    </a>
+                    <a href="/admin/audit-logs" class="nav-link">
+                        <i class="fas fa-history me-1"></i> Audit Logs
+                    </a>
+                    <a href="/admin/manage-accounts" class="nav-link">
+                        <i class="fas fa-users-cog me-1"></i> Manage
+                    </a>
+                    <a href="/logout" class="nav-link">
+                        <i class="fas fa-sign-out-alt me-1"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="profile-header">
+        <div class="container">
+            <h1 class="profile-title">{{ profile.user.full_name }}</h1>
+            <p class="opacity-90">Student Profile Details</p>
+            <div class="status-badges">
+                <span class="status-badge {% if profile.approved_by_admin %}status-approved{% else %}status-pending{% endif %}">
+                    <i class="fas fa-{% if profile.approved_by_admin %}check-circle{% else %}clock{% endif %}"></i>
+                    {{ 'Approved' if profile.approved_by_admin else 'Pending Approval' }}
+                </span>
+                {% if profile.featured %}
+                <span class="status-badge status-featured">
+                    <i class="fas fa-star"></i> Featured Student
+                </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        <a href="/admin/students" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Students
+        </a>
+
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-address-card"></i> Contact Information
+            </h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Email Address</span>
+                    <span class="info-value">{{ profile.user.email }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Phone Number</span>
+                    <span class="info-value">{{ profile.phone or 'Not provided' }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">College</span>
+                    <span class="info-value">{{ profile.user.college or 'Not provided' }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Location</span>
+                    <span class="info-value">{{ profile.location or 'Not provided' }}</span>
+                </div>
+            </div>
+        </div>
+
+        {% if profile.bio %}
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-user-circle"></i> About
+            </h2>
+            <p>{{ profile.bio }}</p>
+        </div>
+        {% endif %}
+
+        {% if profile.education %}
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-graduation-cap"></i> Education
+            </h2>
+            {% for edu in profile.education %}
+            <div class="item-card">
+                <div class="item-title">{{ edu.degree }} - {{ edu.field_of_study }}</div>
+                <div class="item-subtitle"><i class="fas fa-university me-2"></i>{{ edu.institution }}</div>
+                <div class="item-meta">
+                    <i class="fas fa-calendar me-2"></i>
+                    {{ edu.start_date.year if edu.start_date }} - {{ edu.end_date.year if edu.end_date else 'Present' }}
+                    {% if edu.grade %}
+                    <span class="ms-3"><i class="fas fa-award me-2"></i>Grade: {{ edu.grade }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if profile.work_experience %}
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-briefcase"></i> Work Experience
+            </h2>
+            {% for exp in profile.work_experience %}
+            <div class="item-card">
+                <div class="item-title">{{ exp.position }}</div>
+                <div class="item-subtitle"><i class="fas fa-building me-2"></i>{{ exp.company }}</div>
+                <div class="item-meta">
+                    <i class="fas fa-calendar me-2"></i>
+                    {{ exp.start_date.year if exp.start_date }} - {{ exp.end_date.year if exp.end_date else 'Present' }}
+                </div>
+                {% if exp.description %}
+                <p class="mt-2">{{ exp.description }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if profile.skills %}
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-code"></i> Skills
+            </h2>
+            <div class="skills-grid">
+                {% for skill in profile.skills %}
+                <span class="skill-badge">
+                    <i class="fas fa-check-circle"></i>
+                    {{ skill.name }} <small>({{ skill.proficiency_level }})</small>
+                </span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if profile.linkedin or profile.github or profile.portfolio %}
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-link"></i> Social Links
+            </h2>
+            <div class="social-links">
+                {% if profile.linkedin %}
+                <a href="{{ profile.linkedin }}" target="_blank" class="social-link">
+                    <i class="fab fa-linkedin"></i> LinkedIn
+                </a>
+                {% endif %}
+                {% if profile.github %}
+                <a href="{{ profile.github }}" target="_blank" class="social-link">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+                {% endif %}
+                {% if profile.portfolio %}
+                <a href="{{ profile.portfolio }}" target="_blank" class="social-link">
+                    <i class="fas fa-globe"></i> Portfolio
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-cog"></i> Admin Actions
+            </h2>
+            <div class="action-buttons">
+                <button class="btn-action btn-approve" id="approveBtn" data-profile-id="{{ profile.id }}" data-approved="{{ profile.approved_by_admin|lower }}">
+                    <i class="fas fa-{% if profile.approved_by_admin %}times-circle{% else %}check-circle{% endif %}" id="approveIcon"></i>
+                    <span id="approveText">{{ 'Unapprove' if profile.approved_by_admin else 'Approve' }} Profile</span>
+                </button>
+                <button class="btn-action btn-feature" id="featureBtn" data-profile-id="{{ profile.id }}" data-featured="{{ profile.featured|lower }}">
+                    <i class="fas fa-star" id="featureIcon"></i>
+                    <span id="featureText">{{ 'Unfeature' if profile.featured else 'Feature' }} Student</span>
+                </button>
+                {% if profile.resume_filename %}
+                <a href="/static/uploads/{{ profile.resume_filename }}" target="_blank" class="btn-action btn-secondary">
+                    <i class="fas fa-file-pdf"></i>
+                    View Resume
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Approve/Unapprove Student
+        document.getElementById('approveBtn').addEventListener('click', async function() {
+            const profileId = this.dataset.profileId;
+            const isApproved = this.dataset.approved === 'true';
+
+            const result = await Swal.fire({
+                title: `${isApproved ? 'Unapprove' : 'Approve'} Student?`,
+                text: `Are you sure you want to ${isApproved ? 'unapprove' : 'approve'} this student profile?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#00B894',
+                cancelButtonColor: '#d33',
+                confirmButtonText: `Yes, ${isApproved ? 'unapprove' : 'approve'} it!`
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(`/admin/students/${profileId}/toggle-approval`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        credentials: 'same-origin'
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: data.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+
+                        // Update button UI
+                        this.dataset.approved = data.approved;
+                        const icon = document.getElementById('approveIcon');
+                        const text = document.getElementById('approveText');
+
+                        if (data.approved) {
+                            icon.className = 'fas fa-times-circle';
+                            text.textContent = 'Unapprove Profile';
+                        } else {
+                            icon.className = 'fas fa-check-circle';
+                            text.textContent = 'Approve Profile';
+                        }
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message
+                        });
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to update student approval status'
+                    });
+                }
+            }
+        });
+
+        // Feature/Unfeature Student
+        document.getElementById('featureBtn').addEventListener('click', async function() {
+            const profileId = this.dataset.profileId;
+            const isFeatured = this.dataset.featured === 'true';
+
+            const result = await Swal.fire({
+                title: `${isFeatured ? 'Unfeature' : 'Feature'} Student?`,
+                text: `Are you sure you want to ${isFeatured ? 'unfeature' : 'feature'} this student?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#FDCB6E',
+                cancelButtonColor: '#d33',
+                confirmButtonText: `Yes, ${isFeatured ? 'unfeature' : 'feature'} it!`
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(`/admin/students/${profileId}/toggle-feature`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        credentials: 'same-origin'
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: data.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+
+                        // Update button UI
+                        this.dataset.featured = data.featured;
+                        const text = document.getElementById('featureText');
+                        text.textContent = data.featured ? 'Unfeature Student' : 'Feature Student';
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message
+                        });
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to update student feature status'
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

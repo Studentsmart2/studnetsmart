@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding - Final Step | StudentSmart</title>
+    <link rel="icon" href="https://i.ibb.co/1YBpx2KS/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --primary-light: #A29BFE;
+            --secondary: #00CEC9;
+            --accent: #FD79A8;
+            --dark: #2D3436;
+            --light: #F5F6FA;
+            --white: #FFFFFF;
+            --success: #00B894;
+            --border-radius: 12px;
+            --border-radius-lg: 20px;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .onboarding-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .onboarding-container {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        .preview-container {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 2rem;
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+            max-height: calc(100vh - 4rem);
+            overflow-y: auto;
+        }
+
+        .preview-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .preview-title i {
+            color: var(--primary);
+        }
+
+        .preview-profile {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .preview-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--light);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            overflow: hidden;
+            border: 4px solid var(--white);
+            box-shadow: var(--shadow);
+        }
+
+        .preview-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-name {
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .preview-meta {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.25rem;
+        }
+
+        .preview-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--light);
+        }
+
+        .preview-section-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .preview-text {
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .preview-placeholder {
+            font-style: italic;
+            color: #999;
+        }
+
+        .preview-status-card {
+            background: var(--light);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .preview-status-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .preview-status-icon.uploaded {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .preview-status-icon.pending {
+            background: #e0e0e0;
+            color: #999;
+        }
+
+        .preview-status-content {
+            flex: 1;
+        }
+
+        .preview-status-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+
+        .preview-status-subtitle {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .preview-completion {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .preview-completion-percent {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .preview-completion-text {
+            font-size: 0.9rem;
+            opacity: 0.95;
+        }
+
+        .onboarding-header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 2.5rem 2rem;
+            text-align: center;
+        }
+
+        .onboarding-header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .onboarding-header p {
+            opacity: 0.95;
+            font-size: 1rem;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            padding: 1.5rem 2rem;
+            background: var(--light);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background: #ddd;
+            z-index: 0;
+        }
+
+        .step:last-child::after {
+            display: none;
+        }
+
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #ddd;
+            color: #666;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            position: relative;
+            z-index: 1;
+            transition: var(--transition);
+        }
+
+        .step.active .step-circle {
+            background: var(--primary);
+            color: var(--white);
+            box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.2);
+        }
+
+        .step.completed .step-circle {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .step-label {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 0.5rem;
+            display: block;
+        }
+
+        .onboarding-content {
+            padding: 2.5rem 2rem;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        .form-group label .required {
+            color: #e74c3c;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #e0e0e0;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            background: var(--light);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(108, 92, 231, 0.05);
+        }
+
+        .file-upload-area.has-file {
+            border-color: var(--success);
+            background: rgba(0, 184, 148, 0.05);
+        }
+
+        .file-upload-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .file-upload-area.has-file .file-upload-icon {
+            color: var(--success);
+        }
+
+        .file-upload-text {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-upload-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-top: 0.5rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .help-text {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: var(--success);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        @media (max-width: 1024px) {
+            .onboarding-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-container {
+                position: relative;
+                top: 0;
+                max-height: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+
+            .onboarding-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .onboarding-content {
+                padding: 1.5rem 1rem;
+            }
+
+            .step-label {
+                font-size: 0.65rem;
+            }
+
+            .preview-container {
+                padding: 1.5rem;
+            }
+
+            .file-upload-area {
+                padding: 1.5rem;
+            }
+
+            .file-upload-icon {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="onboarding-wrapper">
+        <div class="onboarding-container">
+            <div class="onboarding-header">
+                <h1><i class="fas fa-check-circle"></i> Final Step</h1>
+                <p>Upload your profile picture and resume to complete your profile</p>
+            </div>
+
+            <div class="progress-steps">
+                <div class="step completed">
+                    <span class="step-circle">1</span>
+                    <span class="step-label">Personal Info</span>
+                </div>
+                <div class="step completed">
+                    <span class="step-circle">2</span>
+                    <span class="step-label">Education</span>
+                </div>
+                <div class="step completed">
+                    <span class="step-circle">3</span>
+                    <span class="step-label">Experience</span>
+                </div>
+                <div class="step completed">
+                    <span class="step-circle">4</span>
+                    <span class="step-label">Skills</span>
+                </div>
+                <div class="step active">
+                    <span class="step-circle">5</span>
+                    <span class="step-label">Complete</span>
+                </div>
+            </div>
+
+            <div class="onboarding-content">
+                <form id="step5Form" enctype="multipart/form-data">
+                    <!-- Profile Picture Section -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-camera"></i>
+                            Profile Picture
+                        </h3>
+
+                        <div class="file-upload-area" id="photoUploadArea" onclick="document.getElementById('profile_photo').click()">
+                            <div class="file-upload-icon">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="file-upload-text">Click to upload your profile picture</div>
+                            <div class="help-text">JPG, PNG or GIF (Max 5MB)</div>
+                            <div class="file-upload-name" id="photoFileName"></div>
+                        </div>
+                        <input type="file" id="profile_photo" name="profile_photo" accept="image/*" class="file-input">
+                    </div>
+
+                    <!-- Resume Section -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-file-pdf"></i>
+                            Resume
+                        </h3>
+
+                        <div class="file-upload-area" id="resumeUploadArea" onclick="document.getElementById('resume').click()">
+                            <div class="file-upload-icon">
+                                <i class="fas fa-file-upload"></i>
+                            </div>
+                            <div class="file-upload-text">Click to upload your resume</div>
+                            <div class="help-text">PDF, DOC or DOCX (Max 10MB)</div>
+                            <div class="file-upload-name" id="resumeFileName"></div>
+                        </div>
+                        <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" class="file-input">
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-check-circle"></i> Complete Profile
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Live Preview Panel -->
+        <div class="preview-container">
+            <h3 class="preview-title">
+                <i class="fas fa-eye"></i>
+                Profile Preview
+            </h3>
+
+            <div class="preview-profile">
+                <div class="preview-avatar" id="previewAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="preview-name">Your Name</div>
+                <div class="preview-meta">Your College</div>
+            </div>
+
+            <div class="preview-section">
+                <div class="preview-section-title">
+                    <i class="fas fa-clipboard-check"></i>
+                    Upload Status
+                </div>
+
+                <div class="preview-status-card">
+                    <div class="preview-status-icon pending" id="photoStatusIcon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div class="preview-status-content">
+                        <div class="preview-status-title">Profile Picture</div>
+                        <div class="preview-status-subtitle" id="photoStatus">Not uploaded</div>
+                    </div>
+                </div>
+
+                <div class="preview-status-card">
+                    <div class="preview-status-icon pending" id="resumeStatusIcon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <div class="preview-status-content">
+                        <div class="preview-status-title">Resume</div>
+                        <div class="preview-status-subtitle" id="resumeStatus">Not uploaded</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-completion" id="completionCard">
+                <div class="preview-completion-percent" id="completionPercent">0%</div>
+                <div class="preview-completion-text" id="completionText">Upload files to complete your profile</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let profilePhotoFile = null;
+        let resumeFile = null;
+
+        // Profile Photo Upload Handler
+        document.getElementById('profile_photo').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                profilePhotoFile = file;
+
+                // Update file name display
+                document.getElementById('photoFileName').textContent = file.name;
+                document.getElementById('photoUploadArea').classList.add('has-file');
+
+                // Update preview avatar with actual image
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const previewAvatar = document.getElementById('previewAvatar');
+                    previewAvatar.innerHTML = `<img src="${event.target.result}" alt="Profile Picture">`;
+                };
+                reader.readAsDataURL(file);
+
+                // Update status
+                document.getElementById('photoStatus').textContent = 'Uploaded - ' + file.name;
+                document.getElementById('photoStatusIcon').classList.remove('pending');
+                document.getElementById('photoStatusIcon').classList.add('uploaded');
+
+                updateCompletion();
+            }
+        });
+
+        // Resume Upload Handler
+        document.getElementById('resume').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                resumeFile = file;
+
+                // Update file name display
+                document.getElementById('resumeFileName').textContent = file.name;
+                document.getElementById('resumeUploadArea').classList.add('has-file');
+
+                // Update status
+                document.getElementById('resumeStatus').textContent = 'Uploaded - ' + file.name;
+                document.getElementById('resumeStatusIcon').classList.remove('pending');
+                document.getElementById('resumeStatusIcon').classList.add('uploaded');
+
+                updateCompletion();
+            }
+        });
+
+        function updateCompletion() {
+            let completionPercent = 0;
+            let completionText = 'Upload files to complete your profile';
+
+            if (profilePhotoFile && resumeFile) {
+                completionPercent = 100;
+                completionText = 'Your profile is complete! Ready to submit.';
+            } else if (profilePhotoFile || resumeFile) {
+                completionPercent = 50;
+                completionText = 'Almost there! Upload remaining files.';
+            }
+
+            document.getElementById('completionPercent').textContent = completionPercent + '%';
+            document.getElementById('completionText').textContent = completionText;
+
+            // Add animation
+            const card = document.getElementById('completionCard');
+            card.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                card.style.transform = 'scale(1)';
+            }, 300);
+        }
+
+        // Form submission handler
+        document.getElementById('step5Form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = e.target.querySelector('.btn-submit');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+            submitBtn.disabled = true;
+
+            try {
+                const formData = new FormData(e.target);
+
+                const response = await fetch('/student/onboarding/step5', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    // Show success message
+                    submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Success! Redirecting...';
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 1000);
+                } else {
+                    alert('Error: ' + (data.message || 'Failed to upload'));
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Initialize
+        updateCompletion();
+    </script>
+</body>
+</html>

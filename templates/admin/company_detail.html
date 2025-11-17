@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ company.company_name }} - Admin | StudentSmart</title>
+    <link rel="icon" href="https://i.ibb.co/1YBpx2KS/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --primary-light: #A29BFE;
+            --secondary: #00CEC9;
+            --accent: #FD79A8;
+            --dark: #2D3436;
+            --light: #F5F6FA;
+            --white: #FFFFFF;
+            --success: #00B894;
+            --warning: #FDCB6E;
+            --border-radius: 12px;
+            --border-radius-lg: 20px;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-link {
+            color: var(--dark);
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .nav-link:hover { color: var(--primary); }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .back-link:hover {
+            color: var(--primary-light);
+            transform: translateX(-5px);
+        }
+
+        .company-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: var(--white);
+            padding: 2.5rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .company-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 1.75rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border-left: 5px solid var(--primary);
+            text-align: center;
+        }
+
+        .kpi-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-5px);
+        }
+
+        .kpi-card.secondary { border-left-color: var(--secondary); }
+        .kpi-card.success { border-left-color: var(--success); }
+
+        .kpi-value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-label {
+            color: #666;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .section-card {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title i { color: var(--primary); }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 1.05rem;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .info-value a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .info-value a:hover {
+            text-decoration: underline;
+        }
+
+        .job-card {
+            background: var(--light);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .job-card:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow);
+        }
+
+        .job-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+        }
+
+        .job-meta {
+            color: #666;
+            font-size: 0.9rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .job-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: rgba(0, 184, 148, 0.2);
+            color: var(--success);
+        }
+
+        .status-inactive {
+            background: rgba(239, 68, 68, 0.2);
+            color: #dc2626;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        @media (max-width: 768px) {
+            .company-title { font-size: 2rem; }
+            .kpi-cards { grid-template-columns: 1fr; }
+            .info-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <a href="/" class="navbar-brand">StudentSmart Admin</a>
+                <div class="d-flex gap-3">
+                    <a href="/admin/dashboard" class="nav-link">
+                        <i class="fas fa-home me-1"></i> Dashboard
+                    </a>
+                    <a href="/admin/students" class="nav-link">
+                        <i class="fas fa-users me-1"></i> Students
+                    </a>
+                    <a href="/admin/companies" class="nav-link">
+                        <i class="fas fa-building me-1"></i> Companies
+                    </a>
+                    <a href="/admin/colleges" class="nav-link">
+                        <i class="fas fa-university me-1"></i> Colleges
+                    </a>
+                    <a href="/admin/internships" class="nav-link">
+                        <i class="fas fa-briefcase me-1"></i> Internships
+                    </a>
+                    <a href="/admin/applications" class="nav-link">
+                        <i class="fas fa-file-alt me-1"></i> Applications
+                    </a>
+                    <a href="/admin/audit-logs" class="nav-link">
+                        <i class="fas fa-history me-1"></i> Audit Logs
+                    </a>
+                    <a href="/admin/manage-accounts" class="nav-link">
+                        <i class="fas fa-users-cog me-1"></i> Manage
+                    </a>
+                    <a href="/logout" class="nav-link">
+                        <i class="fas fa-sign-out-alt me-1"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="company-header">
+        <div class="container">
+            <h1 class="company-title">{{ company.company_name }}</h1>
+            <p class="opacity-90">Company Profile Details</p>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        <a href="/admin/companies" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Companies
+        </a>
+
+        <div class="kpi-cards">
+            <div class="kpi-card primary">
+                <div class="kpi-value">{{ company.internships|length }}</div>
+                <div class="kpi-label">Job Posts</div>
+            </div>
+
+            <div class="kpi-card success">
+                <div class="kpi-value">
+                    {% if company.is_verified %}
+                    <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                    {% else %}
+                    <i class="fas fa-times-circle" style="color: #dc2626;"></i>
+                    {% endif %}
+                </div>
+                <div class="kpi-label">Verification Status</div>
+            </div>
+
+            <div class="kpi-card secondary">
+                <div class="kpi-value">
+                    <i class="fab fa-{{ 'google' if company.is_google_user else 'envelope' }}" style="font-size: 2rem;"></i>
+                </div>
+                <div class="kpi-label">Login Method</div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-building"></i> Company Information
+            </h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Email Address</span>
+                    <span class="info-value">{{ company.email }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Website</span>
+                    <span class="info-value">
+                        {% if company.website %}
+                        <a href="{{ company.website }}" target="_blank">
+                            {{ company.website }} <i class="fas fa-external-link-alt fa-sm"></i>
+                        </a>
+                        {% else %}
+                        Not provided
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Industry</span>
+                    <span class="info-value">{{ company.industry or 'Not specified' }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Company Size</span>
+                    <span class="info-value">{{ company.company_size or 'Not specified' }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Joined Date</span>
+                    <span class="info-value">{{ company.created_at.strftime('%Y-%m-%d') }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Verification Status</span>
+                    <span class="info-value">
+                        <span class="status-badge {% if company.is_verified %}status-active{% else %}status-inactive{% endif %}">
+                            {% if company.is_verified %}
+                                <i class="fas fa-check-circle"></i> Verified
+                            {% else %}
+                                <i class="fas fa-times-circle"></i> Unverified
+                            {% endif %}
+                        </span>
+                    </span>
+                </div>
+            </div>
+            {% if company.description %}
+            <div class="mt-4">
+                <div class="info-label">Company Description</div>
+                <p class="mt-2">{{ company.description }}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="section-card">
+            <h2 class="section-title">
+                <i class="fas fa-briefcase"></i> Posted Jobs ({{ company.internships|length }})
+            </h2>
+            {% if company.internships %}
+            {% for job in company.internships %}
+            <div class="job-card">
+                <div class="job-title">{{ job.title }}</div>
+                <div class="job-meta">
+                    <span><i class="fas fa-map-marker-alt"></i> {{ job.location or 'Not specified' }}</span>
+                    <span><i class="fas fa-eye"></i> {{ job.view_count or 0 }} views</span>
+                    <span><i class="fas fa-calendar"></i> Posted: {{ job.created_at.strftime('%Y-%m-%d') }}</span>
+                </div>
+                <span class="status-badge status-{{ 'active' if job.active else 'inactive' }}">
+                    {{ 'Active' if job.active else 'Inactive' }}
+                </span>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-briefcase"></i>
+                <h4>No Job Posts Yet</h4>
+                <p>This company hasn't posted any internships yet.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
