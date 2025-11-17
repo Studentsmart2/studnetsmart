@@ -702,30 +702,66 @@
 
             const submitBtn = e.target.querySelector('.btn-submit');
             const originalText = submitBtn.innerHTML;
+
+            // Collect and validate experience data
+            const experience = [];
+            let validationErrors = [];
+
+            for (let i = 1; i <= expCount; i++) {
+                const expElem = document.getElementById(`exp_${i}`);
+                if (!expElem) continue; // Skip removed entries
+
+                const companyElem = document.getElementById(`company_${i}`);
+                const positionElem = document.getElementById(`position_${i}`);
+                const descriptionElem = document.getElementById(`description_${i}`);
+                const startElem = document.getElementById(`start_${i}`);
+                const endElem = document.getElementById(`end_${i}`);
+
+                // Get values and trim them
+                const company = companyElem?.value?.trim() || '';
+                const position = positionElem?.value?.trim() || '';
+                const description = descriptionElem?.value?.trim() || '';
+                const start_date = startElem?.value?.trim() || '';
+                const end_date = endElem?.value?.trim() || '';
+
+                // Validate all required fields
+                if (!company) {
+                    validationErrors.push(`Work Experience ${i}: Company name is required`);
+                }
+                if (!position) {
+                    validationErrors.push(`Work Experience ${i}: Position/Role is required`);
+                }
+                if (!description) {
+                    validationErrors.push(`Work Experience ${i}: Description is required`);
+                }
+                if (!start_date) {
+                    validationErrors.push(`Work Experience ${i}: Start Date is required`);
+                }
+                // Note: end_date is optional for current jobs
+
+                // If required fields are present, add to experience array
+                if (company && position && description && start_date) {
+                    experience.push({
+                        company: company,
+                        position: position,
+                        description: description,
+                        start_date: start_date,
+                        end_date: end_date || null
+                    });
+                }
+            }
+
+            // Show validation errors if any
+            if (validationErrors.length > 0) {
+                alert('Please fill all required fields:\n\n' + validationErrors.join('\n'));
+                return;
+            }
+
+            // Proceed with submission
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
             submitBtn.disabled = true;
 
             try {
-                // Collect experience data
-                const experience = [];
-                for (let i = 1; i <= expCount; i++) {
-                    const companyElem = document.getElementById(`company_${i}`);
-                    if (companyElem && document.getElementById(`exp_${i}`)) {
-                        const company = companyElem.value;
-                        const position = document.getElementById(`position_${i}`).value;
-
-                        if (company && position) {
-                            experience.push({
-                                company: company,
-                                position: position,
-                                description: document.getElementById(`description_${i}`).value,
-                                start_date: document.getElementById(`start_${i}`).value,
-                                end_date: document.getElementById(`end_${i}`).value
-                            });
-                        }
-                    }
-                }
-
                 const response = await fetch('/student/onboarding/step3', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
@@ -741,6 +777,7 @@
                     submitBtn.disabled = false;
                 }
             } catch (error) {
+                console.error('Submission error:', error);
                 alert('Network error. Please try again.');
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;

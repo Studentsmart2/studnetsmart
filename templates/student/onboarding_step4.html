@@ -795,35 +795,65 @@
 
             const submitBtn = e.target.querySelector('.btn-submit');
             const originalText = submitBtn.innerHTML;
+
+            // Collect skills (convert to format backend expects)
+            const skillsData = skills.map(skill => ({
+                name: skill,
+                proficiency_level: 'intermediate' // Default proficiency
+            }));
+
+            // Collect and validate certifications
+            const certifications = [];
+            let validationErrors = [];
+
+            for (let i = 1; i <= certCount; i++) {
+                const certElem = document.getElementById(`cert_${i}`);
+                if (!certElem) continue; // Skip removed entries
+
+                const nameElem = document.getElementById(`cert_name_${i}`);
+                const orgElem = document.getElementById(`cert_org_${i}`);
+                const dateElem = document.getElementById(`cert_date_${i}`);
+                const urlElem = document.getElementById(`cert_url_${i}`);
+
+                // Get values and trim them
+                const name = nameElem?.value?.trim() || '';
+                const org = orgElem?.value?.trim() || '';
+                const issue_date = dateElem?.value?.trim() || '';
+                const credential_url = urlElem?.value?.trim() || '';
+
+                // Validate all required fields for certifications
+                if (!name) {
+                    validationErrors.push(`Certification ${i}: Name is required`);
+                }
+                if (!org) {
+                    validationErrors.push(`Certification ${i}: Issuing organization is required`);
+                }
+                if (!issue_date) {
+                    validationErrors.push(`Certification ${i}: Issue date is required`);
+                }
+
+                // If required fields are present, add to certifications array
+                if (name && org && issue_date) {
+                    certifications.push({
+                        name: name,
+                        issuing_organization: org,
+                        issue_date: issue_date,
+                        credential_url: credential_url || ''
+                    });
+                }
+            }
+
+            // Show validation errors if any
+            if (validationErrors.length > 0) {
+                alert('Please fill all required fields:\n\n' + validationErrors.join('\n'));
+                return;
+            }
+
+            // Proceed with submission
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
             submitBtn.disabled = true;
 
             try {
-                // Collect skills (convert to format backend expects)
-                const skillsData = skills.map(skill => ({
-                    name: skill,
-                    proficiency_level: 'intermediate' // Default proficiency
-                }));
-
-                // Collect certifications
-                const certifications = [];
-                for (let i = 1; i <= certCount; i++) {
-                    const nameElem = document.getElementById(`cert_name_${i}`);
-                    if (nameElem && document.getElementById(`cert_${i}`)) {
-                        const name = nameElem.value;
-                        const org = document.getElementById(`cert_org_${i}`).value;
-
-                        if (name && org) {
-                            certifications.push({
-                                name: name,
-                                issuing_organization: org,
-                                issue_date: document.getElementById(`cert_date_${i}`).value,
-                                credential_url: document.getElementById(`cert_url_${i}`).value
-                            });
-                        }
-                    }
-                }
-
                 const response = await fetch('/student/onboarding/step4', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
@@ -842,6 +872,7 @@
                     submitBtn.disabled = false;
                 }
             } catch (error) {
+                console.error('Submission error:', error);
                 alert('Network error. Please try again.');
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
