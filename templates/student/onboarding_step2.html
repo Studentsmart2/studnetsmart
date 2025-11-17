@@ -855,38 +855,81 @@
 
             const submitBtn = e.target.querySelector('.btn-submit');
             const originalText = submitBtn.innerHTML;
+
+            // Collect interests
+            const selectedInterests = [];
+            document.querySelectorAll('.interest-option input[type="checkbox"]:checked').forEach(checkbox => {
+                selectedInterests.push(checkbox.value);
+            });
+            const allInterests = [...selectedInterests, ...customInterests];
+
+            // Collect and validate education
+            const education = [];
+            let validationErrors = [];
+
+            for (let i = 1; i <= eduCount; i++) {
+                const eduElem = document.getElementById(`edu_${i}`);
+                if (!eduElem) continue; // Skip removed entries
+
+                const degreeElem = document.getElementById(`degree_${i}`);
+                const institutionElem = document.getElementById(`institution_${i}`);
+                const fieldElem = document.getElementById(`field_${i}`);
+                const gradeElem = document.getElementById(`grade_${i}`);
+                const startElem = document.getElementById(`start_${i}`);
+                const endElem = document.getElementById(`end_${i}`);
+
+                // Get values and trim them
+                const degree = degreeElem?.value?.trim() || '';
+                const institution = institutionElem?.value?.trim() || '';
+                const field_of_study = fieldElem?.value?.trim() || '';
+                const grade = gradeElem?.value?.trim() || '';
+                const start_date = startElem?.value?.trim() || '';
+                const end_date = endElem?.value?.trim() || '';
+
+                // Validate all required fields
+                if (!degree) {
+                    validationErrors.push(`Education entry ${i}: Degree is required`);
+                }
+                if (!institution) {
+                    validationErrors.push(`Education entry ${i}: Institution is required`);
+                }
+                if (!field_of_study) {
+                    validationErrors.push(`Education entry ${i}: Field of Study is required`);
+                }
+                if (!grade) {
+                    validationErrors.push(`Education entry ${i}: Grade/CGPA is required`);
+                }
+                if (!start_date) {
+                    validationErrors.push(`Education entry ${i}: Start Date is required`);
+                }
+                if (!end_date) {
+                    validationErrors.push(`Education entry ${i}: End Date is required`);
+                }
+
+                // If any field is missing, don't add this entry
+                if (degree && institution && field_of_study && grade && start_date && end_date) {
+                    education.push({
+                        degree: degree,
+                        institution: institution,
+                        field_of_study: field_of_study,
+                        grade: grade,
+                        start_date: start_date,
+                        end_date: end_date
+                    });
+                }
+            }
+
+            // Show validation errors if any
+            if (validationErrors.length > 0) {
+                alert('Please fill all required fields:\n\n' + validationErrors.join('\n'));
+                return;
+            }
+
+            // Proceed with submission
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
             submitBtn.disabled = true;
 
             try {
-                // Collect interests
-                const selectedInterests = [];
-                document.querySelectorAll('.interest-option input[type="checkbox"]:checked').forEach(checkbox => {
-                    selectedInterests.push(checkbox.value);
-                });
-                const allInterests = [...selectedInterests, ...customInterests];
-
-                // Collect education
-                const education = [];
-                for (let i = 1; i <= eduCount; i++) {
-                    const degreeElem = document.getElementById(`degree_${i}`);
-                    if (degreeElem && document.getElementById(`edu_${i}`)) {
-                        const degree = degreeElem.value;
-                        const institution = document.getElementById(`institution_${i}`).value;
-
-                        if (degree && institution) {
-                            education.push({
-                                degree: degree,
-                                institution: institution,
-                                field_of_study: document.getElementById(`field_${i}`).value,
-                                grade: document.getElementById(`grade_${i}`).value,
-                                start_date: document.getElementById(`start_${i}`).value,
-                                end_date: document.getElementById(`end_${i}`).value
-                            });
-                        }
-                    }
-                }
-
                 const response = await fetch('/student/onboarding/step2', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
@@ -905,6 +948,7 @@
                     submitBtn.disabled = false;
                 }
             } catch (error) {
+                console.error('Submission error:', error);
                 alert('Network error. Please try again.');
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;

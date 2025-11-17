@@ -5885,6 +5885,11 @@ def student_onboarding_step2():
         data = request.json
         print(f"[STEP2] Received data: {data}")
 
+        # Validate request data
+        if not data:
+            print(f"[STEP2] ERROR: No data received")
+            return jsonify({'success': False, 'message': 'No data received. Please try again.'}), 400
+
         # Save interests
         if 'interests' in data:
             import json
@@ -5907,44 +5912,98 @@ def student_onboarding_step2():
             education_list = []
 
         added_count = 0
+        skipped_count = 0
+        validation_errors = []
+
         for idx, edu in enumerate(education_list):
-            # Validate all required fields
-            degree = str(edu.get('degree', '')).strip()
-            institution = str(edu.get('institution', '')).strip()
-            field_of_study = str(edu.get('field_of_study', '')).strip()
-            grade = str(edu.get('grade', '')).strip()
+            try:
+                # Validate all required fields
+                degree = str(edu.get('degree', '')).strip()
+                institution = str(edu.get('institution', '')).strip()
+                field_of_study = str(edu.get('field_of_study', '')).strip()
+                grade = str(edu.get('grade', '')).strip()
 
-            if not degree or not institution or not field_of_study or not grade:
-                print(f"[STEP2] Skipping education {idx}: missing required fields (degree, institution, field, or grade)")
+                # Validate string lengths to prevent database errors
+                if len(degree) > 100:
+                    validation_errors.append(f"Education {idx + 1}: Degree name too long (max 100 characters)")
+                    skipped_count += 1
+                    continue
+
+                if len(institution) > 200:
+                    validation_errors.append(f"Education {idx + 1}: Institution name too long (max 200 characters)")
+                    skipped_count += 1
+                    continue
+
+                if len(field_of_study) > 100:
+                    validation_errors.append(f"Education {idx + 1}: Field of study too long (max 100 characters)")
+                    skipped_count += 1
+                    continue
+
+                if len(grade) > 20:
+                    validation_errors.append(f"Education {idx + 1}: Grade too long (max 20 characters)")
+                    skipped_count += 1
+                    continue
+
+                if not degree or not institution or not field_of_study or not grade:
+                    print(f"[STEP2] Skipping education {idx}: missing required fields")
+                    validation_errors.append(f"Education {idx + 1}: All fields are required (degree, institution, field of study, grade)")
+                    skipped_count += 1
+                    continue
+
+                # Parse dates safely using helper function
+                start_date = parse_date_safe(edu.get('start_date'))
+                end_date = parse_date_safe(edu.get('end_date'))
+
+                # Validate dates are required and parsed successfully
+                if not start_date or not end_date:
+                    print(f"[STEP2] Skipping education {idx}: invalid dates")
+                    print(f"[STEP2]   start_date_raw: {edu.get('start_date')}, end_date_raw: {edu.get('end_date')}")
+                    validation_errors.append(f"Education {idx + 1}: Start date and end date are required and must be valid")
+                    skipped_count += 1
+                    continue
+
+                # Validate date logic
+                if start_date > end_date:
+                    validation_errors.append(f"Education {idx + 1}: Start date cannot be after end date")
+                    skipped_count += 1
+                    continue
+
+                print(f"[STEP2] Parsed dates successfully - start: {start_date}, end: {end_date}")
+
+                education = Education(
+                    student_profile_id=profile.id,
+                    degree=degree,
+                    institution=institution,
+                    field_of_study=field_of_study,
+                    grade=grade,
+                    start_date=start_date,
+                    end_date=end_date
+                )
+                db.session.add(education)
+                added_count += 1
+                print(f"[STEP2] Added education {idx}: {degree} at {institution}")
+
+            except Exception as edu_error:
+                print(f"[STEP2] Error processing education {idx}: {str(edu_error)}")
+                validation_errors.append(f"Education {idx + 1}: Invalid data format")
+                skipped_count += 1
                 continue
 
-            # Parse dates safely using helper function
-            start_date = parse_date_safe(edu.get('start_date'))
-            end_date = parse_date_safe(edu.get('end_date'))
-
-            # Validate dates are required and parsed successfully
-            if not start_date or not end_date:
-                print(f"[STEP2] Skipping education {idx}: start_date or end_date missing or invalid")
-                print(f"[STEP2]   start_date_raw: {edu.get('start_date')}, end_date_raw: {edu.get('end_date')}")
-                continue
-
-            print(f"[STEP2] Parsed dates successfully - start: {start_date}, end: {end_date}")
-
-            education = Education(
-                student_profile_id=profile.id,
-                degree=degree,
-                institution=institution,
-                field_of_study=field_of_study,
-                grade=grade,
-                start_date=start_date,
-                end_date=end_date
-            )
-            db.session.add(education)
-            added_count += 1
-            print(f"[STEP2] Added education {idx}: {degree} at {institution}")
-
+        # Commit changes
         db.session.commit()
-        print(f"[STEP2] Successfully saved. Added {added_count} education records")
+        print(f"[STEP2] Successfully saved. Added {added_count} education records, skipped {skipped_count}")
+
+        # Return success with warnings if any entries were skipped
+        if validation_errors:
+            print(f"[STEP2] Validation errors: {validation_errors}")
+            return jsonify({
+                'success': True,
+                'redirect': url_for('student_onboarding_step3'),
+                'warnings': validation_errors,
+                'added': added_count,
+                'skipped': skipped_count
+            })
+
         return jsonify({'success': True, 'redirect': url_for('student_onboarding_step3')})
 
     except Exception as e:
@@ -5953,7 +6012,7 @@ def student_onboarding_step2():
         error_details = traceback.format_exc()
         print(f"[STEP2] ERROR: {str(e)}")
         print(f"[STEP2] Full traceback:\n{error_details}")
-        return jsonify({'success': False, 'message': 'Failed to save data. Please try again.'}), 500
+        return jsonify({'success': False, 'message': f'Failed to save data: {str(e)}. Please try again.'}), 500
 
 
 @app.route('/student/onboarding/step3', methods=['GET', 'POST'])
@@ -5972,6 +6031,11 @@ def student_onboarding_step3():
         data = request.json
         print(f"[STEP3] Received data: {data}")
 
+        # Validate request data
+        if not data:
+            print(f"[STEP3] ERROR: No data received")
+            return jsonify({'success': False, 'message': 'No data received. Please try again.'}), 400
+
         # Delete existing work experience to avoid duplicates
         deleted_count = WorkExperience.query.filter_by(student_profile_id=profile.id).delete()
         print(f"[STEP3] Deleted {deleted_count} old work experience records")
@@ -5983,42 +6047,86 @@ def student_onboarding_step3():
             experience_list = []
 
         added_count = 0
+        skipped_count = 0
+        validation_errors = []
+
         for idx, exp in enumerate(experience_list):
-            # Validate all required fields
-            company = str(exp.get('company', '')).strip()
-            position = str(exp.get('position', '')).strip()
-            description = str(exp.get('description', '')).strip()
+            try:
+                # Validate all required fields
+                company = str(exp.get('company', '')).strip()
+                position = str(exp.get('position', '')).strip()
+                description = str(exp.get('description', '')).strip()
 
-            if not company or not position or not description:
-                print(f"[STEP3] Skipping experience {idx}: missing required fields (company, position, or description)")
+                # Validate string lengths to prevent database errors
+                if len(company) > 200:
+                    validation_errors.append(f"Experience {idx + 1}: Company name too long (max 200 characters)")
+                    skipped_count += 1
+                    continue
+
+                if len(position) > 100:
+                    validation_errors.append(f"Experience {idx + 1}: Position too long (max 100 characters)")
+                    skipped_count += 1
+                    continue
+
+                if not company or not position or not description:
+                    print(f"[STEP3] Skipping experience {idx}: missing required fields")
+                    validation_errors.append(f"Experience {idx + 1}: Company, position, and description are required")
+                    skipped_count += 1
+                    continue
+
+                # Parse dates safely using helper function
+                start_date = parse_date_safe(exp.get('start_date'))
+                end_date = parse_date_safe(exp.get('end_date'))  # Optional for current jobs
+
+                # Validate start_date is required (end_date is optional for current jobs)
+                if not start_date:
+                    print(f"[STEP3] Skipping experience {idx}: start_date missing or invalid")
+                    print(f"[STEP3]   start_date_raw: {exp.get('start_date')}")
+                    validation_errors.append(f"Experience {idx + 1}: Start date is required and must be valid")
+                    skipped_count += 1
+                    continue
+
+                # Validate date logic if end_date exists
+                if end_date and start_date > end_date:
+                    validation_errors.append(f"Experience {idx + 1}: Start date cannot be after end date")
+                    skipped_count += 1
+                    continue
+
+                print(f"[STEP3] Parsed dates successfully - start: {start_date}, end: {end_date}")
+
+                work_exp = WorkExperience(
+                    student_profile_id=profile.id,
+                    company=company,
+                    position=position,
+                    description=description,
+                    start_date=start_date,
+                    end_date=end_date
+                )
+                db.session.add(work_exp)
+                added_count += 1
+                print(f"[STEP3] Added experience {idx}: {position} at {company}")
+
+            except Exception as exp_error:
+                print(f"[STEP3] Error processing experience {idx}: {str(exp_error)}")
+                validation_errors.append(f"Experience {idx + 1}: Invalid data format")
+                skipped_count += 1
                 continue
 
-            # Parse dates safely using helper function
-            start_date = parse_date_safe(exp.get('start_date'))
-            end_date = parse_date_safe(exp.get('end_date'))  # Optional for current jobs
-
-            # Validate start_date is required (end_date is optional for current jobs)
-            if not start_date:
-                print(f"[STEP3] Skipping experience {idx}: start_date missing or invalid")
-                print(f"[STEP3]   start_date_raw: {exp.get('start_date')}")
-                continue
-
-            print(f"[STEP3] Parsed dates successfully - start: {start_date}, end: {end_date}")
-
-            work_exp = WorkExperience(
-                student_profile_id=profile.id,
-                company=company,
-                position=position,
-                description=description,
-                start_date=start_date,
-                end_date=end_date
-            )
-            db.session.add(work_exp)
-            added_count += 1
-            print(f"[STEP3] Added experience {idx}: {position} at {company}")
-
+        # Commit changes
         db.session.commit()
-        print(f"[STEP3] Successfully saved. Added {added_count} work experience records")
+        print(f"[STEP3] Successfully saved. Added {added_count} work experience records, skipped {skipped_count}")
+
+        # Return success with warnings if any entries were skipped
+        if validation_errors:
+            print(f"[STEP3] Validation errors: {validation_errors}")
+            return jsonify({
+                'success': True,
+                'redirect': url_for('student_onboarding_step4'),
+                'warnings': validation_errors,
+                'added': added_count,
+                'skipped': skipped_count
+            })
+
         return jsonify({'success': True, 'redirect': url_for('student_onboarding_step4')})
 
     except Exception as e:
@@ -6027,7 +6135,7 @@ def student_onboarding_step3():
         error_details = traceback.format_exc()
         print(f"[STEP3] ERROR: {str(e)}")
         print(f"[STEP3] Full traceback:\n{error_details}")
-        return jsonify({'success': False, 'message': 'Failed to save data. Please try again.'}), 500
+        return jsonify({'success': False, 'message': f'Failed to save data: {str(e)}. Please try again.'}), 500
 
 
 @app.route('/student/onboarding/step4', methods=['GET', 'POST'])
@@ -6046,6 +6154,11 @@ def student_onboarding_step4():
         data = request.json
         print(f"[STEP4] Received data: {data}")
 
+        # Validate request data
+        if not data:
+            print(f"[STEP4] ERROR: No data received")
+            return jsonify({'success': False, 'message': 'No data received. Please try again.'}), 400
+
         # Delete existing skills and certifications to avoid duplicates
         deleted_skills = Skill.query.filter_by(student_profile_id=profile.id).delete()
         deleted_certs = Certification.query.filter_by(student_profile_id=profile.id).delete()
@@ -6058,28 +6171,45 @@ def student_onboarding_step4():
             skills_list = []
 
         added_skills = 0
+        skipped_skills = 0
+        validation_errors = []
+
         for idx, skill_data in enumerate(skills_list):
-            skill_name = str(skill_data.get('name', '')).strip()
+            try:
+                skill_name = str(skill_data.get('name', '')).strip()
 
-            if not skill_name:
-                print(f"[STEP4] Skipping skill {idx}: missing name")
+                # Validate string length
+                if len(skill_name) > 100:
+                    validation_errors.append(f"Skill {idx + 1}: Name too long (max 100 characters)")
+                    skipped_skills += 1
+                    continue
+
+                if not skill_name:
+                    print(f"[STEP4] Skipping skill {idx}: missing name")
+                    skipped_skills += 1
+                    continue
+
+                proficiency = str(skill_data.get('proficiency_level', 'intermediate')).strip().lower()
+                # Validate proficiency level
+                valid_levels = ['beginner', 'intermediate', 'advanced', 'expert']
+                if proficiency not in valid_levels:
+                    proficiency = 'intermediate'
+                    print(f"[STEP4] Invalid proficiency level, defaulting to 'intermediate'")
+
+                skill = Skill(
+                    student_profile_id=profile.id,
+                    name=skill_name,
+                    proficiency_level=proficiency
+                )
+                db.session.add(skill)
+                added_skills += 1
+                print(f"[STEP4] Added skill {idx}: {skill_name} ({proficiency})")
+
+            except Exception as skill_error:
+                print(f"[STEP4] Error processing skill {idx}: {str(skill_error)}")
+                validation_errors.append(f"Skill {idx + 1}: Invalid data format")
+                skipped_skills += 1
                 continue
-
-            proficiency = str(skill_data.get('proficiency_level', 'intermediate')).strip().lower()
-            # Validate proficiency level
-            valid_levels = ['beginner', 'intermediate', 'advanced', 'expert']
-            if proficiency not in valid_levels:
-                proficiency = 'intermediate'
-                print(f"[STEP4] Invalid proficiency level, defaulting to 'intermediate'")
-
-            skill = Skill(
-                student_profile_id=profile.id,
-                name=skill_name,
-                proficiency_level=proficiency
-            )
-            db.session.add(skill)
-            added_skills += 1
-            print(f"[STEP4] Added skill {idx}: {skill_name} ({proficiency})")
 
         # Process certifications
         certifications_list = data.get('certifications', [])
@@ -6088,39 +6218,79 @@ def student_onboarding_step4():
             certifications_list = []
 
         added_certs = 0
+        skipped_certs = 0
+
         for idx, cert_data in enumerate(certifications_list):
-            # Validate all required fields
-            cert_name = str(cert_data.get('name', '')).strip()
-            issuing_org = str(cert_data.get('issuing_organization', '')).strip()
+            try:
+                # Validate all required fields
+                cert_name = str(cert_data.get('name', '')).strip()
+                issuing_org = str(cert_data.get('issuing_organization', '')).strip()
 
-            if not cert_name or not issuing_org:
-                print(f"[STEP4] Skipping certification {idx}: missing name or organization")
+                # Validate string lengths
+                if len(cert_name) > 200:
+                    validation_errors.append(f"Certification {idx + 1}: Name too long (max 200 characters)")
+                    skipped_certs += 1
+                    continue
+
+                if len(issuing_org) > 200:
+                    validation_errors.append(f"Certification {idx + 1}: Organization name too long (max 200 characters)")
+                    skipped_certs += 1
+                    continue
+
+                if not cert_name or not issuing_org:
+                    print(f"[STEP4] Skipping certification {idx}: missing name or organization")
+                    validation_errors.append(f"Certification {idx + 1}: Name and organization are required")
+                    skipped_certs += 1
+                    continue
+
+                # Parse date safely using helper function
+                issue_date = parse_date_safe(cert_data.get('issue_date'))
+
+                # Validate issue_date is required
+                if not issue_date:
+                    print(f"[STEP4] Skipping certification {idx}: issue_date missing or invalid")
+                    print(f"[STEP4]   issue_date_raw: {cert_data.get('issue_date')}")
+                    validation_errors.append(f"Certification {idx + 1}: Issue date is required and must be valid")
+                    skipped_certs += 1
+                    continue
+
+                print(f"[STEP4] Parsed issue_date successfully: {issue_date}")
+
+                cert = Certification(
+                    student_profile_id=profile.id,
+                    name=cert_name,
+                    issuing_organization=issuing_org,
+                    issue_date=issue_date,
+                    credential_url=str(cert_data.get('credential_url', '')).strip()
+                )
+                db.session.add(cert)
+                added_certs += 1
+                print(f"[STEP4] Added certification {idx}: {cert_name}")
+
+            except Exception as cert_error:
+                print(f"[STEP4] Error processing certification {idx}: {str(cert_error)}")
+                validation_errors.append(f"Certification {idx + 1}: Invalid data format")
+                skipped_certs += 1
                 continue
 
-            # Parse date safely using helper function
-            issue_date = parse_date_safe(cert_data.get('issue_date'))
-
-            # Validate issue_date is required
-            if not issue_date:
-                print(f"[STEP4] Skipping certification {idx}: issue_date missing or invalid")
-                print(f"[STEP4]   issue_date_raw: {cert_data.get('issue_date')}")
-                continue
-
-            print(f"[STEP4] Parsed issue_date successfully: {issue_date}")
-
-            cert = Certification(
-                student_profile_id=profile.id,
-                name=cert_name,
-                issuing_organization=issuing_org,
-                issue_date=issue_date,
-                credential_url=str(cert_data.get('credential_url', '')).strip()
-            )
-            db.session.add(cert)
-            added_certs += 1
-            print(f"[STEP4] Added certification {idx}: {cert_name}")
-
+        # Commit changes
         db.session.commit()
         print(f"[STEP4] Successfully saved. Added {added_skills} skills and {added_certs} certifications")
+        print(f"[STEP4] Skipped {skipped_skills} skills and {skipped_certs} certifications")
+
+        # Return success with warnings if any entries were skipped
+        if validation_errors:
+            print(f"[STEP4] Validation errors: {validation_errors}")
+            return jsonify({
+                'success': True,
+                'redirect': url_for('student_onboarding_step5'),
+                'warnings': validation_errors,
+                'added_skills': added_skills,
+                'added_certs': added_certs,
+                'skipped_skills': skipped_skills,
+                'skipped_certs': skipped_certs
+            })
+
         return jsonify({'success': True, 'redirect': url_for('student_onboarding_step5')})
 
     except Exception as e:
@@ -6129,7 +6299,7 @@ def student_onboarding_step4():
         error_details = traceback.format_exc()
         print(f"[STEP4] ERROR: {str(e)}")
         print(f"[STEP4] Full traceback:\n{error_details}")
-        return jsonify({'success': False, 'message': 'Failed to save data. Please try again.'}), 500
+        return jsonify({'success': False, 'message': f'Failed to save data: {str(e)}. Please try again.'}), 500
 
 
 @app.route('/student/onboarding/step5', methods=['GET', 'POST'])
