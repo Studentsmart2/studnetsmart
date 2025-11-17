@@ -231,12 +231,23 @@
 
     <div class="container pb-5">
         <div class="form-container">
-            <form id="editForm">
+            <form id="editForm" enctype="multipart/form-data">
                 <div class="form-section">
                     <h3 class="section-title">
                         <i class="fas fa-building"></i>
                         Company Information
                     </h3>
+
+                    <div class="form-group">
+                        <label>Company Logo</label>
+                        {% if company.logo_url %}
+                        <div class="mb-3">
+                            <img src="/static/uploads/{{ company.logo_url }}" alt="Company Logo" style="max-width: 150px; max-height: 150px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        </div>
+                        {% endif %}
+                        <input type="file" id="logo" class="form-control" accept="image/*">
+                        <small style="color: #666; font-size: 0.85rem;">Upload your company logo (max 5MB). Supported formats: JPG, PNG, GIF</small>
+                    </div>
 
                     <div class="form-group">
                         <label>Company Name</label>
@@ -269,6 +280,21 @@
                             <option value="500+" {% if company.company_size == '500+' %}selected{% endif %}>500+ employees</option>
                         </select>
                     </div>
+
+                    <div class="form-group">
+                        <label>Mobile Number</label>
+                        <input type="tel" id="mobile" class="form-control" value="{{ company.mobile or '' }}" placeholder="+1234567890">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Contact Person Name</label>
+                        <input type="text" id="contact_person_name" class="form-control" value="{{ company.contact_person_name or '' }}" placeholder="John Doe">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Contact Person Position</label>
+                        <input type="text" id="contact_person_position" class="form-control" value="{{ company.contact_person_position or '' }}" placeholder="e.g., HR Manager, CEO">
+                    </div>
                 </div>
 
                 <button type="submit" class="btn-submit">
@@ -288,30 +314,38 @@
     <script>
         document.getElementById('editForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const submitBtn = e.target.querySelector('.btn-submit');
             const originalHTML = submitBtn.innerHTML;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Saving...';
             submitBtn.disabled = true;
 
             try {
+                const formData = new FormData();
+                formData.append('company_name', document.getElementById('company_name').value);
+                formData.append('website', document.getElementById('website').value);
+                formData.append('description', document.getElementById('description').value);
+                formData.append('industry', document.getElementById('industry').value);
+                formData.append('company_size', document.getElementById('company_size').value);
+                formData.append('mobile', document.getElementById('mobile').value);
+                formData.append('contact_person_name', document.getElementById('contact_person_name').value);
+                formData.append('contact_person_position', document.getElementById('contact_person_position').value);
+
+                const logoFile = document.getElementById('logo').files[0];
+                if (logoFile) {
+                    formData.append('logo', logoFile);
+                }
+
                 const response = await fetch('/company/profile/edit', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        company_name: document.getElementById('company_name').value,
-                        website: document.getElementById('website').value,
-                        description: document.getElementById('description').value,
-                        industry: document.getElementById('industry').value,
-                        company_size: document.getElementById('company_size').value
-                    })
+                    body: formData
                 });
-                
+
                 const data = await response.json();
                 if (data.success) {
                     window.location.href = data.redirect;
                 } else {
-                    alert('Error: Failed to save changes. Please try again.');
+                    alert('Error: ' + (data.message || 'Failed to save changes. Please try again.'));
                     submitBtn.innerHTML = originalHTML;
                     submitBtn.disabled = false;
                 }

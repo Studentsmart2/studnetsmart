@@ -479,16 +479,19 @@ class Company(db.Model):
     industry = db.Column(db.String(100))
     company_size = db.Column(db.String(50))
     logo_url = db.Column(db.String(200))
+    mobile = db.Column(db.String(20))
+    contact_person_name = db.Column(db.String(100))
+    contact_person_position = db.Column(db.String(100))
     google_id = db.Column(db.String(100), unique=True, nullable=True)
     is_google_user = db.Column(db.Boolean, default=False)
     is_verified = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
+
     internships = db.relationship('Internship', backref='company', cascade="all, delete-orphan", lazy=True)
-    
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
-    
+
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
@@ -5778,24 +5781,27 @@ def company_login():
 def company_register():
     if request.method == 'GET':
         return render_template('company/register.html')
-    
+
     data = request.json
     existing_company = Company.query.filter_by(email=data['email']).first()
     if existing_company:
         return jsonify({'success': False, 'message': 'Email already registered'}), 400
-    
+
     company = Company(
         email=data['email'],
         company_name=data['company_name'],
         website=data.get('website'),
         industry=data.get('industry'),
         company_size=data.get('company_size'),
+        mobile=data.get('mobile'),
+        contact_person_name=data.get('contact_person_name'),
+        contact_person_position=data.get('contact_person_position'),
         is_verified=True
     )
     company.set_password(data['password'])
     db.session.add(company)
     db.session.commit()
-    
+
     session['company_id'] = company.id
     session['user_type'] = 'company'
     return jsonify({'success': True, 'redirect': url_for('company_dashboard')})
@@ -6768,6 +6774,20 @@ def company_jobs():
     return render_template('company/jobs.html', internships=internships)
 
 
+@app.route('/company/jobs/<int:job_id>/applicants')
+@company_required
+def company_job_applicants(job_id):
+    company = db.session.get(Company, session['company_id'])
+    internship = db.get_or_404(Internship, job_id)
+
+    # Verify that this job belongs to the company
+    if internship.posted_by_company_id != company.id:
+        abort(403)
+
+    applications = Application.query.filter_by(internship_id=job_id).order_by(Application.applied_at.desc()).all()
+    return render_template('company/job_applicants.html', internship=internship, applications=applications)
+
+
 @app.route('/company/applications')
 @company_required
 def company_applications():
@@ -6780,15 +6800,36 @@ def company_applications():
 @company_required
 def company_profile_edit():
     company = db.session.get(Company, session['company_id'])
-    
+
     if request.method == 'GET':
         return render_template('company/edit_profile.html', company=company)
-    
-    company.company_name = request.json.get('company_name', company.company_name)
-    company.website = request.json.get('website', company.website)
-    company.description = request.json.get('description', company.description)
-    company.industry = request.json.get('industry', company.industry)
-    company.company_size = request.json.get('company_size', company.company_size)
+
+    # Handle form data (not JSON anymore due to file upload)
+    company.company_name = request.form.get('company_name', company.company_name)
+    company.website = request.form.get('website', company.website)
+    company.description = request.form.get('description', company.description)
+    company.industry = request.form.get('industry', company.industry)
+    company.company_size = request.form.get('company_size', company.company_size)
+    company.mobile = request.form.get('mobile', company.mobile)
+    company.contact_person_name = request.form.get('contact_person_name', company.contact_person_name)
+    company.contact_person_position = request.form.get('contact_person_position', company.contact_person_position)
+
+    # Handle logo upload
+    if 'logo' in request.files:
+        logo_file = request.files['logo']
+        if logo_file and logo_file.filename:
+            # Validate file extension
+            allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
+            file_ext = logo_file.filename.rsplit('.', 1)[1].lower() if '.' in logo_file.filename else ''
+
+            if file_ext in allowed_extensions:
+                filename = secure_filename(f"company_logo_{company.id}_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}.{file_ext}")
+                logo_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                logo_file.save(logo_path)
+                company.logo_url = filename
+            else:
+                return jsonify({'success': False, 'message': 'Invalid file type. Only PNG, JPG, JPEG, and GIF are allowed.'}), 400
+
     db.session.commit()
 
     return jsonify({'success': True, 'redirect': url_for('company_dashboard')})
@@ -6863,6 +6904,26 @@ def admin_company_detail(id):
     db.session.commit()
 
     return render_template('admin/company_detail.html', company=company, internships=internships)
+
+
+@app.route('/admin/jobs/<int:job_id>/applicants')
+@login_required
+def admin_job_applicants(job_id):
+    if not current_user.is_admin:
+        return redirect(url_for('index'))
+
+    internship = db.get_or_404(Internship, job_id)
+    applications = Application.query.filter_by(internship_id=job_id).order_by(Application.applied_at.desc()).all()
+
+    audit = AuditLog(
+        admin_user_id=current_user.id,
+        action=f"Viewed applicants for job: {internship.title}",
+        ip_address=request.remote_addr
+    )
+    db.session.add(audit)
+    db.session.commit()
+
+    return render_template('admin/job_applicants.html', internship=internship, applications=applications)
 
 
 @app.route('/admin/internships')

@@ -308,6 +308,30 @@
                 </div>
 
                 <div class="form-group">
+                    <label>Mobile Number <span class="required">*</span></label>
+                    <div class="input-group">
+                        <i class="fas fa-phone input-icon"></i>
+                        <input type="tel" id="mobile" class="form-control with-icon" placeholder="+1234567890" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Contact Person Name <span class="required">*</span></label>
+                    <div class="input-group">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" id="contact_person_name" class="form-control with-icon" placeholder="John Doe" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Contact Person Position <span class="required">*</span></label>
+                    <div class="input-group">
+                        <i class="fas fa-briefcase input-icon"></i>
+                        <input type="text" id="contact_person_position" class="form-control with-icon" placeholder="e.g., HR Manager, CEO" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label>Password <span class="required">*</span></label>
                     <div class="input-group">
                         <i class="fas fa-lock input-icon"></i>
@@ -358,6 +382,9 @@
                         website: document.getElementById('website').value,
                         industry: document.getElementById('industry').value,
                         company_size: document.getElementById('company_size').value,
+                        mobile: document.getElementById('mobile').value,
+                        contact_person_name: document.getElementById('contact_person_name').value,
+                        contact_person_position: document.getElementById('contact_person_position').value,
                         password: document.getElementById('password').value
                     })
                 });
