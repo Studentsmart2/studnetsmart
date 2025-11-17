@@ -572,9 +572,45 @@
     <script>
         document.getElementById('step1Form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const submitBtn = e.target.querySelector('.btn-submit');
             const originalText = submitBtn.innerHTML;
+
+            // Validate all required fields
+            const phone = document.getElementById('phone').value.trim();
+            const bio = document.getElementById('bio').value.trim();
+            const location = document.getElementById('location').value.trim();
+            const state = document.getElementById('state').value.trim();
+
+            let validationErrors = [];
+
+            if (!phone) {
+                validationErrors.push('Phone number is required');
+            } else if (phone.length < 10) {
+                validationErrors.push('Phone number must be at least 10 digits');
+            }
+
+            if (!bio) {
+                validationErrors.push('Bio is required');
+            } else if (bio.length < 20) {
+                validationErrors.push('Bio must be at least 20 characters long');
+            }
+
+            if (!location) {
+                validationErrors.push('City/Location is required');
+            }
+
+            if (!state) {
+                validationErrors.push('State is required');
+            }
+
+            // Show validation errors if any
+            if (validationErrors.length > 0) {
+                alert('Please fix the following errors:\n\n' + validationErrors.join('\n'));
+                return;
+            }
+
+            // Proceed with submission
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
             submitBtn.disabled = true;
 
@@ -583,14 +619,14 @@
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                        phone: document.getElementById('phone').value,
-                        bio: document.getElementById('bio').value,
-                        location: document.getElementById('location').value,
-                        state: document.getElementById('state').value,
-                        linkedin_url: document.getElementById('linkedin_url').value,
-                        github_url: document.getElementById('github_url').value,
-                        portfolio_url: document.getElementById('portfolio_url').value,
-                        leetcode_url: document.getElementById('leetcode_url').value
+                        phone: phone,
+                        bio: bio,
+                        location: location,
+                        state: state,
+                        linkedin_url: document.getElementById('linkedin_url').value.trim(),
+                        github_url: document.getElementById('github_url').value.trim(),
+                        portfolio_url: document.getElementById('portfolio_url').value.trim(),
+                        leetcode_url: document.getElementById('leetcode_url').value.trim()
                     })
                 });
 
@@ -603,6 +639,7 @@
                     submitBtn.disabled = false;
                 }
             } catch (error) {
+                console.error('Submission error:', error);
                 alert('Network error. Please try again.');
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
