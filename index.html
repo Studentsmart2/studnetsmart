@@ -22,6 +22,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-PZCVV1J0EK"></script>
@@ -4677,10 +4678,25 @@
                                     <option value="4">4th Year</option>
                                 </select>
                             </div>
+                            <div class="col-md-6">
+                                <label class="form-label">College Type</label>
+                                <select class="form-select" name="college_type" id="collegeType" required>
+                                    <option value="">Select Type</option>
+                                    <option value="BTech">BTech</option>
+                                    <option value="Medical">Medical</option>
+                                    <option value="Associate">Associate (Degree)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">College State</label>
+                                <select class="form-select" name="college_state" id="collegeState" required disabled>
+                                    <option value="">Select type first</option>
+                                </select>
+                            </div>
                             <div class="col-12">
                                 <label class="form-label">College</label>
-                                <select class="form-select" name="college" id="collegeSelect" required>
-                                    <option value="">Select Your College</option>
+                                <select class="form-select" name="college" id="collegeSelect" required disabled>
+                                    <option value="">Select state first</option>
                                 </select>
                             </div>
                             <div class="col-12">
@@ -6762,6 +6778,8 @@
     </div>
 
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -9666,24 +9684,119 @@
             }
         }
         function populateCollegeDropdowns() {
+            // Legacy function kept for backward compatibility
             const sortedColleges = colleges.sort();
 
-            // Populate registration form dropdown
-            const registerForm = document.getElementById('collegeSelect');
-            sortedColleges.forEach(college => {
-                const option = document.createElement('option');
-                option.value = college;
-                option.textContent = college;
-                registerForm.appendChild(option);
+            // Populate search filter dropdown (legacy)
+            const filterSelect = document.getElementById('collegeFilter');
+            if (filterSelect) {
+                sortedColleges.forEach(college => {
+                    const option = document.createElement('option');
+                    option.value = college;
+                    option.textContent = college;
+                    filterSelect.appendChild(option);
+                });
+            }
+        }
+
+        // Initialize cascading dropdowns for registration modal
+        function initializeRegistrationDropdowns() {
+            let selectedCollegeType = '';
+            let selectedCollegeState = '';
+
+            const collegeTypeSelect = $('#collegeType');
+            const collegeStateSelect = $('#collegeState');
+            const collegeSelectElem = $('#collegeSelect');
+
+            // Initialize Select2 for College State dropdown
+            collegeStateSelect.select2({
+                placeholder: "Search for your state",
+                allowClear: true,
+                width: '100%',
+                minimumInputLength: 0,
+                dropdownParent: $('#registerModal'),
+                data: indianStates.map(state => ({ id: state, text: state }))
             });
 
-            // Populate search filter dropdown
-            const filterSelect = document.getElementById('collegeFilter');
-            sortedColleges.forEach(college => {
-                const option = document.createElement('option');
-                option.value = college;
-                option.textContent = college;
-                filterSelect.appendChild(option);
+            // Initialize Select2 for College dropdown
+            collegeSelectElem.select2({
+                placeholder: "Search for your college",
+                allowClear: true,
+                width: '100%',
+                minimumInputLength: 2,
+                dropdownParent: $('#registerModal'),
+                data: []
+            });
+
+            // College Type change handler
+            collegeTypeSelect.on('change', function() {
+                selectedCollegeType = $(this).val();
+
+                if (selectedCollegeType) {
+                    // Enable state dropdown
+                    collegeStateSelect.prop('disabled', false);
+
+                    // Reset college dropdown
+                    collegeSelectElem.val(null).trigger('change');
+                    collegeSelectElem.prop('disabled', true);
+                    selectedCollegeState = '';
+
+                    // Update state options based on available states for this college type
+                    const availableStates = Object.keys(collegesData[selectedCollegeType] || {});
+                    const stateOptions = availableStates.length > 0
+                        ? availableStates.map(state => ({ id: state, text: state }))
+                        : indianStates.map(state => ({ id: state, text: state }));
+
+                    collegeStateSelect.empty().select2({
+                        placeholder: "Search for your state",
+                        allowClear: true,
+                        width: '100%',
+                        minimumInputLength: 0,
+                        dropdownParent: $('#registerModal'),
+                        data: stateOptions
+                    });
+                } else {
+                    // Disable both state and college dropdowns
+                    collegeStateSelect.prop('disabled', true).val(null).trigger('change');
+                    collegeSelectElem.prop('disabled', true).val(null).trigger('change');
+                    selectedCollegeState = '';
+                }
+            });
+
+            // College State change handler
+            collegeStateSelect.on('select2:select', function(e) {
+                selectedCollegeState = e.params.data.id;
+
+                // Get colleges for selected type and state
+                let collegesList = [];
+                if (selectedCollegeType && selectedCollegeState) {
+                    collegesList = collegesData[selectedCollegeType]?.[selectedCollegeState] || [];
+                }
+
+                // If no colleges in the data structure, fall back to legacy list
+                if (collegesList.length === 0) {
+                    collegesList = colleges;
+                }
+
+                // Update college dropdown
+                const collegeOptions = collegesList.map(college => ({ id: college, text: college }));
+                collegeSelectElem.empty().select2({
+                    placeholder: "Search for your college",
+                    allowClear: true,
+                    width: '100%',
+                    minimumInputLength: 0,
+                    dropdownParent: $('#registerModal'),
+                    data: collegeOptions
+                });
+
+                // Enable college dropdown
+                collegeSelectElem.prop('disabled', false);
+            });
+
+            // Clear state handler
+            collegeStateSelect.on('select2:clear', function() {
+                selectedCollegeState = '';
+                collegeSelectElem.prop('disabled', true).val(null).trigger('change');
             });
         }
 
@@ -9890,6 +10003,11 @@
             // Check if user is logged in
             checkSession();
             populateCollegeDropdowns();
+
+            // Initialize cascading dropdowns when jQuery and Select2 are ready
+            $(document).ready(function() {
+                initializeRegistrationDropdowns();
+            });
 
             // Add event listeners for search and filters (only if elements exist and loadListings is defined)
             const searchInput = document.getElementById('searchInput');
@@ -10430,8 +10548,80 @@
 
         // Simple error handling function
 
+        // Indian States List
+        const indianStates = [
+            "Andhra Pradesh",
+            "Arunachal Pradesh",
+            "Assam",
+            "Bihar",
+            "Chhattisgarh",
+            "Goa",
+            "Gujarat",
+            "Haryana",
+            "Himachal Pradesh",
+            "Jharkhand",
+            "Karnataka",
+            "Kerala",
+            "Madhya Pradesh",
+            "Maharashtra",
+            "Manipur",
+            "Meghalaya",
+            "Mizoram",
+            "Nagaland",
+            "Odisha",
+            "Punjab",
+            "Rajasthan",
+            "Sikkim",
+            "Tamil Nadu",
+            "Telangana",
+            "Tripura",
+            "Uttar Pradesh",
+            "Uttarakhand",
+            "West Bengal",
+            "Andaman and Nicobar Islands",
+            "Chandigarh",
+            "Dadra and Nagar Haveli and Daman and Diu",
+            "Delhi",
+            "Jammu and Kashmir",
+            "Ladakh",
+            "Lakshadweep",
+            "Puducherry"
+        ];
 
+        // College Types
+        const collegeTypes = ["BTech", "Medical", "Associate"];
 
+        // Colleges Data Structure
+        // Format: { "CollegeType": { "State": ["College1", "College2", ...] } }
+        // USER WILL ADD THEIR COLLEGES DATA HERE
+        const collegesData = {
+            "BTech": {
+                "Andhra Pradesh": [
+                    // Add BTech colleges for Andhra Pradesh here
+                ],
+                "Telangana": [
+                    // Add BTech colleges for Telangana here
+                ],
+                // Add more states here
+            },
+            "Medical": {
+                "Andhra Pradesh": [
+                    // Add Medical colleges for Andhra Pradesh here
+                ],
+                "Arunachal Pradesh": [
+                    // Add Medical colleges for Arunachal Pradesh here
+                ],
+                // Add more states here
+            },
+            "Associate": {
+                "Andhra Pradesh": [
+                    // Add Associate degree colleges for Andhra Pradesh here
+                ],
+                // Add more states here
+            }
+        };
+
+        // Legacy colleges list for backward compatibility
         const colleges = [
             "A U College Of Engg. Visakhapatnam, Visakhapatnam",
 "A U College Of Engg For Women, Visakhapatnam",

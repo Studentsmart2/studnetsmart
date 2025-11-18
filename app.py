@@ -202,6 +202,8 @@ class User(UserMixin, db.Model):
     reset_token_expiry = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     college = db.Column(db.String(200), nullable=False)
+    college_type = db.Column(db.String(50), nullable=True)  # BTech, Medical, Associate
+    college_state = db.Column(db.String(100), nullable=True)  # State where college is located
     is_admin = db.Column(db.Boolean, default=False)
     admin_role = db.Column(db.String(20), default=None)  # 'super_admin', 'normal_admin', 'intern_admin'
     unread_notifications = db.Column(db.Integer, default=0)
@@ -958,6 +960,8 @@ def register():
             department=data['department'],
             year=int(data['year']),
             college=data['college'],
+            college_type=data.get('college_type'),  # BTech, Medical, Associate
+            college_state=data.get('college_state'),  # State name
             is_verified=False,
             roll_number=roll_number if roll_number else None
         )
@@ -1715,7 +1719,7 @@ def complete_google_registration():
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Department *</label>
-                                <input type="text" class="form-control" name="department" 
+                                <input type="text" class="form-control" name="department"
                                        placeholder="e.g., Computer Science" required>
                             </div>
                             <div class="col-md-6">
@@ -1728,16 +1732,32 @@ def complete_google_registration():
                                     <option value="4">4th Year</option>
                                 </select>
                             </div>
+                            <div class="col-md-6">
+                                <label class="form-label">College Type *</label>
+                                <select class="form-select" name="college_type" id="googleCollegeType" required>
+                                    <option value="">Select Type</option>
+                                    <option value="BTech">BTech</option>
+                                    <option value="Medical">Medical</option>
+                                    <option value="Associate">Associate (Degree)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">College State *</label>
+                                <select class="form-select state-select" name="college_state" id="googleCollegeState" required disabled>
+                                    <option value="">Select type first</option>
+                                    <!-- States will be loaded dynamically -->
+                                </select>
+                            </div>
                             <div class="col-12">
                                 <label class="form-label">College *</label>
-                                <select class="form-select college-select" name="college" required>
-                                    <option value="">Select your college</option>
+                                <select class="form-select college-select" name="college" id="googleCollege" required disabled>
+                                    <option value="">Select state first</option>
                                     <!-- Colleges will be loaded dynamically -->
                                 </select>
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Roll Number (Optional)</label>
-                                <input type="text" class="form-control" name="roll_number" 
+                                <input type="text" class="form-control" name="roll_number"
                                        placeholder="Your college roll number (optional)">
                                 <div class="form-text">You can leave this blank if you prefer</div>
                             </div>
@@ -1763,27 +1783,25 @@ def complete_google_registration():
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script>
             $(document).ready(function() {{
-                console.log("Initializing college dropdown...");
-                
-                // Initialize Select2 for college dropdown with improved configuration
-                $('.college-select').select2({{
-                    placeholder: "Search for your college",
+                let selectedCollegeType = '';
+                let selectedCollegeState = '';
+
+                // Initialize Select2 for state dropdown
+                $('.state-select').select2({{
+                    placeholder: "Search for your state",
                     allowClear: true,
                     width: '100%',
-                    minimumInputLength: 2, // Require at least 2 characters to start searching
+                    minimumInputLength: 0,
                     ajax: {{
-                        url: '/api/colleges',
+                        url: '/api/states',
                         dataType: 'json',
                         delay: 250,
                         data: function (params) {{
-                            console.log("Searching for:", params.term);
                             return {{
-                                q: params.term, // search term
-                                page: params.page
+                                q: params.term
                             }};
                         }},
-                        processResults: function (data, params) {{
-                            console.log("Received data:", data);
+                        processResults: function (data) {{
                             return {{
                                 results: data.results,
                                 pagination: data.pagination
@@ -1791,17 +1809,72 @@ def complete_google_registration():
                         }},
                         cache: true
                     }}
-                }}).on('select2:open', function () {{
-                    // Focus on the search field when dropdown opens
-                    setTimeout(function() {{
-                        document.querySelector('.select2-search__field').focus();
-                    }}, 100);
-                }}).on('select2:select', function (e) {{
-                    console.log("Selected college:", e.params.data.text);
                 }});
-                
-                // Debug: Check if Select2 is properly initialized
-                console.log("Select2 initialized:", $('.college-select').data('select2'));
+
+                // Initialize Select2 for college dropdown
+                $('.college-select').select2({{
+                    placeholder: "Search for your college",
+                    allowClear: true,
+                    width: '100%',
+                    minimumInputLength: 2,
+                    ajax: {{
+                        url: '/api/colleges',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {{
+                            return {{
+                                q: params.term,
+                                type: selectedCollegeType,
+                                state: selectedCollegeState
+                            }};
+                        }},
+                        processResults: function (data) {{
+                            return {{
+                                results: data.results,
+                                pagination: data.pagination
+                            }};
+                        }},
+                        cache: false
+                    }}
+                }});
+
+                // College Type change handler
+                $('#googleCollegeType').on('change', function() {{
+                    selectedCollegeType = $(this).val();
+                    const stateSelect = $('#googleCollegeState');
+                    const collegeSelect = $('#googleCollege');
+
+                    if (selectedCollegeType) {{
+                        // Enable state dropdown
+                        stateSelect.prop('disabled', false);
+
+                        // Reset and disable college dropdown
+                        collegeSelect.val(null).trigger('change');
+                        collegeSelect.prop('disabled', true);
+                        selectedCollegeState = '';
+                    }} else {{
+                        // Disable both state and college dropdowns
+                        stateSelect.prop('disabled', true).val(null).trigger('change');
+                        collegeSelect.prop('disabled', true).val(null).trigger('change');
+                        selectedCollegeState = '';
+                    }}
+                }});
+
+                // State change handler
+                $('.state-select').on('select2:select', function(e) {{
+                    selectedCollegeState = e.params.data.id;
+                    const collegeSelect = $('#googleCollege');
+
+                    // Reset and enable college dropdown
+                    collegeSelect.val(null).trigger('change');
+                    collegeSelect.prop('disabled', false);
+                }});
+
+                // Clear state handler
+                $('.state-select').on('select2:clear', function() {{
+                    selectedCollegeState = '';
+                    $('#googleCollege').prop('disabled', true).val(null).trigger('change');
+                }});
             }});
             
             document.getElementById('completeGoogleRegistration').addEventListener('submit', async function(e) {{
@@ -1870,7 +1943,7 @@ def complete_google_registration_submit():
         data = request.form
         
         # Validate required fields
-        required_fields = ['department', 'year', 'college']
+        required_fields = ['department', 'year', 'college', 'college_type', 'college_state']
         for field in required_fields:
             if not data.get(field):
                 return jsonify({'error': f'{field.replace("_", " ").title()} is required'}), 400
@@ -1893,6 +1966,8 @@ def complete_google_registration_submit():
             department=data['department'],
             year=int(data['year']),
             college=data['college'],
+            college_type=data.get('college_type'),  # BTech, Medical, Associate
+            college_state=data.get('college_state'),  # State name
             roll_number=roll_number if roll_number else None,
             profile_picture=google_data.get('picture', ''),
             google_id=google_data['google_id'],
@@ -1929,11 +2004,87 @@ def complete_google_registration_submit():
         db.session.rollback()
         print(f"Complete Google registration error: {str(e)}")
         return jsonify({'error': 'Registration failed. Please try again.'}), 500
+# Indian States List
+INDIAN_STATES = [
+    "Andhra Pradesh",
+    "Arunachal Pradesh",
+    "Assam",
+    "Bihar",
+    "Chhattisgarh",
+    "Goa",
+    "Gujarat",
+    "Haryana",
+    "Himachal Pradesh",
+    "Jharkhand",
+    "Karnataka",
+    "Kerala",
+    "Madhya Pradesh",
+    "Maharashtra",
+    "Manipur",
+    "Meghalaya",
+    "Mizoram",
+    "Nagaland",
+    "Odisha",
+    "Punjab",
+    "Rajasthan",
+    "Sikkim",
+    "Tamil Nadu",
+    "Telangana",
+    "Tripura",
+    "Uttar Pradesh",
+    "Uttarakhand",
+    "West Bengal",
+    "Andaman and Nicobar Islands",
+    "Chandigarh",
+    "Dadra and Nagar Haveli and Daman and Diu",
+    "Delhi",
+    "Jammu and Kashmir",
+    "Ladakh",
+    "Lakshadweep",
+    "Puducherry"
+]
+
+# College Types
+COLLEGE_TYPES = ["BTech", "Medical", "Associate"]
+
+# Colleges Data Structure
+# Format: { "CollegeType": { "State": ["College1", "College2", ...] } }
+# USER WILL ADD THEIR COLLEGES DATA HERE
+COLLEGES_DATA = {
+    "BTech": {
+        "Andhra Pradesh": [
+            "A U College Of Engg. Visakhapatnam, Visakhapatnam",
+            "A U College Of Engg For Women, Visakhapatnam",
+            # More BTech colleges for Andhra Pradesh will be added by user
+        ],
+        "Telangana": [
+            "AAR Mahaveer Engineering College, Hyderabad",
+            # More BTech colleges for Telangana will be added by user
+        ],
+        # More states will be added by user
+    },
+    "Medical": {
+        "Andhra Pradesh": [
+            # Medical colleges for Andhra Pradesh will be added by user
+        ],
+        "Arunachal Pradesh": [
+            # Medical colleges for Arunachal Pradesh will be added by user
+        ],
+        # More states will be added by user
+    },
+    "Associate": {
+        "Andhra Pradesh": [
+            # Associate degree colleges for Andhra Pradesh will be added by user
+        ],
+        # More states will be added by user
+    }
+}
+
 @app.route('/api/colleges')
 def get_colleges():
     """Return the list of colleges for dropdown in Select2 format"""
     try:
-        # Your complete list of 500+ colleges
+        # Legacy colleges list for backward compatibility
         colleges = [
             "A U College Of Engg. Visakhapatnam, Visakhapatnam",
 "A U College Of Engg For Women, Visakhapatnam",
@@ -2323,19 +2474,32 @@ def get_colleges():
         
         # Sort alphabetically
         colleges.sort()
-        
-        # Get search query parameter
+
+        # Get query parameters
         search_term = request.args.get('q', '').lower()
-        
-        # Filter colleges based on search term
-        if search_term:
-            filtered_colleges = [college for college in colleges if search_term in college.lower()]
+        college_type = request.args.get('type', '')  # BTech, Medical, Associate
+        college_state = request.args.get('state', '')  # State name
+
+        # Determine which colleges list to use
+        if college_type and college_state:
+            # Use filtered colleges from COLLEGES_DATA structure
+            filtered_colleges = COLLEGES_DATA.get(college_type, {}).get(college_state, [])
+        elif college_type:
+            # Get all colleges for this type across all states
+            filtered_colleges = []
+            for state, colleges_list in COLLEGES_DATA.get(college_type, {}).items():
+                filtered_colleges.extend(colleges_list)
         else:
+            # Use legacy colleges list for backward compatibility
             filtered_colleges = colleges
-        
+
+        # Apply search term filter
+        if search_term:
+            filtered_colleges = [college for college in filtered_colleges if search_term in college.lower()]
+
         # Format for Select2
         results = [{"id": college, "text": college} for college in filtered_colleges]
-        
+
         return jsonify({
             "results": results,
             "pagination": {"more": False}  # No pagination needed for now
@@ -2343,6 +2507,29 @@ def get_colleges():
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/api/states')
+def get_states():
+    """Return the list of Indian states for dropdown in Select2 format"""
+    try:
+        search_term = request.args.get('q', '').lower()
+
+        # Filter states based on search term
+        if search_term:
+            filtered_states = [state for state in INDIAN_STATES if search_term in state.lower()]
+        else:
+            filtered_states = INDIAN_STATES
+
+        # Format for Select2
+        results = [{"id": state, "text": state} for state in filtered_states]
+
+        return jsonify({
+            "results": results,
+            "pagination": {"more": False}
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/verify-email/<token>')
 def verify_email(token):
     try:
